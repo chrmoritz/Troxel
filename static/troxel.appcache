@@ -1,0 +1,18 @@
+---
+---
+CACHE MANIFEST
+{% if site.github.build_revision %}
+# rev {{ site.github.build_revision }}
+{% else %}
+# rev {{ site.time }}
+{% endif %}
+index.html
+static/stats.min.js
+static/three.min.js
+static/bootstrap-theme.min.css
+static/bootstrap.min.css
+static/bootstrap.min.js
+static/jquery-2.1.1.min.js
+static/troxel.min.js
+static/catiline.min.js
+static/OrbitControls.min.js
