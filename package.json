@@ -24,7 +24,7 @@
     "express": "~4.10",
     "jade": "~1.7",
     "mocha": "~2.0",
-    "should": "~4.2",
+    "should": "~4.3",
     "uglify-js": "~2.4"
   }
 }

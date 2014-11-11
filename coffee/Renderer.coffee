@@ -26,33 +26,36 @@ class Renderer
     @scene.add @rollOverMesh
     # grid
     geometry = new THREE.Geometry()
-    for i in [0..1000] by 50
-      geometry.vertices.push new THREE.Vector3    0,    0,    i
-      geometry.vertices.push new THREE.Vector3 1000,    0,    i
-      geometry.vertices.push new THREE.Vector3    i,    0,    0
-      geometry.vertices.push new THREE.Vector3    i,    0, 1000
-      geometry.vertices.push new THREE.Vector3    0,    i,    0
-      geometry.vertices.push new THREE.Vector3 1000,    i,    0
-      geometry.vertices.push new THREE.Vector3    i,    0,    0
-      geometry.vertices.push new THREE.Vector3    i, 1000,    0
-      geometry.vertices.push new THREE.Vector3    0,    0,    i
-      geometry.vertices.push new THREE.Vector3    0, 1000,    i
-      geometry.vertices.push new THREE.Vector3    0,    i,    0
-      geometry.vertices.push new THREE.Vector3    0,    i, 1000
+    for z in [0..@z] by 1
+      geometry.vertices.push new THREE.Vector3       0,       0,  50 * z # bottom grid
+      geometry.vertices.push new THREE.Vector3 50 * @x,       0,  50 * z
+      geometry.vertices.push new THREE.Vector3 50 * @x,       0,  50 * z # back grid
+      geometry.vertices.push new THREE.Vector3 50 * @x, 50 * @y,  50 * z
+    for x in [0..@x] by 1
+      geometry.vertices.push new THREE.Vector3  50 * x,       0,       0 # bottom grid
+      geometry.vertices.push new THREE.Vector3  50 * x,       0, 50 * @z
+      geometry.vertices.push new THREE.Vector3  50 * x,       0,       0 # left grid
+      geometry.vertices.push new THREE.Vector3  50 * x, 50 * @y,       0
+    for y in [0..@y] by 1
+      geometry.vertices.push new THREE.Vector3       0,  50 * y,       0 # left grid
+      geometry.vertices.push new THREE.Vector3 50 * @x,  50 * y,       0
+      geometry.vertices.push new THREE.Vector3 50 * @x,  50 * y,       0 # back grid
+      geometry.vertices.push new THREE.Vector3 50 * @x,  50 * y, 50 * @z
     material = new THREE.LineBasicMaterial color: 0x000000, opacity: 0.2, transparent: true
     @grid = new THREE.Line geometry, material, THREE.LinePieces
     @scene.add @grid
+    geometry = new THREE.PlaneBufferGeometry 50 * @x, 50 * @z
+    geometry.applyMatrix new THREE.Matrix4().makeRotationX -Math.PI / 2
+    @plane = new THREE.Mesh geometry
+    @plane.position.x = 25 * @x
+    @plane.position.z = 25 * @z
+    @plane.visible = false
+    @scene.add @plane
+    @objects.push @plane
     # Raycaster
     @vector = new THREE.Vector3()
     @raycaster = new THREE.Raycaster()
     @isShiftDown = false
-    geometry = new THREE.PlaneBufferGeometry 1000, 1000
-    geometry.applyMatrix new THREE.Matrix4().makeRotationX -Math.PI / 2
-    @plane = new THREE.Mesh geometry
-    @plane.position.x = @plane.position.z = 500
-    @plane.visible = false
-    @scene.add @plane
-    @objects.push @plane
     # Load Model
     for z in [0...@z] by 1
       for y in [0...@y] by 1
