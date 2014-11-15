@@ -188,6 +188,15 @@ html(manifest=dev?null:'troxel.appcache')
                       option(value=3) iridescent
           .panel.panel-default
             .panel-heading
+              h3.panel-title Light options
+            .panel-body(style='padding: 5px 15px 0px;')
+              .form-horizontal
+                .form-group(style='margin-bottom: 10px;')
+                  label.col-sm-8.control-label(for='ambLightColor') Ambient light:
+                  .col-sm-4
+                    input#ambLightColor.form-control.input-sm(type='color', value='#606060', style='padding: 5px;')
+          .panel.panel-default
+            .panel-heading
               h3.panel-title Rotate model
             .panel-body
               .form-horizontal

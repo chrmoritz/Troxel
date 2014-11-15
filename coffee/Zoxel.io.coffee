@@ -6,7 +6,7 @@ class ZoxelIO extends IO
     fr = new FileReader()
     fr.onloadend = =>
       data = JSON.parse fr.result
-      {"creator": c, "height": @y, "width": @x, "depth": @z, "version": v, "frames": frames} = data
+      {"creator": c, "width": @x, "height": @y, "depth": @z, "version": v, "frames": frames} = data
       console.log "creator: #{x}"
       console.log "version: #{v} (expected 1)"
       console.log "frames: #{frames} (expected 1)"

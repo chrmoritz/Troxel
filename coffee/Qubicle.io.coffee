@@ -1,5 +1,3 @@
-# ToDo: Handle negative matrix offsets
-
 # http://www.minddesk.com/wiki/index.php?title=Qubicle_Constructor_1:Data_Exchange_With_Qubicle_Binary
 class QubicleIO extends IO
   constructor: (files, callback) ->

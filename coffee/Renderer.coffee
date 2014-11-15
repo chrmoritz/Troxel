@@ -72,11 +72,11 @@ class Renderer
           @scene.add voxel
           @objects.push voxel
     # Lights
-    ambientLight = new THREE.AmbientLight 0x606060
-    @scene.add ambientLight
-    directionalLight = new THREE.DirectionalLight 0xffffff
-    directionalLight.position.set(1, 0.75, 0.5).normalize()
-    @scene.add directionalLight
+    @ambientLight = new THREE.AmbientLight 0x606060
+    @scene.add @ambientLight
+    @directionalLight = new THREE.DirectionalLight 0xffffff
+    @directionalLight.position.set(1, 0.75, 0.5).normalize()
+    @scene.add @directionalLight
     @renderer = new THREE.WebGLRenderer antialias: true
     @renderer.setClearColor 0x888888
     @renderer.setSize @width, @height
@@ -213,5 +213,6 @@ class Renderer
     @camera.aspect = @width / @height
     @camera.updateProjectionMatrix()
     @renderer.setSize @width, @height
+    @render()
 
 if typeof module == 'object' then module.exports = Renderer else window.Renderer = Renderer

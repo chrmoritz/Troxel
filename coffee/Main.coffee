@@ -161,3 +161,9 @@ $('.mirrorBtn').click ->
     when 'z' then io.mirrorZ(true)
   renderer.reload(io)
   history.pushState {voxels: io.voxels, x: io.x, y: io.y, z: io.z}, 'Troxel', '#m=' + new Base64IO(io).export false
+$('.panel-heading').click ->
+  $(@).next().toggle()
+$('#ambLightColor').change ->
+  return unless io?
+  renderer.ambientLight.color = new THREE.Color($(@).val())
+  renderer.render()
