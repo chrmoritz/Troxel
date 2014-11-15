@@ -55,7 +55,6 @@ class Renderer
     # Raycaster
     @vector = new THREE.Vector3()
     @raycaster = new THREE.Raycaster()
-    @isShiftDown = false
     # Load Model
     for z in [0...@z] by 1
       for y in [0...@y] by 1
@@ -154,14 +153,13 @@ class Renderer
 
   onDocumentMouseDown: (e) ->
     return if !@editMode or $('#openModal').css('display') == 'block' or $('#exportModal').css('display') == 'block' or $('#saveModal').css('display') == 'block'
-    e.preventDefault()
     @vector.set (e.clientX / @width) * 2 - 1, -((e.clientY - 50) / @height) * 2 + 1, 0.5
     @vector.unproject @camera
     @raycaster.ray.set @camera.position, @vector.sub(@camera.position).normalize()
     intersects = @raycaster.intersectObjects @objects
     if intersects.length > 0
       intersect = intersects[0]
-      if @isShiftDown # delete cube
+      if e.button == 2 # right mouse button => delete cube
         if intersect.object != @plane
           x = (intersect.object.position.x - 25) / 50
           y = (intersect.object.position.y - 25) / 50
@@ -171,7 +169,7 @@ class Renderer
           delete @voxels[z] if @voxels[z].filter((e) -> return e != undefined).length == 0
           @scene.remove intersect.object
           @objects.splice @objects.indexOf(intersect.object), 1
-      else # create cube
+      if e.button == 0 # left mouse button => create cube
         cubeMaterial = new THREE.MeshLambertMaterial color: new THREE.Color($('#addVoxColor').val()), shading: THREE.FlatShading
         cubeMaterial.ambient = cubeMaterial.color
         a = parseInt($('#addVoxAlpha').val())
@@ -199,13 +197,15 @@ class Renderer
 
   onDocumentKeyDown: (e) ->
     switch e.keyCode
-      when 16 then @isShiftDown = true
-      #when 17 then @isCtrlDown = true
+      when 18 # Alt
+        @controls.enabled = true
+        @editMode = false
 
   onDocumentKeyUp: (e) ->
     switch e.keyCode
-      when 16 then @isShiftDown = false
-      #when 17 then @isCtrlDown = false
+      when 18 # Alt
+        @controls.enabled = false
+        @editMode = true
 
   onWindowResize: ->
     @width = $('#WebGlContainer').width()
