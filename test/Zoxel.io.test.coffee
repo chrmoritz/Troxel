@@ -23,4 +23,4 @@ describe 'ZoxelIO', ->
     it 'should be able to successfully export to a .zox file', ->
       json = (new ZoxelIO model).export()
       json.should.startWith('data:application/octet-binary;base64,')
-      atob(json.substr(37)).should.eql(JSON.stringify(data))
+      JSON.parse(atob(json.substr(37))).should.eql(data)

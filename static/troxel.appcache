@@ -16,3 +16,6 @@ static/jquery-2.1.1.min.js
 static/troxel.min.js
 static/catiline.min.js
 static/OrbitControls.min.js
+
+NETWORK:
+*
