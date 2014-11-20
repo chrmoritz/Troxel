@@ -35,7 +35,7 @@ npm start
 ```
 *This server will automatically recompile resources after editing them. You only need to reload you page to see your edits live.*
 
-#### Running test
+#### Running tests
 ```
 npm test
 ```

@@ -4,6 +4,13 @@
 io = null
 dragFiles = null
 renderer = null
+if window.applicationCache.status != window.applicationCache.UNCACHED
+  window.applicationCache.addEventListener 'updateready', ->
+    if window.applicationCache.status == window.applicationCache.UPDATEREADY
+      if confirm "A new version of Troxel is available! Do you want to reload this page now to update? (You can reload this page at any time later to update to the new version.)"
+        location.reload()
+        clearInterval(updatechecker)
+  updatechecker = setInterval (-> window.applicationCache.update()), 600000
 window.onpopstate = ->
   window.location.hash.replace('#','').split('&').some (e) ->
     [param, value] = e.split('=')

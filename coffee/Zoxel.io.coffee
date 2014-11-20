@@ -27,7 +27,7 @@ class ZoxelIO extends IO
   export: ->
     frame = []
     frame.push [ix, iy, iz, ((x.r << 24) | (x.g << 16) | (x.b << 8) | x.a) >>> 0] for x, ix in y when x? for y, iy in z when y? for z, iz in @voxels when z?
-    json = {creator: "Troxel", height: @y, width: @x, depth: @z, version: 1, frames: 1, frame1: frame}
+    json = {creator: "Troxel", width: @x, height: @y, depth: @z, version: 1, frames: 1, frame1: frame}
     console.log "Zoxel export:"
     console.log json
     'data:application/octet-binary;base64,' + btoa JSON.stringify json
