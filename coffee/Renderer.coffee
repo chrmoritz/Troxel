@@ -10,14 +10,8 @@ class Renderer
     @y = io.y
     @z = io.z
     @objects = []
-    @theta = -90
     @width = $('#WebGlContainer').width()
     @height = window.innerHeight - 55
-    @camera = new THREE.PerspectiveCamera 45, @width / @height, 1, 10000
-    @camera.position.y = @y * 60
-    @camera.position.x = @x * 25 + 100 * @x * Math.sin THREE.Math.degToRad @theta
-    @camera.position.z = @z * 25 + 100 * @y * Math.cos THREE.Math.degToRad @theta
-    @camera.lookAt new THREE.Vector3 @x * 25, @y * 25, @z * 25
     @scene = new THREE.Scene()
     # roll-over helpers
     rollOverGeo = new THREE.BoxGeometry 50, 50, 50
@@ -87,9 +81,13 @@ class Renderer
     document.addEventListener  'keydown',   (e) => @onDocumentKeyDown(e)
     document.addEventListener  'keyup',     (e) => @onDocumentKeyUp(e)
     window.addEventListener    'resize',    (e) => @onWindowResize(e)
-    # Controls
+    # Controls and Camera
+    @camera = new THREE.PerspectiveCamera 45, @width / @height, 1, 10000
+    @camera.position.y = @y * 50
+    @camera.position.x = @x * -75
+    @camera.position.z = @z * 25
     @controls = new THREE.OrbitControls @camera, container
-    @controls.target = new THREE.Vector3 500, 500, 500
+    @controls.target = new THREE.Vector3 @x * 25, @y * 25, @z * 25
     @controls.addEventListener 'change', => @render()
     @controls.enabled = false
     @changeEditMode($('#modeEdit').parent().hasClass('active'))
