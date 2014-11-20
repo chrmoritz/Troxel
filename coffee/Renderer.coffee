@@ -81,6 +81,11 @@ class Renderer
     document.addEventListener  'keydown',   (e) => @onDocumentKeyDown(e)
     document.addEventListener  'keyup',     (e) => @onDocumentKeyUp(e)
     window.addEventListener    'resize',    (e) => @onWindowResize(e)
+    # Stats (fps)
+    @stats = new Stats()
+    @stats.domElement.style.position = 'absolute'
+    @stats.domElement.style.top = '0px'
+    $('#WebGlContainer').append @stats.domElement
     # Controls and Camera
     @camera = new THREE.PerspectiveCamera 45, @width / @height, 1, 10000
     @camera.position.y = @y * 50
@@ -131,6 +136,7 @@ class Renderer
   animate: ->
     requestAnimationFrame => @animate()
     @controls.update()
+    @stats.update()
 
   render: (exportPng) ->
     @renderer.render @scene, @camera
