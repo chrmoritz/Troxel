@@ -164,7 +164,7 @@ html(manifest=dev?null:'troxel.appcache')
                   label.col-sm-4.control-label(for='addVoxColor') Color:
                   .col-sm-8
                     input#addVoxColor.form-control.input-sm(type='color', value='#ffb248')
-                .form-group(style='margin-bottom: 10px;')
+                .form-group(style='margin-bottom: 0px;')
                   label.col-sm-4.control-label(for='addVoxAlpha') Alpha:
                   .col-sm-8
                     input#addVoxAlpha(type='range', min=16, max=272, step=32, value=272)
@@ -195,6 +195,25 @@ html(manifest=dev?null:'troxel.appcache')
                   label.col-sm-8.control-label(for='ambLightColor') Ambient light:
                   .col-sm-4
                     input#ambLightColor.form-control.input-sm(type='color', value='#606060', style='padding: 5px;')
+              .h5: b: u Directional light:
+              .form-horizontal
+                .form-group(style='margin-bottom: 0px;')
+                  label.col-sm-4.control-label(for='dirLightColor') Color:
+                  .col-sm-8
+                    input#dirLightColor.form-control.input-sm(type='color', value='#ffffff', style='padding: 5px;')
+                .form-group(style='margin-bottom: 10px;')
+                  label.col-sm-4.control-label(for='dirLightIntensity') Intensity:
+                  .col-sm-8
+                    input#dirLightIntensity(type='range', min=0, max=5, step=0.1, value=1, style='margin-top: 5px;')
+                .input-group.input-group-sm(style='margin: 0px -8px 5px;')
+                  span.input-group-addon(style='padding: 5px;') x:
+                  input#dirLightX.form-control(type='text', value='1', style='padding: 5px;')
+                  span.input-group-addon(style='padding: 5px;') y:
+                  input#dirLightY.form-control(type='text', value='0.75', style='padding: 5px;')
+                  span.input-group-addon(style='padding: 5px;') z:
+                  input#dirLightZ.form-control(type='text', value='0.5', style='padding: 5px;')
+                  span.input-group-btn
+                    button#dirLightVector.btn.btn-default(style='padding: 5px;') go
           .panel.panel-default
             .panel-heading
               h3.panel-title Rotate model

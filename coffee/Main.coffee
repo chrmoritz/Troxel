@@ -171,7 +171,22 @@ $('.mirrorBtn').click ->
   history.pushState {voxels: io.voxels, x: io.x, y: io.y, z: io.z}, 'Troxel', '#m=' + new Base64IO(io).export false
 $('.panel-heading').click ->
   $(@).next().toggle()
-$('#ambLightColor').change ->
+$('#ambLightColor').val('#606060').change ->
   return unless io?
   renderer.ambientLight.color = new THREE.Color($(@).val())
+  renderer.render()
+$('#dirLightColor').val('#ffffff').change ->
+  return unless io?
+  renderer.directionalLight.color = new THREE.Color($(@).val())
+  renderer.render()
+$('#dirLightIntensity').val(1).change ->
+  return unless io?
+  renderer.directionalLight.intensity = $(@).val()
+  renderer.render()
+$('#dirLightX').val('1')
+$('#dirLightY').val('0.75')
+$('#dirLightZ').val('0.5')
+$('#dirLightVector').click ->
+  return unless io?
+  renderer.directionalLight.position.set(parseFloat($('#dirLightX').val()), parseFloat($('#dirLightY').val()), parseFloat($('#dirLightZ').val())).normalize()
   renderer.render()
