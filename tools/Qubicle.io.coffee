@@ -147,9 +147,19 @@ class QubicleIO extends IO
   addAlphaValues: (x, y, z, r, g, b) ->
     return console.warn "Ignoring alpha voxel because of non existing color voxel at the same position" unless @voxels[z]?[y]?[x]?
     if r == g and g == b
-      return @voxels[z][y][x].a = r if r in [16, 48, 80, 112, 144, 176, 208, 240, 255]
-      console.warn "invalid alpha value: falling back to fully opaque"
-      return @voxels[z][y][x].a = 255
+      return @voxels[z][y][x].a = switch r
+        when  16 then 255 # Solid
+        when  48 then 240 #   |
+        when  80 then 208 #   |
+        when 112 then 176 #   |
+        when 144 then 144 #   |
+        when 176 then 112 #   |
+        when 208 then  80 #   |
+        when 240 then  48 #   V
+        when 255 then  16 # Very Transparent
+        else
+          console.warn "invalid alpha value: r, g and b are not equal, falling back to fully opaque"
+          255
     return @voxels[z][y][x].a = 255 if r == b == 255 and g == 0 # attachment point
     console.warn "invalid alpha value: r, g and b are not equal, falling back to fully opaque"
     @voxels[z][y][x].a = 255
@@ -199,15 +209,15 @@ class QubicleIO extends IO
         data = data.concat [vox.r, vox.g, vox.b, 255]
         data_a = data_a.concat switch
           when vox.t == 7 and vox.s == 7 then [255, 0, 255, 255] # attachment point
-          when vox.a == 255 then [255, 255, 255, 255] # Solid
-          when vox.a  > 224 then [240, 240, 240, 255] #   |
-          when vox.a  > 192 then [208, 208, 208, 255] #   |
-          when vox.a  > 160 then [176, 176, 176 ,255] #   |
+          when vox.a == 255 then [ 16,  16,  16, 255] # Solid
+          when vox.a  > 224 then [ 48,  48,  48, 255] #   |
+          when vox.a  > 192 then [ 80,  80,  80, 255] #   |
+          when vox.a  > 160 then [112, 112, 112 ,255] #   |
           when vox.a  > 128 then [144, 144, 144 ,255] #   |
-          when vox.a  >  96 then [112, 112, 112 ,255] #   |
-          when vox.a  >  64 then [ 80,  80,  80 ,255] #   |
-          when vox.a  >  32 then [ 48,  48,  48 ,255] #   V
-          else                   [ 16,  16,  16, 255] # Very Transparent
+          when vox.a  >  96 then [176, 176, 176 ,255] #   |
+          when vox.a  >  64 then [208, 208, 208 ,255] #   |
+          when vox.a  >  32 then [240, 240, 240 ,255] #   V
+          else                   [255, 255, 255, 255] # Very Transparent
         data_t = data_t.concat switch vox.t
           when 0 then [255, 255, 255, 255] # solid (default)
           when 1 then [128, 128, 128, 255] # glass
