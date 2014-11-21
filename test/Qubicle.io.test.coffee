@@ -66,7 +66,7 @@ describe 'QubicleIO', ->
       it 'should add alpha values correctly', ->
         io.addColorValues 0, 0, 0, 32, 64, 128
         io.addAlphaValues 0, 0, 0, 112, 112, 112
-        io.voxels.should.have.propertyByPath(0, 0, 0).with.properties({r: 32, g: 64, b: 128, a: 176, t: 0, s: 0})
+        io.voxels.should.have.propertyByPath(0, 0, 0).with.properties({r: 32, g: 64, b: 128, a: 112, t: 0, s: 0})
       it 'should add alpha values correctly (fallback invalid data)', ->
         io.addColorValues 0, 0, 0, 32, 64, 128
         io.addAlphaValues 0, 0, 0, 145, 32, 213
