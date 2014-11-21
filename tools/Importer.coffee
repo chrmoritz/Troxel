@@ -12,7 +12,8 @@ BROKEN_MODELS = [ # devtool does not finish after over 1 minute for these bluepr
   'C_M_saloonbot_master.blueprint', 'E_F_treestump_01.blueprint', 'E_F_cave_mushroom_01.blueprint', 'E_F_bush_01.blueprint',
   # in these blueprints the heigth (y) of the model is incorrectly set to 4294967295
   'equipment_face_mask_wisebeard[MugensBlade].blueprint', 'equipment_face_mask_soulpatch[Cretoriani].blueprint', 'equipment_face_collar_001.blueprint',
-  'char_hair_face_mustache_003.blueprint', 'char_hair_face_mustache_002.blueprint', 'char_hair_face_mustache_001.blueprint'
+  'char_hair_face_mustache_003.blueprint', 'char_hair_face_mustache_002.blueprint', 'char_hair_face_mustache_001.blueprint', 'C_M_muffinmaker_eyes.blueprint',
+  'C_M_gumballer_lids.blueprint'
 ]
 
 models = {}
@@ -29,7 +30,7 @@ fs.readdir 'blueprints', (err, files) ->
         throw err if err?
         qbf = 'qbexport/' + f.substring 0, f.length - 10
         io = new QubicleIO m: qbf + '.qb', a: qbf + '_a.qb', t: qbf + '_t.qb', s: qbf + '_s.qb', ->
-          models[f] = new Base64IO(io).export(true)
+          models[f.substring(0, f.length - 10)] = new Base64IO(io).export(true)
           if --toProcess == 0
             fs.writeFile jsonPath, JSON.stringify(models), -> thow err if err?
             process.stdout.write 'base64 data successfully written to static/Trove.json\n'

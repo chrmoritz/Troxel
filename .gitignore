@@ -3,7 +3,6 @@ _site
 js
 Renderer_old.coffee
 Renderer2_old.coffee
-Trove.json
 
 # Logs
 logs
