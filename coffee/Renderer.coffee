@@ -200,12 +200,14 @@ class Renderer
       @render()
 
   onDocumentKeyDown: (e) ->
+    return if $('.active #modeView').length == 1
     switch e.keyCode
       when 18 # Alt
         @controls.enabled = true
         @editMode = false
 
   onDocumentKeyUp: (e) ->
+    return if $('.active #modeView').length == 1
     switch e.keyCode
       when 18 # Alt
         @controls.enabled = false

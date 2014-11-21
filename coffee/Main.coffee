@@ -13,15 +13,24 @@ if window.applicationCache.status != window.applicationCache.UNCACHED
         clearInterval(updatechecker)
   updatechecker = setInterval (-> window.applicationCache.update()), 600000
 window.onpopstate = ->
-  window.location.hash.replace('#','').split('&').some (e) ->
+  for e in window.location.hash.replace('#','').split('&')
     [param, value] = e.split('=')
-    if param == 'm'
+    if param == 'm' # load from base64 data
       io = new Base64IO value
       $('#btnExport').hide() if io.readonly == 1
       $('#btnExport').show() if io.readonly == 0
       $('#btnExportPng').show()
       renderer = new Renderer io
-      return true
+      break
+    if param == 'b' # load Trove model from blueprint id
+      $.getJSON 'static/Trove.json', (data) ->
+        model = data[value]
+        return unless model
+        io = new Base64IO model
+        $('#btnExport').hide()
+        $('#btnExportPng').show()
+        renderer = new Renderer io
+      break
 window.onpopstate()
 $('input[type="file"]').change ->
   if $(@).prop('files').length > 1
