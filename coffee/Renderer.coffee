@@ -4,14 +4,14 @@
 # ToDo: reload with changing dimensions
 
 class Renderer
-  constructor: (io) ->
+  constructor: (io, @embedded = false, @domContainer = $('#WebGlContainer')) ->
     @voxels = io.voxels
     @x = io.x
     @y = io.y
     @z = io.z
     @objects = []
-    @width = $('#WebGlContainer').width()
-    @height = window.innerHeight - 55
+    @width = @domContainer.width()
+    @height = if @embedded then @domContainer.height() else window.innerHeight - 55
     @scene = new THREE.Scene()
     # roll-over helpers
     rollOverGeo = new THREE.BoxGeometry 50, 50, 50
@@ -73,26 +73,27 @@ class Renderer
     @renderer = new THREE.WebGLRenderer antialias: true
     @renderer.setClearColor 0x888888
     @renderer.setSize @width, @height
-    $('#WebGlContainer').empty().append @renderer.domElement
+    @domContainer.empty().append @renderer.domElement
     # Event handlers
-    container = document.getElementById('WebGlContainer')
-    container.addEventListener 'mousedown', (e) => @onDocumentMouseDown(e)
-    container.addEventListener 'mousemove', (e) => @onDocumentMouseMove(e)
-    document.addEventListener  'keydown',   (e) => @onDocumentKeyDown(e)
-    document.addEventListener  'keyup',     (e) => @onDocumentKeyUp(e)
-    window.addEventListener    'resize',    (e) => @onWindowResize(e)
+    @domContainer.on        'mousedown', (e) => @onDocumentMouseDown(e)
+    @domContainer.on        'mousemove', (e) => @onDocumentMouseMove(e)
+    document.addEventListener 'keydown', (e) => @onDocumentKeyDown(e)
+    document.addEventListener   'keyup', (e) => @onDocumentKeyUp(e)
+    window.addEventListener    'resize', (e) => @onWindowResize(e)
     # Stats (fps)
-    @stats = new Stats()
-    @stats.domElement.style.position = 'absolute'
-    @stats.domElement.style.top = '0px'
-    $('#WebGlContainer').append @stats.domElement
+    unless @embedded
+      @stats = new Stats()
+      @stats.domElement.style.position = 'absolute'
+      @stats.domElement.style.top = '0px'
+      @domContainer.append @stats.domElement
     # Controls and Camera
     @camera = new THREE.PerspectiveCamera 45, @width / @height, 1, 10000
     @camera.position.y = @y * 50
     @camera.position.x = @x * -75
     @camera.position.z = @z * 25
-    @controls = new THREE.OrbitControls @camera, container
+    @controls = new THREE.OrbitControls @camera, @domContainer[0]
     @controls.target = new THREE.Vector3 @x * 25, @y * 25, @z * 25
+    @controls.autoRotate = true if @embedded
     @controls.addEventListener 'change', => @render()
     @controls.enabled = false
     @changeEditMode($('#modeEdit').parent().hasClass('active'))
@@ -136,7 +137,7 @@ class Renderer
   animate: ->
     requestAnimationFrame => @animate()
     @controls.update()
-    @stats.update()
+    @stats.update() unless @embedded
 
   render: (exportPng) ->
     @renderer.render @scene, @camera
@@ -214,8 +215,8 @@ class Renderer
         @editMode = true
 
   onWindowResize: ->
-    @width = $('#WebGlContainer').width()
-    @height = window.innerHeight - 55
+    @width = @domContainer.width()
+    @height = if @embedded then @domContainer.height() else window.innerHeight - 55
     @camera.aspect = @width / @height
     @camera.updateProjectionMatrix()
     @renderer.setSize @width, @height

@@ -10,9 +10,9 @@
     "serve": "jekyll serve -ws dist",
     "build": "npm run build-clean && npm run build-coffee && npm run build-jade && npm run build-static",
     "build-clean": "rm -rf dist/* && mkdir -p dist/static && rm -rf js/*",
-    "build-coffee": "coffee -co js coffee && uglifyjs js/IO.js js/Qubicle.io.js js/Magica.io.js js/Zoxel.io.js js/Troxel.io.js js/Renderer.js js/Main.js -eo dist/static/troxel.min.js",
+    "build-coffee": "coffee -co js coffee && uglifyjs js/IO.js js/Qubicle.io.js js/Magica.io.js js/Zoxel.io.js js/Troxel.io.js js/Renderer.js js/Main.js -eo dist/static/troxel.min.js && uglifyjs js/IO.js js/Troxel.io.js js/Renderer.js js/libTroxel.js -eo dist/static/libTroxel.min.js",
     "build-jade": "jade -o dist views/index.jade",
-    "build-static": "cp -r static dist && mv dist/static/troxel.appcache dist",
+    "build-static": "echo 'callback(' > static/Trove.jsonp && cat static/Trove.json >> static/Trove.jsonp && echo ');' >> static/Trove.jsonp && cp -r static dist && mv dist/static/troxel.appcache dist",
 	"import": "coffee tools/Importer.coffee"
   },
   "author": "Christian Moritz",
