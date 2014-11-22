@@ -1,13 +1,22 @@
 <!DOCTYPE html>
 <html>
   <body>
-    <div id="container" style="width: 300px; height: 300px; position: relative;"></div>
+    <div id="container" style="width: 300px; height: 300px;"></div>
     <script src="https://chrmoritz.github.io/Troxel/static/jquery-2.1.1.min.js" type="text/javascript"></script>
     <script src="https://chrmoritz.github.io/Troxel/static/three.min.js" type="text/javascript"></script>
-    <script src="https://chrmoritz.github.io/Troxel/OrbitControls.min.js" type="text/javascript"></script>
-    <script src="https://chrmoritz.github.io/Troxel/libTroxel.min.js" type="text/javascript"></script>
+    <script src="https://chrmoritz.github.io/Troxel/static/OrbitControls.min.js" type="text/javascript"></script>
+    <script src="https://chrmoritz.github.io/Troxel/static/libTroxel.min.js" type="text/javascript"></script>
     <script type="text/javascript">
-      Troxel.renderBlueprint('deco_candy_torch_mallow[Laoge]', $('#container'));
+      Troxel.renderBlueprint('deco_candy_torch_mallow[Laoge]', $('#container'), {
+        autoRotate: true, // default to true (auto rotate enabled)
+        autoRotateSpeed: 4.0, // default to 2.0 (30 seconds per round when fps is 60)
+        rendererClearColor: 0x9c9c9c, // default to 0x888888
+        ambientLightColor: 0x707070, // default to 0x606060
+        directionalLightColor: 0xeeeeee, // default to 0xffffff
+        directionalLightIntensity: 0.9, // default to 1.0
+        directionalLightVector: {x: 0.58, y: 0.58, z: 0.58}, // default to (1, 0.75, 0.5) (don't need to be a normal vector)
+        showInfoLabel: true // you can hide the 'Open this model in Troxel' link if you want to move it somewhere else in your layout
+      });
     </script>
   </body>
 </html>

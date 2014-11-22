@@ -93,7 +93,6 @@ class Renderer
     @camera.position.z = @z * 25
     @controls = new THREE.OrbitControls @camera, @domContainer[0]
     @controls.target = new THREE.Vector3 @x * 25, @y * 25, @z * 25
-    @controls.autoRotate = true if @embedded
     @controls.addEventListener 'change', => @render()
     @controls.enabled = false
     @changeEditMode($('#modeEdit').parent().hasClass('active'))

@@ -1,7 +1,7 @@
 Troxel [![Build Status](https://travis-ci.org/chrmoritz/Troxel.svg?branch=master)](https://travis-ci.org/chrmoritz/Troxel)
 ======
 
-Troxel is a WebGL-based HTML5-WebApp for viewing and editing voxel models with some additional support for [Trove](http://www.trionworlds.com/trove/) specific features.  Visit [chrmoritz.github.io/Troxel/](http://chrmoritz.github.io/Troxel/) to try it out!
+Troxel is a WebGL-based HTML5-WebApp for viewing and editing voxel models with some additional support for [Trove](http://www.trionworlds.com/trove/) specific features.  Visit [chrmoritz.github.io/Troxel/](http://chrmoritz.github.io/Troxel/) to try it out! You can embed Troxel in your own website too with [libTroxel](#libTroxel).
 
 ## Features ##
 * Supported file formats for both import and export
@@ -58,3 +58,67 @@ npm run serve
 npm run import -- <UNIX-style path to Trove folder>
 ```
 *Note: You have to run this on a Windows machine, because it depends on Trove's devtool for converting `.blueprint` into `.qb`.*
+
+libTroxel
+======
+
+LibTroxel is a JavaScript library which allows you to embedd voxel models rendered with Troxel into your own website.
+
+## How to use
+
+You can find an [example usage of libTroxel here](test/libTroxelTest.html).
+
+#### Dependencies
+
+In addition to libTroxel, you will need to have these JavaScript libaries loaded: JQuery, Three.js and it's OrbitalControlls. If you want to use our github pages site as a CDN just add these lines to your html:
+
+```html
+<script src="https://chrmoritz.github.io/Troxel/static/jquery-2.1.1.min.js" type="text/javascript"></script>
+<script src="https://chrmoritz.github.io/Troxel/static/three.min.js" type="text/javascript"></script>
+<script src="https://chrmoritz.github.io/Troxel/static/OrbitControls.min.js" type="text/javascript"></script>
+<script src="https://chrmoritz.github.io/Troxel/static/libTroxel.min.js" type="text/javascript"></script>
+```
+
+### API
+
+Create somewhere in your layout a `<div>` element and set it's size to the size the rendered model should have.
+
+#### Troxel.renderBlueprint(blueprintId, domElement, [options])
+
+Renders any Trove blueprint into the given DOM element. It has these parameters:
+* `blueprintId` is the id of the blueprint (the filename without the `.blueprint` file extension)
+* `domElement` is either a DOM element or a JQuery Object representing this DOM element
+* `options` is a optional Object of [render options](#Options)
+
+```JavaScript
+Troxel.renderBlueprint('deco_candy_torch_mallow[Laoge]', $('#container'), {
+    autoRotate: true,
+    autoRotateSpeed: 4.0,
+    rendererClearColor: 0x9c9c9c,
+    ambientLightColor: 0x707070,
+    directionalLightColor: 0xeeeeee,
+    directionalLightIntensity: 0.9,
+    directionalLightVector: {x: 0.58, y: 0.58, z: 0.58},
+});
+```
+
+#### Troxel.renderBase64(base64, domElement, [options])
+
+Renders any voxel model represented in Troxel's Base64 format into the given DOM element. It has these parameters:
+* `base64` is a Base64 formated String containing the voxel data of your model (check out Troxels `Link (share)` export options and use the base64 string starting after `#m=`)
+* `domElement` is either a DOM element or a JQuery Object representing this DOM element
+* `options` is a optional Object of [render options](#Options)
+
+### Options
+
+`options` is a JavaScript Object with these optional keys
+* `autoRotate`: set to `true` to automatically rotate around the voxel model (default to `true`)
+* `autoRotateSpeed`: the rotation speed in full rotation per minute at 60 fps (default to `2.0` = 30 seconds per rotation @60fps)
+* `rendererClearColor`: the color of the background behind the voxel model (default to `0x888888`)
+* `ambientLightColor`: the color of the ambient light (default to `0x606060`)
+* `directionalLightColor`: the color of the directional light (default to `0xffffff`)
+* `directionalLightIntensity`: the intensity of the direction light as a Float (default to `1.0`)
+* `directionalLightVector`: the vector direction of the directional light as an Object (default to `{x: 1, y: 0.75, z: 0.5}`,  don't need to be a normal vector)
+* `showInfoLabel`: set to `false`, if you want to hide the 'Open this model in Troxel' link (please link in this case somewhere else in your layout to Troxel)
+
+*Note: every color muss be passed as a Javascript hexadecimal Number and not as a hex string like in css*
