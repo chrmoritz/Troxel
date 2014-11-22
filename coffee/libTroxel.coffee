@@ -12,7 +12,7 @@ window.Troxel =
     info.style.position = 'absolute'
     info.style.bottom = '0px'
     info.style.width = '100%'
-    info.style.textAlign = 'center';
+    info.style.textAlign = 'center'
     link = if blueprintId? then '#b=' + blueprintId else '#m=' + base64
     info.innerHTML = "<a href='http://chrmoritz.github.io/Troxel/#{link}' target='_blank' class='troxelLink'>Open this model in Troxel</a>"
     @domElement.append info
