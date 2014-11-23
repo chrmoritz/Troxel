@@ -103,6 +103,7 @@ $('#open').click ->
         return unless model?
         io = new Base64IO model
         cb()
+  return
 $('#openTroveTab').click ->
   i = 0
   blueprints = new Bloodhound({
