@@ -1,8 +1,3 @@
-# ToDo: Performance tests and optimisation
-# ToDo: improve Alpha
-# ToDo: support for type and specular map
-# ToDo: reload with changing dimensions
-
 class Renderer
   constructor: (io, @embedded = false, @domContainer = $('#WebGlContainer')) ->
     @voxels = io.voxels

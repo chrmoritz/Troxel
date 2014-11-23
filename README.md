@@ -1,7 +1,7 @@
 Troxel [![Build Status](https://travis-ci.org/chrmoritz/Troxel.svg?branch=master)](https://travis-ci.org/chrmoritz/Troxel)
 ======
 
-Troxel is a WebGL-based HTML5-WebApp for viewing and editing voxel models with some additional support for [Trove](http://www.trionworlds.com/trove/) specific features.  Visit [chrmoritz.github.io/Troxel/](http://chrmoritz.github.io/Troxel/) to try it out! You can embed Troxel in your own website too with [libTroxel](#libTroxel).
+Troxel is a WebGL-based HTML5-WebApp for viewing and editing voxel models with some additional support for [Trove](http://www.trionworlds.com/trove/) specific features.  Visit [chrmoritz.github.io/Troxel/](http://chrmoritz.github.io/Troxel/) to try it out! You can embed Troxel in your own website too with [libTroxel](#libtroxel).
 
 ## Features ##
 * Supported file formats for both import and export
@@ -66,7 +66,7 @@ LibTroxel is a JavaScript library which allows you to embedd voxel models render
 
 ## How to use
 
-You can find an [example usage of libTroxel here](test/libTroxelTest.html).
+LibTroxel is licensed under the same license as Troxel, the [GNU LGPL v3.0](LICENSE.txt) . You can find an [example usage of libTroxel here](test/libTroxelTest.html).
 
 #### Dependencies
 
@@ -81,14 +81,14 @@ In addition to libTroxel, you will need to have these JavaScript libaries loaded
 
 ### API
 
-Create somewhere in your layout a `<div>` element and set it's size to the size the rendered model should have.
+Create somewhere in your layout a `<div>` element and set it's size to the size the rendered model should have. You can add a fallback content inside it, witch will be shown if the model is  not available or your users browser doesn't support WebGL.
 
 #### Troxel.renderBlueprint(blueprintId, domElement, [options])
 
 Renders any Trove blueprint into the given DOM element. It has these parameters:
 * `blueprintId` is the id of the blueprint (the filename without the `.blueprint` file extension)
 * `domElement` is either a DOM element or a JQuery Object representing this DOM element
-* `options` is a optional Object of [render options](#Options)
+* `options` is a optional Object of [render options](#options)
 
 ```JavaScript
 Troxel.renderBlueprint('deco_candy_torch_mallow[Laoge]', $('#container'), {
@@ -98,7 +98,7 @@ Troxel.renderBlueprint('deco_candy_torch_mallow[Laoge]', $('#container'), {
     ambientLightColor: 0x707070,
     directionalLightColor: 0xeeeeee,
     directionalLightIntensity: 0.9,
-    directionalLightVector: {x: 0.58, y: 0.58, z: 0.58},
+    directionalLightVector: {x: 0.58, y: 0.58, z: 0.58}
 });
 ```
 
@@ -107,7 +107,11 @@ Troxel.renderBlueprint('deco_candy_torch_mallow[Laoge]', $('#container'), {
 Renders any voxel model represented in Troxel's Base64 format into the given DOM element. It has these parameters:
 * `base64` is a Base64 formated String containing the voxel data of your model (check out Troxels `Link (share)` export options and use the base64 string starting after `#m=`)
 * `domElement` is either a DOM element or a JQuery Object representing this DOM element
-* `options` is a optional Object of [render options](#Options)
+* `options` is a optional Object of [render options](#options)
+
+#### Troxel.webgl()
+
+Returns `true` if the current browser supports WebGL and `false` otherwise.
 
 ### Options
 

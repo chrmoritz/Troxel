@@ -1,5 +1,3 @@
-# implement move right/left, up/down ... (modulo or expand)
-
 class IO
   constructor: (other) ->
     if (other instanceof IO) or (typeof other == 'object' and other.x? and other.y? and other.z? and other.voxels?)

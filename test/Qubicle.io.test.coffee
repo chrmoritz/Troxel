@@ -3,9 +3,6 @@ global.IO = require '../coffee/IO.coffee'
 QubicleIO = require '../coffee/Qubicle.io.coffee'
 {readFileAsUint8Array} = require './TestUtils.coffee'
 
-# ToDo: tests alpha, type and specular layer files
-# ToDo: tests multi matrix files
-
 describe 'QubicleIO', ->
   model = require './models/chr_knight.json'
   describe 'import', ->

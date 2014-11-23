@@ -1,10 +1,16 @@
 window.Troxel =
+  webgl: -> try
+    canvas = document.createElement 'canvas'
+    !!(window.WebGLRenderingContext && (canvas.getContext 'webgl' || canvas.getContext 'experimental-webgl'))
+  catch
+    false
   renderBlueprint: (blueprintId, domElement, options) ->
     $.ajax dataType: 'jsonp', url: 'https://chrmoritz.github.io/Troxel/static/Trove.jsonp', jsonpCallback: 'callback', success: (data) ->
       model = data[blueprintId]
       return Troxel.renderBase64(model, domElement, options, blueprintId) if model?
       console.warn "blueprintId #{blueprintId} not found"
   renderBase64: (base64, domElement, options = {}, blueprintId) ->
+    return console.warn "WebGL is not supported by your browser" unless Troxel.webgl()
     @domElement = $(domElement).empty().css('position', 'relative')
     @io = new Base64IO base64
     @renderer = new Renderer @io, true, @domElement
