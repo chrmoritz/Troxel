@@ -7,11 +7,11 @@
     "test": "npm run mocha && npm run lint && npm run build",
     "mocha": "mocha -t 5000 --compilers coffee:coffee-script/register",
     "lint": "coffeelint -f coffeelint.json coffee/*",
-    "serve": "jekyll serve -ws dist",
+    "serve": "jekyll serve --baseurl /Troxel -ws dist",
     "build": "npm run build-clean && npm run build-coffee && npm run build-jade && npm run build-static",
     "build-clean": "rm -rf dist/* && mkdir -p dist/static && rm -rf js/*",
     "build-coffee": "coffee -co js coffee && uglifyjs js/IO.js js/Qubicle.io.js js/Magica.io.js js/Zoxel.io.js js/Troxel.io.js js/Renderer.js js/Main.js --screw-ie8 -cmeo dist/static/troxel.min.js && npm run build-lib",
-	"build-lib": "uglifyjs js/IO.js js/Troxel.io.js js/Renderer.js js/libTroxel.js --screw-ie8 -cmeo dist/static/libTroxel.min.js && echo '/*!\n * libTroxel (https://github.com/chrmoritz/Troxel)\n * Copyright 2014 Christian Moritz\n * Licensed under GNU LGPL v3.0 (https://github.com/chrmoritz/Troxel/blob/master/LICENSE.txt)\n */' | cat - dist/static/libTroxel.min.js > tmp && mv tmp dist/static/libTroxel.min.js",
+    "build-lib": "uglifyjs js/IO.js js/Troxel.io.js js/Renderer.js js/libTroxel.js --screw-ie8 -cmeo dist/static/libTroxel.min.js && echo '/*!\n * libTroxel (https://github.com/chrmoritz/Troxel)\n * Copyright 2014 Christian Moritz\n * Licensed under GNU LGPL v3.0 (https://github.com/chrmoritz/Troxel/blob/master/LICENSE.txt)\n */' | cat - dist/static/libTroxel.min.js > tmp && mv tmp dist/static/libTroxel.min.js",
     "build-jade": "jade -o dist views/index.jade",
     "build-static": "echo 'callback(' > static/Trove.jsonp && cat static/Trove.json >> static/Trove.jsonp && echo ');' >> static/Trove.jsonp && cp -r static dist && mv dist/static/troxel.appcache dist",
 	"import": "coffee tools/Importer.coffee"
