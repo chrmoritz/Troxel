@@ -12,11 +12,43 @@ html(manifest=dev?null:'troxel.appcache')
         padding: 25px;
         text-align: center;
       }
+
+      .twitter-typeahead{
+        width: 100%;
+      }
+      .tt-dropdown-menu {
+        width: 100%;
+        margin-top: 2px;
+        padding: 8px 0;
+        background-color: #fff;
+        border: 1px solid #ccc;
+        border: 1px solid rgba(0, 0, 0, 0.2);
+        max-height: 400px;
+        overflow-y: auto;
+        -webkit-border-radius: 8px;
+           -moz-border-radius: 8px;
+                border-radius: 8px;
+        -webkit-box-shadow: 0 5px 10px rgba(0,0,0,.2);
+           -moz-box-shadow: 0 5px 10px rgba(0,0,0,.2);
+                box-shadow: 0 5px 10px rgba(0,0,0,.2);
+      }
+      .tt-suggestion {
+        padding: 3px 20px;
+        font-size: 18px;
+        line-height: 24px;
+      }
+      .tt-suggestion.tt-cursor {
+        color: #fff;
+        background-color: #0097cf;
+      }
+      .tt-suggestion p {
+        margin: 0;
+      }
   body(style='background-color: #888888;')
     .navbar.navbar-inverse.navbar-fixed-top(role='navigation', style='margin-bottom: 0px;')
       .container-fluid
         .navbar-header
-          a(href='/Troxel/').navbar-brand Troxel
+          a(href=dev?'/':'/Troxel/').navbar-brand Troxel
         .collapse.navbar-collapse
           ul.nav.navbar-nav
             li.dropdown
@@ -40,7 +72,7 @@ html(manifest=dev?null:'troxel.appcache')
             li: a#modeEdit Edit
 
     #openModal.modal.fade(tabindex='-1', role='dialog')
-      .modal-dialog
+      .modal-dialog.modal-lg
         .modal-content
           .modal-header
             button.close(data-dismiss='modal'): span &times;
@@ -50,23 +82,24 @@ html(manifest=dev?null:'troxel.appcache')
               li.active: a(href='#tabqb', data-toggle='tab') Qubicle (.qb)
               li: a(href='#tabzox', data-toggle='tab') Zoxel (.zox)
               li: a(href='#tabvox', data-toggle='tab') Magica (.vox)
-              li: a(href='#tabjson', data-toggle='tab') Troxel (json)
-              li: a(href='#tabdrag', data-toggle='tab') Drag & Drop
+              li: a(href='#tabjson', data-toggle='tab') Troxel (JSON)
+              li: a(href='#tabdrag', data-toggle='tab') Drag & Drop (any)
+              li: a#openTroveTab(href='#tabtrove', data-toggle='tab') Trove-Model-List
             .tab-content
               #tabqb.tab-pane.fade.in.active
                 .form-horizontal
                   .form-group
-                    label.col-sm-4.control-label(for='fqb') Main mesh (*.qb):
-                    .col-sm-8: input#fqb(type='file', multiple)
+                    label.col-sm-3.control-label(for='fqb') Main mesh (*.qb):
+                    .col-sm-9: input#fqb(type='file', multiple)
                   .form-group
-                    label.col-sm-4.control-label(for='fqba') Alpha map (*_a.qb):
-                    .col-sm-8: input#fqba(type='file', multiple)
+                    label.col-sm-3.control-label(for='fqba') Alpha map (*_a.qb):
+                    .col-sm-9: input#fqba(type='file', multiple)
                   .form-group
-                    label.col-sm-4.control-label(for='fqbt') Type map (*_t.qb):
-                    .col-sm-8: input#fqbt(type='file', multiple)
+                    label.col-sm-3.control-label(for='fqbt') Type map (*_t.qb):
+                    .col-sm-9: input#fqbt(type='file', multiple)
                   .form-group
-                    label.col-sm-4.control-label(for='fqbs') Specular map (*_s.qb):
-                    .col-sm-8: input#fqbs(type='file', multiple)
+                    label.col-sm-3.control-label(for='fqbs') Specular map (*_s.qb):
+                    .col-sm-9: input#fqbs(type='file', multiple)
                   span.help-block Alpha, Type and Specular map are optional (only the main mesh is required)
               #tabzox.tab-pane.fade
                 .form-horizontal
@@ -76,18 +109,27 @@ html(manifest=dev?null:'troxel.appcache')
               #tabvox.tab-pane.fade
                 .form-horizontal
                   .form-group
-                    label(for='fvox').col-sm-4.control-label Magica Voxel file (*.vox):
-                    .col-sm-8: input#fvox(type='file', multiple)
+                    label(for='fvox').col-sm-3.control-label Magica Voxel file (*.vox):
+                    .col-sm-9: input#fvox(type='file', multiple)
               #tabjson.tab-pane.fade
                 .form-horizontal
                   .form-group
-                    label(for='sjson').col-sm-2.control-label JSON:
-                    .col-sm-10: textarea#sjson.form-control(rows=7, style='resize: vertical; min-height: 100px;')
+                    label(for='sjson').col-sm-1.control-label JSON:
+                    .col-sm-11: textarea#sjson.form-control(rows=7, style='resize: vertical; min-height: 100px;')
               #tabdrag.tab-pane.fade
                 #dropZone Drag files anywhere to this modal to select them
                 h4 Selected files:
                 ul.list-unstyled
                   li: span.help-block No files selected
+              #tabtrove.tab-pane.fade
+                .form-horizontal
+                  .form-group
+                    label(for='sbtrove').col-sm-2.control-label Blueprint id:
+                    .col-sm-10: input#sbtrove.form-control(type='text')
+                  span.help-block
+                    | Hint: Check out
+                    a(href='http://www.etaew.net/trove/database.php')  Trove DB
+                    |  for a categorized list of Trove items with metatdata.
           .modal-footer
             button.btn.btn-default(data-dismiss='modal') Close
             button#open.btn.btn-primary Open model
@@ -250,6 +292,7 @@ html(manifest=dev?null:'troxel.appcache')
     script(src='static/three.min.js', type='text/javascript')
     script(src='static/OrbitControls.min.js', type='text/javascript')
     script(src='static/stats.min.js', type='text/javascript')
+    script(src='static/typeahead.min.js', type='text/javascript')
     if dev
       != js('IO', {'type': 'text/javascript'})
       != js('Qubicle.io', {'type': 'text/javascript'})

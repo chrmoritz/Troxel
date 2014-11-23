@@ -1,6 +1,3 @@
-# ToDo: rewrite with an MVC framework? (AngularJS)
-# ToDo: Do some backgroung stuff in WebWorkers (base64 url calculation)
-
 io = null
 dragFiles = null
 renderer = null
@@ -100,6 +97,28 @@ $('#open').click ->
     when '#tabjson'
       io = new JsonIO $('#sjson').val()
       cb()
+    when '#tabtrove'
+      $.getJSON 'static/Trove.json', (data) ->
+        model = data[$('#sbtrove').val()]
+        return unless model?
+        io = new Base64IO model
+        cb()
+$('#openTroveTab').click ->
+  i = 0
+  blueprints = new Bloodhound({
+    datumTokenizer: (bp) -> bp.value.split(/[\[,\],_]/i),
+    queryTokenizer: Bloodhound.tokenizers.whitespace,
+    limit: 10000,
+    prefetch: {
+      url: 'static/Trove.json',
+      cacheKey: 'TroveBlueprintCache'
+      filter: (bps) -> $.map(bps, (base64, bp) ->
+        return {value: bp}
+      )
+    }
+  })
+  blueprints.initialize()
+  $('#sbtrove').typeahead {highlight: true, minLength: 2, hint: false}, {name: 'troveBlueprints', source: blueprints.ttAdapter()}
 $('#btnExport').click ->
   $('#exportQb').text('Export as Qubicle (.qb) ...').removeAttr('href')
   $('#exportQba').hide().removeAttr('href')
@@ -133,10 +152,10 @@ $('#btnExportPng').click -> renderer.render(true)
 $('#ulSavedModels').parent().on 'show.bs.dropdown', (e) ->
   if $(e.relatedTarget).data('tag') == '#ulSavedModels'
     $('#ulSavedModels li:gt(6)').remove()
-    $('#ulSavedModels').append '<li class="disabled"><a>No saved models</a></li>' if window.localStorage.length == 0
     for i in [0...window.localStorage.length] by 1
       key = window.localStorage.key i
-      $('#ulSavedModels').append "<li><a class='openSavedModel' data-model='#{window.localStorage.getItem(key)}'>#{key}</a></li>"
+      $('#ulSavedModels').append "<li><a class='openSavedModel' data-model='#{window.localStorage.getItem(key)}'>#{key}</a></li>" unless key.indexOf('__') == 0
+    $('#ulSavedModels').append '<li class="disabled"><a>No saved models</a></li>' if $('.openSavedModel').length == 0
   $('.openSavedModel').click ->
     io = new Base64IO $(@).data 'model'
     $('#btnExport').show() if !io.readonly? or io.readonly == 0

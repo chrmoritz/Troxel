@@ -81,7 +81,7 @@ In addition to libTroxel, you will need to have these JavaScript libaries loaded
 
 ### API
 
-Create somewhere in your layout a `<div>` element and set it's size to the size the rendered model should have. You can add a fallback content inside it, witch will be shown if the model is  not available or your users browser doesn't support WebGL.
+Create somewhere in your layout a `<div>` element and set it's size to the size the rendered model should have. You can add a fallback content inside it, which will be shown if the model is  not available or your users browser doesn't support WebGL.
 
 #### Troxel.renderBlueprint(blueprintId, domElement, [options])
 
