@@ -103,6 +103,22 @@ $('#open').click ->
         return unless model?
         io = new Base64IO model
         cb()
+    when '#tabnew'
+      x = parseInt $('#snewX').val()
+      y = parseInt $('#snewY').val()
+      z = parseInt $('#snewZ').val()
+      voxels = {}
+      if $('#cbnewAp').prop('checked')
+        ax = parseInt $('#snewApX').val()
+        ay = parseInt $('#snewApY').val()
+        az = parseInt $('#snewApZ').val()
+        if ax < x && ay < y and az < z
+          voxels[az] = {}
+          voxels[az][ay] = {}
+          voxels[az][ay][ax] = {r: 255, g: 0, b: 255, a: 255, t: 7, s: 7} # ToDo: correct alpha value for attachment point?
+      io = new IO x: x, y: y, z: z, voxels: voxels
+      cb()
+      $('#modeEdit').click()
   return
 $('#openTroveTab').click ->
   i = 0
@@ -120,6 +136,8 @@ $('#openTroveTab').click ->
   })
   blueprints.initialize()
   $('#sbtrove').typeahead {highlight: true, minLength: 2, hint: false}, {name: 'troveBlueprints', source: blueprints.ttAdapter()}
+$('.snewApPos').prop('disabled', true)
+$('#cbnewAp').prop('checked', false).change -> $('.snewApPos').prop('disabled', !$(@).prop('checked'))
 $('#btnExport').click ->
   $('#exportQb').text('Export as Qubicle (.qb) ...').removeAttr('href')
   $('#exportQba').hide().removeAttr('href')

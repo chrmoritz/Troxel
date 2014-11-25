@@ -83,8 +83,9 @@ html(manifest=dev?null:'troxel.appcache')
               li: a(href='#tabzox', data-toggle='tab') Zoxel (.zox)
               li: a(href='#tabvox', data-toggle='tab') Magica (.vox)
               li: a(href='#tabjson', data-toggle='tab') Troxel (JSON)
-              li: a(href='#tabdrag', data-toggle='tab') Drag & Drop (any)
+              li: a(href='#tabdrag', data-toggle='tab') Drag & Drop
               li: a#openTroveTab(href='#tabtrove', data-toggle='tab') Trove-Model-List
+              li: a(href='#tabnew', data-toggle='tab') empty Model (new)
             .tab-content
               #tabqb.tab-pane.fade.in.active
                 .form-horizontal
@@ -130,6 +131,33 @@ html(manifest=dev?null:'troxel.appcache')
                     | Hint: Check out
                     a(href='http://www.etaew.net/trove/database.php')  Trove DB
                     |  for a categorized list of Trove items with metatdata.
+              #tabnew.tab-pane.fade
+                .form-horizontal
+                  .form-group
+                    label.col-sm-2.control-label(for='cbnewTP') Trove presets:
+                    .col-sm-10: select#cbnewTP.form-control
+                      option custom - choose your options below
+                  .form-group
+                    label.col-sm-2.control-label Dimensions:
+                    .col-sm-10: .input-group
+                      span.input-group-addon x:
+                      input#snewX.form-control(type='text', value='20')
+                      span.input-group-addon y:
+                      input#snewY.form-control(type='text', value='20')
+                      span.input-group-addon z:
+                      input#snewZ.form-control(type='text', value='20')
+                  .form-group
+                    label.col-sm-2.control-label(for='cbnewAp') attachment Point:
+                    .col-sm-10: .input-group
+                      span.input-group-addon
+                        input#cbnewAp(type='checkbox', style='margin-right: 3px;')
+                        |  add at position:
+                      span.input-group-addon x:
+                      input#snewApX.snewApPos.form-control(type='text', value='10', disabled)
+                      span.input-group-addon y:
+                      input#snewApY.snewApPos.form-control(type='text', value='10', disabled)
+                      span.input-group-addon z:
+                      input#snewApZ.snewApPos.form-control(type='text', value='10', disabled)
           .modal-footer
             button.btn.btn-default(data-dismiss='modal') Close
             button#open.btn.btn-primary Open model
