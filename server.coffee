@@ -9,4 +9,4 @@ app.set 'view engine', 'jade'
 app.get '/Troxel/', (req, res) -> res.render 'index', dev: true
 app.get '*', (req, res) -> res.redirect '/Troxel/'
 
-app.listen 3000
+app.listen process.env.PORT || 3000
