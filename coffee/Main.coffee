@@ -51,7 +51,10 @@ dropFiles.addEventListener 'drop', (e) ->
 $('#open').click ->
   cb = ->
     $('#openModal').modal 'hide'
-    $('#btnExport').show() if !io.readonly? or io.readonly == 0
+    if !io.readonly? or io.readonly == 0
+      $('#btnExport').show()
+    else
+      $('#btnExport').hide()
     $('#btnExportPng').show()
     renderer = new Renderer io
     history.pushState {voxels: io.voxels, x: io.x, y: io.y, z: io.z}, 'Troxel', '#m=' + new Base64IO(io).export false
@@ -102,7 +105,11 @@ $('#open').click ->
         model = data[$('#sbtrove').val()]
         return unless model?
         io = new Base64IO model
-        cb()
+        $('#openModal').modal 'hide'
+        $('#btnExport').hide()
+        $('#btnExportPng').show()
+        renderer = new Renderer io
+        history.pushState {voxels: io.voxels, x: io.x, y: io.y, z: io.z}, 'Troxel', '#b=' + $('#sbtrove').val()
     when '#tabnew'
       x = parseInt $('#snewX').val()
       y = parseInt $('#snewY').val()
