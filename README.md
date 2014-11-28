@@ -89,6 +89,7 @@ Renders any Trove blueprint into the given DOM element. It has these parameters:
 * `blueprintId` is the id of the blueprint (the filename without the `.blueprint` file extension)
 * `domElement` is either a DOM element or a JQuery Object representing this DOM element
 * `options` is a optional Object of [render options](#options)
+Returns `true` if it was able to render the blueprint and otherwise (blueprint not found, WebGL not supported) `false`.
 
 ```JavaScript
 Troxel.renderBlueprint('deco_candy_torch_mallow[Laoge]', $('#container'), {
@@ -108,6 +109,7 @@ Renders any voxel model represented in Troxel's Base64 format into the given DOM
 * `base64` is a Base64 formated String containing the voxel data of your model (check out Troxels `Link (share)` export options and use the base64 string starting after `#m=`)
 * `domElement` is either a DOM element or a JQuery Object representing this DOM element
 * `options` is a optional Object of [render options](#options)
+Returns `true` if it was able to render the voxel model and otherwise (WebGL not supported) `false`.
 
 #### Troxel.webgl()
 

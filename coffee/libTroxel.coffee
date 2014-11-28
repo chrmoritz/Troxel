@@ -9,8 +9,11 @@ window.Troxel =
       model = data[blueprintId]
       return Troxel.renderBase64(model, domElement, options, blueprintId) if model?
       console.warn "blueprintId #{blueprintId} not found"
+      return false
   renderBase64: (base64, domElement, options = {}, blueprintId) ->
-    return console.warn "WebGL is not supported by your browser" unless Troxel.webgl()
+    unless Troxel.webgl()
+      console.warn "WebGL is not supported by your browser"
+      return false
     domElement = $(domElement).empty().css('position', 'relative')
     io = new Base64IO base64
     renderer = new Renderer io, true, domElement
@@ -28,3 +31,4 @@ window.Troxel =
       link = if blueprintId? then '#b=' + blueprintId else '#m=' + base64
       info = $("<div><a href='http://chrmoritz.github.io/Troxel/#{link}' target='_blank' class='troxelLink'>Open this model in Troxel</a></div>")
       domElement.append info.css position: 'absolute', bottom: '0px', width: '100%', textAlign: 'center'
+    return true
