@@ -13,7 +13,6 @@ fs.readdir 'blueprints', (err, files) ->
   toProcess = files.length
   failedBlueprints = []
   processedOne = ->
-    process.stdout.write "#{toProcess} blueprints remaining: #{f}\n"
     if --toProcess == 0
       fs.writeFile jsonPath, JSON.stringify(models), -> thow err if err?
       process.stdout.write 'base64 data successfully written to static/Trove.json\nskipped broken blueprints:\n'
@@ -26,17 +25,21 @@ fs.readdir 'blueprints', (err, files) ->
         if err?
           failedBlueprints.push(f)
           processedOne()
+          process.stdout.write "#{toProcess} blueprints remaining: skipped #{f} because of trove devtool not responding\n"
           return process.nextTick processSny
         qbf = 'qbexport/' + f.substring 0, f.length - 10
         try
           io = new QubicleIO m: qbf + '.qb', a: qbf + '_a.qb', t: qbf + '_t.qb', s: qbf + '_s.qb', ->
             models[f.substring(0, f.length - 10)] = new Base64IO(io).export(true)
             processedOne()
+            process.stdout.write "#{toProcess} blueprints remaining: #{f}\n"
         catch
           failedBlueprints.push(f)
           processedOne()
+          process.stdout.write "#{toProcess} blueprints remaining: skipped #{f} because of invalid qubicle matrix height\n"
         process.nextTick processSny
     else
       processedOne()
+      process.stdout.write "#{toProcess} blueprints remaining: skipped #{f} because not a blueprint\n"
       process.nextTick processSny
   processSny() for i in [0...4] # 4 parallel jobs

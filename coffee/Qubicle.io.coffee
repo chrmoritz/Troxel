@@ -149,7 +149,7 @@ class QubicleIO extends IO
     return console.warn "Ignoring alpha voxel because of non existing color voxel at the same position" unless @voxels[z]?[y]?[x]?
     if r == g and g == b
       return @voxels[z][y][x].a = r if r in [16, 48, 80, 112, 144, 176, 208, 240]
-      console.warn "invalid alpha value: falling back to 122"
+      console.warn "invalid alpha value #{r}: falling back to 122"
       return @voxels[z][y][x].a = 112
     return @voxels[z][y][x].a = 255 if r == b == 255 and g == 0 # attachment point
     console.warn "invalid alpha value: r, g and b are not equal, falling back to 112"
