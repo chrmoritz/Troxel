@@ -17,7 +17,7 @@ class ZoxelIO extends IO
         for [x, y, z, c] in data["frame#{f}"]
           @voxels[z] = [] unless @voxels[z]?
           @voxels[z][y] = [] unless @voxels[z][y]?
-          @voxels[z][y][x] = {r: (c & 0xff000000) >>> 24, g: (c & 0x00ff0000) >>> 16, b: (c & 0x0000ff00) >>> 8, a: 112, t: 0, s: 0}
+          @voxels[z][y][x] = {r: (c & 0xff000000) >>> 24, g: (c & 0x00ff0000) >>> 16, b: (c & 0x0000ff00) >>> 8, a: 255, t: 0, s: 0}
       console.log "voxels:"
       console.log @voxels
       callback()

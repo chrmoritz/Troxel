@@ -143,15 +143,15 @@ class QubicleIO extends IO
   addColorValues: (x, y, z, r, g, b) ->
     @voxels[z] = [] unless @voxels[z]?
     @voxels[z][y] = [] unless @voxels[z][y]?
-    @voxels[z][y][x] = {r: r, g: g, b: b, a: 112, t: 0, s: 0}
+    @voxels[z][y][x] = {r: r, g: g, b: b, a: 255, t: 0, s: 0}
 
   addAlphaValues: (x, y, z, r, g, b) ->
     return console.warn "Ignoring alpha voxel because of non existing color voxel at the same position" unless @voxels[z]?[y]?[x]?
     if r == g and g == b
-      return @voxels[z][y][x].a = r if r in [16, 48, 80, 112, 144, 176, 208, 240]
+      return @voxels[z][y][x].a = r if r in [16, 48, 80, 112, 144, 176, 208, 240, 255]
       console.warn "invalid alpha value #{r}: falling back to 122"
       return @voxels[z][y][x].a = 112
-    return @voxels[z][y][x].a = 255 if r == b == 255 and g == 0 # attachment point
+    return @voxels[z][y][x].a = 250 if r == b == 255 and g == 0 # attachment point
     console.warn "invalid alpha value: r, g and b are not equal, falling back to 112"
     @voxels[z][y][x].a = 112
 
@@ -199,7 +199,8 @@ class QubicleIO extends IO
       if vox?
         data = data.concat [vox.r, vox.g, vox.b, 255]
         data_a = data_a.concat switch vox.a
-          when 255 then [255,   0, 255, 255] # attachment point
+          when 250 then [255,   0, 255, 255] # attachment point
+          when 255 then [255, 255, 255, 255] # Solid (type map set to non transparent type)
           when 240 then [240, 240, 240, 255] # Nearly Solid
           when 208 then [208, 208, 208, 255] #      |
           when 176 then [176, 176, 176, 255] #      |

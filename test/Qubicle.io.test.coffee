@@ -51,14 +51,14 @@ describe 'QubicleIO', ->
     describe 'addValues', ->
       it 'should handle color format correctly', ->
         io.addValues 0, 0, 0, 0, 0, 0, 0, 32, 64, 128, 1
-        io.voxels.should.have.propertyByPath(0, 0, 0).with.properties({r: 128, g: 64, b: 32, a: 112, t: 0, s: 0})
+        io.voxels.should.have.propertyByPath(0, 0, 0).with.properties({r: 128, g: 64, b: 32, a: 255, t: 0, s: 0})
       it 'should handle zOriantation correctly', ->
         io.addValues 0, 0, 0, 8, 8, 1, 1, 32, 64, 128, 0
-        io.voxels.should.have.propertyByPath(0, 0, 0).with.properties({r: 32, g: 64, b: 128, a: 112, t: 0, s: 0})
+        io.voxels.should.have.propertyByPath(0, 0, 0).with.properties({r: 32, g: 64, b: 128, a: 255, t: 0, s: 0})
     describe 'addColorValues', ->
       it 'should add color values correctly and set default values for other parameters', ->
         io.addColorValues 0, 0, 0, 32, 64, 128
-        io.voxels.should.have.propertyByPath(0, 0, 0).with.properties({r: 32, g: 64, b: 128, a: 112, t: 0, s: 0})
+        io.voxels.should.have.propertyByPath(0, 0, 0).with.properties({r: 32, g: 64, b: 128, a: 255, t: 0, s: 0})
     describe 'addAlphaValues', ->
       it 'should add alpha values correctly', ->
         io.addColorValues 0, 0, 0, 32, 64, 128
@@ -72,53 +72,53 @@ describe 'QubicleIO', ->
       it 'should add type values correctly: solid', ->
         io.addColorValues 0, 0, 0, 32, 64, 128
         io.addTypeValues 0, 0, 0, 255, 255, 255
-        io.voxels.should.have.propertyByPath(0, 0, 0).with.properties({r: 32, g: 64, b: 128, a: 112, t: 0, s: 0})
+        io.voxels.should.have.propertyByPath(0, 0, 0).with.properties({r: 32, g: 64, b: 128, a: 255, t: 0, s: 0})
       it 'should add type values correctly: glass', ->
         io.addColorValues 0, 0, 0, 32, 64, 128
         io.addTypeValues 0, 0, 0, 128, 128, 128
-        io.voxels.should.have.propertyByPath(0, 0, 0).with.properties({r: 32, g: 64, b: 128, a: 112, t: 1, s: 0})
+        io.voxels.should.have.propertyByPath(0, 0, 0).with.properties({r: 32, g: 64, b: 128, a: 255, t: 1, s: 0})
       it 'should add type values correctly: tiled glass', ->
         io.addColorValues 0, 0, 0, 32, 64, 128
         io.addTypeValues 0, 0, 0, 64, 64, 64
-        io.voxels.should.have.propertyByPath(0, 0, 0).with.properties({r: 32, g: 64, b: 128, a: 112, t: 2, s: 0})
+        io.voxels.should.have.propertyByPath(0, 0, 0).with.properties({r: 32, g: 64, b: 128, a: 255, t: 2, s: 0})
       it 'should add type values correctly: glowing solid', ->
         io.addColorValues 0, 0, 0, 32, 64, 128
         io.addTypeValues 0, 0, 0, 255, 0, 0
-        io.voxels.should.have.propertyByPath(0, 0, 0).with.properties({r: 32, g: 64, b: 128, a: 112, t: 3, s: 0})
+        io.voxels.should.have.propertyByPath(0, 0, 0).with.properties({r: 32, g: 64, b: 128, a: 255, t: 3, s: 0})
       it 'should add type values correctly: glowing glass', ->
         io.addColorValues 0, 0, 0, 32, 64, 128
         io.addTypeValues 0, 0, 0, 255, 255, 0
-        io.voxels.should.have.propertyByPath(0, 0, 0).with.properties({r: 32, g: 64, b: 128, a: 112, t: 4, s: 0})
+        io.voxels.should.have.propertyByPath(0, 0, 0).with.properties({r: 32, g: 64, b: 128, a: 255, t: 4, s: 0})
       it 'should add type values correctly: attachment point', ->
         io.addColorValues 0, 0, 0, 32, 64, 128
         io.addTypeValues 0, 0, 0, 255, 0, 255
-        io.voxels.should.have.propertyByPath(0, 0, 0).with.properties({r: 32, g: 64, b: 128, a: 112, t: 7, s: 0})
+        io.voxels.should.have.propertyByPath(0, 0, 0).with.properties({r: 32, g: 64, b: 128, a: 255, t: 7, s: 0})
       it 'should add type values correctly: fallback', ->
         io.addColorValues 0, 0, 0, 32, 64, 128
         io.addTypeValues 0, 0, 0, 32, 48, 64
-        io.voxels.should.have.propertyByPath(0, 0, 0).with.properties({r: 32, g: 64, b: 128, a: 112, t: 0, s: 0})
+        io.voxels.should.have.propertyByPath(0, 0, 0).with.properties({r: 32, g: 64, b: 128, a: 255, t: 0, s: 0})
     describe 'addSpecularValues', ->
       it 'should add specular values correctly: rough', ->
         io.addColorValues 0, 0, 0, 32, 64, 128
         io.addSpecularValues 0, 0, 0, 128, 0, 0
-        io.voxels.should.have.propertyByPath(0, 0, 0).with.properties({r: 32, g: 64, b: 128, a: 112, t: 0, s: 0})
+        io.voxels.should.have.propertyByPath(0, 0, 0).with.properties({r: 32, g: 64, b: 128, a: 255, t: 0, s: 0})
       it 'should add specular values correctly: metal', ->
         io.addColorValues 0, 0, 0, 32, 64, 128
         io.addSpecularValues 0, 0, 0, 0, 128, 0
-        io.voxels.should.have.propertyByPath(0, 0, 0).with.properties({r: 32, g: 64, b: 128, a: 112, t: 0, s: 1})
+        io.voxels.should.have.propertyByPath(0, 0, 0).with.properties({r: 32, g: 64, b: 128, a: 255, t: 0, s: 1})
       it 'should add specular values correctly: water', ->
         io.addColorValues 0, 0, 0, 32, 64, 128
         io.addSpecularValues 0, 0, 0, 0, 0, 128
-        io.voxels.should.have.propertyByPath(0, 0, 0).with.properties({r: 32, g: 64, b: 128, a: 112, t: 0, s: 2})
+        io.voxels.should.have.propertyByPath(0, 0, 0).with.properties({r: 32, g: 64, b: 128, a: 255, t: 0, s: 2})
       it 'should add specular values correctly: iridescent', ->
         io.addColorValues 0, 0, 0, 32, 64, 128
         io.addSpecularValues 0, 0, 0, 128, 128, 0
-        io.voxels.should.have.propertyByPath(0, 0, 0).with.properties({r: 32, g: 64, b: 128, a: 112, t: 0, s: 3})
+        io.voxels.should.have.propertyByPath(0, 0, 0).with.properties({r: 32, g: 64, b: 128, a: 255, t: 0, s: 3})
       it 'should add specular values correctly: attachment point', ->
         io.addColorValues 0, 0, 0, 32, 64, 128
         io.addSpecularValues 0, 0, 0, 255, 0, 255
-        io.voxels.should.have.propertyByPath(0, 0, 0).with.properties({r: 32, g: 64, b: 128, a: 112, t: 0, s: 7})
+        io.voxels.should.have.propertyByPath(0, 0, 0).with.properties({r: 32, g: 64, b: 128, a: 255, t: 0, s: 7})
       it 'should add specular values correctly: fallback', ->
         io.addColorValues 0, 0, 0, 32, 64, 128
         io.addSpecularValues 0, 0, 0, 32, 48, 64
-        io.voxels.should.have.propertyByPath(0, 0, 0).with.properties({r: 32, g: 64, b: 128, a: 112, t: 0, s: 0})
+        io.voxels.should.have.propertyByPath(0, 0, 0).with.properties({r: 32, g: 64, b: 128, a: 255, t: 0, s: 0})
