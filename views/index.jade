@@ -232,12 +232,13 @@ html(manifest=dev?null:'troxel.appcache')
               .form-horizontal
                 .form-group(style='margin-bottom: 10px;')
                   label.col-sm-4.control-label(for='addVoxColor') Color:
-                  .col-sm-8
+                  .col-sm-8: .input-group.input-group-sm
                     input#addVoxColor.form-control.input-sm(type='color', value='#ffb248')
+                    span.input-group-btn: button#addVoxAP.btn.btn-default AP
                 .form-group(style='margin-bottom: 0px;')
                   label.col-sm-4.control-label(for='addVoxAlpha') Alpha:
                   .col-sm-8
-                    input#addVoxAlpha(type='range', min=16, max=272, step=32, value=272)
+                    input#addVoxAlpha(type='range', min=16, max=240, step=32, value=112)
                   span.help-block transparent => solid
                 .form-group(style='margin-bottom: 10px;')
                   label.col-sm-4.control-label(for='addVoxType') Type:

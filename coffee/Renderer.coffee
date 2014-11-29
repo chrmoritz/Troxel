@@ -172,10 +172,10 @@ class Renderer
         cubeMaterial = new THREE.MeshLambertMaterial color: new THREE.Color($('#addVoxColor').val()), shading: THREE.FlatShading
         cubeMaterial.ambient = cubeMaterial.color
         a = parseInt($('#addVoxAlpha').val())
-        a = 255 if a == 272
-        if a < 255 # ToDo
+        t = parseInt($('#addVoxType').val())
+        if t in [1, 2, 4] && $('#addVoxColor').val() != '#ff00ff'
           cubeMaterial.transparent = true
-          cubeMaterial.opacity = a / 255
+          cubeMaterial.opacity = (256 - a) / 255
         voxel = new THREE.Mesh new THREE.BoxGeometry(50, 50, 50), cubeMaterial
         voxel.position.copy(intersect.point).add(intersect.face.normal)
         voxel.position.divideScalar(50).floor().multiplyScalar(50).addScalar(25)
@@ -185,11 +185,13 @@ class Renderer
         return unless 0 <= x < @x and 0 <= y < @y and 0 <= z < @z
         @voxels[z] = [] unless @voxels[z]?
         @voxels[z][y] = [] unless @voxels[z][y]?
-        @voxels[z][y][x] =
-          r: parseInt($('#addVoxColor').val().substring(1, 3),16)
-          g: parseInt($('#addVoxColor').val().substring(3, 5),16)
-          b: parseInt($('#addVoxColor').val().substring(5, 7),16)
-          a: a, t: parseInt($('#addVoxType').val()), s: parseInt($('#addVoxSpecular').val())
+        @voxels[z][y][x] = switch $('#addVoxColor').val()
+          when '#ff00ff' then r: 255, g: 0, b: 255, a: 255, t: 7, s: 7
+          else
+            r: parseInt($('#addVoxColor').val().substring(1, 3),16)
+            g: parseInt($('#addVoxColor').val().substring(3, 5),16)
+            b: parseInt($('#addVoxColor').val().substring(5, 7),16)
+            a: a, t: t, s: parseInt($('#addVoxSpecular').val())
         @scene.add voxel
         @objects.push voxel
       @render()

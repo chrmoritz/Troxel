@@ -244,3 +244,8 @@ $('#dirLightVector').click ->
   return unless io?
   renderer.directionalLight.position.set(parseFloat($('#dirLightX').val()), parseFloat($('#dirLightY').val()), parseFloat($('#dirLightZ').val())).normalize()
   renderer.render()
+$('#addVoxAP').click ->
+  $('#addVoxColor').val('#ff00ff')
+  $('#addVoxAlpha, #addVoxType, #addVoxSpecular').prop('disabled', true)
+$('#addVoxColor').change ->
+  $('#addVoxAlpha, #addVoxType, #addVoxSpecular').prop('disabled', false)
