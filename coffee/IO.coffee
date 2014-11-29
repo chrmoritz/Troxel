@@ -20,7 +20,7 @@ class IO
           return false unless typeof x.r == 'number' and 0 <= x.r <= 255
           return false unless typeof x.g == 'number' and 0 <= x.g <= 255
           return false unless typeof x.b == 'number' and 0 <= x.b <= 255
-          return false unless typeof x.a == 'number' and 0 <= x.a <= 255
+          return false unless typeof x.a == 'number' and x.a in [250, 16, 48, 80, 112, 144, 176, 208, 240, 255]
           return false unless typeof x.t == 'number' and (0 <= x.t <= 4 or x.t == 7)
           return false unless typeof x.s == 'number' and (0 <= x.s <= 3 or x.s == 7)
     return true

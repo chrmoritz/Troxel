@@ -200,7 +200,7 @@ class QubicleIO extends IO
         data = data.concat [vox.r, vox.g, vox.b, 255]
         data_a = data_a.concat switch vox.a
           when 250 then [255,   0, 255, 255] # attachment point
-          when 255 then [255, 255, 255, 255] # Solid (type map set to non transparent type)
+          when 255 then [255, 255, 255, 255] # solid (type map set to non transparent type)
           when 240 then [240, 240, 240, 255] # Nearly Solid
           when 208 then [208, 208, 208, 255] #      |
           when 176 then [176, 176, 176, 255] #      |
@@ -209,7 +209,7 @@ class QubicleIO extends IO
           when  80 then [ 80,  80,  80, 255] #      |
           when  48 then [ 48,  48,  48, 255] #      V
           when  16 then [ 16,  16,  16, 255] # Very Transparent
-          else [112, 112, 112, 255] # fallback
+          else          [112, 112, 112, 255] # fallback
         data_t = data_t.concat switch vox.t
           when 0 then [255, 255, 255, 255] # solid (default)
           when 1 then [128, 128, 128, 255] # glass
