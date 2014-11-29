@@ -45,7 +45,7 @@ dropFiles.addEventListener 'drop', (e) ->
   e.preventDefault()
   dragFiles = e.dataTransfer.files
   if dragFiles.length > 0
-    $('#filetabs li:last a').tab 'show'
+    $('#dragTab').click()
     $('#tabdrag ul').empty()
     $('#tabdrag ul').append $ '<li>' + f.name + '</li>' for f in dragFiles
 $('#open').click ->
