@@ -5,7 +5,7 @@ window.Troxel =
   catch
     false
   renderBlueprint: (blueprintId, domElement, options) ->
-    $.ajax dataType: 'jsonp', url: 'https://chrmoritz.github.io/Troxel/static/Trove.jsonp', jsonpCallback: 'callback', success: (data) ->
+    $.ajax dataType: 'jsonp', url: 'https://chrmoritz.github.io/Troxel/static/Trove.jsonp', jsonpCallback: 'callback', cache: true, success: (data) ->
       model = data[blueprintId]
       return Troxel.renderBase64(model, domElement, options, blueprintId) if model?
       console.warn "blueprintId #{blueprintId} not found"

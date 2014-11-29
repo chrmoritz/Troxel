@@ -322,6 +322,7 @@ html(manifest=dev?null:'troxel.appcache')
     script(src='static/OrbitControls.min.js', type='text/javascript')
     script(src='static/stats.min.js', type='text/javascript')
     script(src='static/typeahead.min.js', type='text/javascript')
+    script(src='static/Trove.json' type='application/json', async)
     if dev
       != js('IO', {'type': 'text/javascript'})
       != js('Qubicle.io', {'type': 'text/javascript'})
