@@ -52,7 +52,7 @@ class Renderer
           material.ambient = material.color
           if @voxels[z][y][x].t in [1, 2, 4] # glass, tiled glass or glowing glass
             material.transparent = true
-            material.opacity = (256 - @voxels[z][y][x].a) / 255
+            material.opacity = @voxels[z][y][x].a / 255
           voxel = new THREE.Mesh new THREE.BoxGeometry(50, 50, 50), material
           voxel.position.x = x * 50 + 25
           voxel.position.y = y * 50 + 25
@@ -108,7 +108,7 @@ class Renderer
           material.ambient = material.color
           if @voxels[z][y][x].t in [1, 2, 4] # glass, tiled glass or glowing glass
             material.transparent = true
-            material.opacity = (256 - @voxels[z][y][x].a) / 255
+            material.opacity = @voxels[z][y][x].a / 255
           voxel = new THREE.Mesh new THREE.BoxGeometry(50, 50, 50), material
           voxel.position.x = x * 50 + 25
           voxel.position.y = y * 50 + 25
@@ -175,7 +175,7 @@ class Renderer
         t = parseInt($('#addVoxType').val())
         if t in [1, 2, 4] && $('#addVoxColor').val() != '#ff00ff'
           cubeMaterial.transparent = true
-          cubeMaterial.opacity = (256 - a) / 255
+          cubeMaterial.opacity = a / 255
         voxel = new THREE.Mesh new THREE.BoxGeometry(50, 50, 50), cubeMaterial
         voxel.position.copy(intersect.point).add(intersect.face.normal)
         voxel.position.divideScalar(50).floor().multiplyScalar(50).addScalar(25)
