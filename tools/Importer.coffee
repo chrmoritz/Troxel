@@ -15,7 +15,8 @@ fs.readdir 'blueprints', (err, files) ->
   processedOne = ->
     if --toProcess == 0
       fs.writeFile jsonPath, JSON.stringify(models), -> thow err if err?
-      process.stdout.write 'base64 data successfully written to static/Trove.json\nskipped broken blueprints:\n'
+      count = Object.keys(models).length
+      process.stdout.write "base64 data of #{count} blueprints successfully written to static/Trove.json\nskipped broken blueprints:\n\n"
       process.stdout.write "#{bp}, " for bp in failedBlueprints
   processSny = -> # Trove doesn't like spawning 1k+ instances at the same time ;-)
     f = files.pop()
@@ -29,7 +30,7 @@ fs.readdir 'blueprints', (err, files) ->
           return process.nextTick processSny
         qbf = 'qbexport/' + f.substring 0, f.length - 10
         io = new QubicleIO m: qbf + '.qb', a: qbf + '_a.qb', t: qbf + '_t.qb', s: qbf + '_s.qb', ->
-          if io.error
+          if io.error or (io.x == 1 and io.y == 1 and io.z == 1 and !io.voxels[0]?)
             failedBlueprints.push(f)
             processedOne()
             return process.stdout.write "#{toProcess} blueprints remaining: skipped #{f} because of invalid qubicle matrix height\n"
