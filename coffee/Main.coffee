@@ -249,3 +249,7 @@ $('#addVoxAP').click ->
   $('#addVoxAlpha, #addVoxType, #addVoxSpecular').prop('disabled', true)
 $('#addVoxColor').change ->
   $('#addVoxAlpha, #addVoxType, #addVoxSpecular').prop('disabled', false)
+$('#addVoxType').change ->
+  switch parseInt($(@).val())
+    when 1, 2, 4 then $('#addVoxAlpha').prop('disabled', false)
+    when 0, 3 then $('#addVoxAlpha').prop('disabled', true)
