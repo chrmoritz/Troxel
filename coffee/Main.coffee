@@ -7,7 +7,6 @@ if window.applicationCache.status != window.applicationCache.UNCACHED
       if confirm "A new version of Troxel is available! Do you want to reload this page now to update?
         (You can reload this page at any time later to update to the new version.)"
         location.reload()
-        clearInterval(updatechecker)
   updatechecker = setInterval (-> window.applicationCache.update()), 600000
 window.onpopstate = ->
   for e in decodeURI(window.location.hash).replace('#','').split('&')
