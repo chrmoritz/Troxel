@@ -50,9 +50,9 @@ class Renderer
         for x in [0...@x] by 1 when @voxels[z]?[y]?[x]?
           material = new THREE.MeshLambertMaterial color: new THREE.Color("rgb(#{@voxels[z][y][x].r},#{@voxels[z][y][x].g},#{@voxels[z][y][x].b})"), shading: THREE.FlatShading
           material.ambient = material.color
-          if @voxels[z][y][x].a < 255
+          if @voxels[z][y][x].t in [1, 2, 4] # glass, tiled glass or glowing glass
             material.transparent = true
-            material.opacity = @voxels[z][y][x].a / 255
+            material.opacity = (256 - @voxels[z][y][x].a) / 255
           voxel = new THREE.Mesh new THREE.BoxGeometry(50, 50, 50), material
           voxel.position.x = x * 50 + 25
           voxel.position.y = y * 50 + 25
@@ -106,9 +106,9 @@ class Renderer
         for x in [0...@x] by 1 when @voxels[z]?[y]?[x]?
           material = new THREE.MeshLambertMaterial color: new THREE.Color("rgb(#{@voxels[z][y][x].r},#{@voxels[z][y][x].g},#{@voxels[z][y][x].b})"), shading: THREE.FlatShading
           material.ambient = material.color
-          if @voxels[z][y][x].a < 255
+          if @voxels[z][y][x].t in [1, 2, 4] # glass, tiled glass or glowing glass
             material.transparent = true
-            material.opacity = @voxels[z][y][x].a / 255
+            material.opacity = (256 - @voxels[z][y][x].a) / 255
           voxel = new THREE.Mesh new THREE.BoxGeometry(50, 50, 50), material
           voxel.position.x = x * 50 + 25
           voxel.position.y = y * 50 + 25
@@ -173,7 +173,7 @@ class Renderer
         cubeMaterial.ambient = cubeMaterial.color
         a = parseInt($('#addVoxAlpha').val())
         a = 255 if a == 272
-        if a < 255
+        if a < 255 # ToDo
           cubeMaterial.transparent = true
           cubeMaterial.opacity = a / 255
         voxel = new THREE.Mesh new THREE.BoxGeometry(50, 50, 50), cubeMaterial
