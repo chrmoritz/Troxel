@@ -170,7 +170,7 @@ $('#exportVox').click ->
   $(@).text('Download as Magica Voxel (.vox)').attr 'href', new MagicaIO(io).export() unless $(@).attr('href')?
 $('#exportBase64').click ->
   return if io.readonly
-  $('#exportBase64Ta').val(window.location + '/#m=' + new Base64IO(io).export($('#exportBase64Ro').prop('checked'))).fadeIn()
+  $('#exportBase64Ta').val(window.location.toString().split('#')[0] + '/#m=' + new Base64IO(io).export($('#exportBase64Ro').prop('checked'))).fadeIn()
 $('#exportJson').click ->
   return if io.readonly
   $('#exportJsonTa').val(new JsonIO(io).export($('#exportJsonPret').prop('checked'))).fadeIn()
