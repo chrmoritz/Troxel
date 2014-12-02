@@ -105,8 +105,8 @@ class Renderer
       @domContainer.append @stats.domElement
     # Controls and Camera
     @camera = new THREE.PerspectiveCamera 45, @width / @height, 1, 10000
+    @camera.position.x = -50 * @y - 20 * @z - 10 * @x
     @camera.position.y = @y * 50
-    @camera.position.x = @x * -75
     @camera.position.z = @z * 25
     @controls = new THREE.OrbitControls @camera, @domContainer[0]
     @controls.target = new THREE.Vector3 @x * 25, @y * 25, @z * 25
