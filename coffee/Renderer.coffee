@@ -33,14 +33,36 @@ class Renderer
     material = new THREE.LineBasicMaterial color: 0x000000, opacity: 0.2, transparent: true
     @grid = new THREE.Line geometry, material, THREE.LinePieces
     @scene.add @grid
+    # Planes
+    @planes = []
+    geometry = new THREE.PlaneBufferGeometry 50 * @z, 50 * @y
+    geometry.applyMatrix new THREE.Matrix4().makeRotationY -Math.PI / 2
+    plane = new THREE.Mesh geometry
+    plane.position.x = 50 * @x
+    plane.position.y = 25 * @y
+    plane.position.z = 25 * @z
+    plane.visible = false
+    @scene.add plane
+    @objects.push plane
+    @planes.push plane
     geometry = new THREE.PlaneBufferGeometry 50 * @x, 50 * @z
     geometry.applyMatrix new THREE.Matrix4().makeRotationX -Math.PI / 2
-    @plane = new THREE.Mesh geometry
-    @plane.position.x = 25 * @x
-    @plane.position.z = 25 * @z
-    @plane.visible = false
-    @scene.add @plane
-    @objects.push @plane
+    plane = new THREE.Mesh geometry
+    plane.position.x = 25 * @x
+    plane.position.z = 25 * @z
+    plane.visible = false
+    @scene.add plane
+    @objects.push plane
+    @planes.push plane
+    geometry = new THREE.PlaneBufferGeometry 50 * @y, 50 * @x
+    geometry.applyMatrix new THREE.Matrix4().makeRotationZ -Math.PI / 2
+    plane = new THREE.Mesh geometry
+    plane.position.x = 25 * @x
+    plane.position.y = 25 * @y
+    plane.visible = false
+    @scene.add plane
+    @objects.push plane
+    @planes.push plane
     # Raycaster
     @vector = new THREE.Vector3()
     @raycaster = new THREE.Raycaster()
@@ -99,8 +121,8 @@ class Renderer
     @x = io.x
     @y = io.y
     @z = io.z
-    @scene.remove o for o in @objects when o != @plane
-    @objects = [@plane]
+    @scene.remove o for o in @objects when o not in @planes
+    @objects = @planes.slice 0
     for z in [0...@z] by 1
       for y in [0...@y] by 1
         for x in [0...@x] by 1 when @voxels[z]?[y]?[x]?
@@ -159,7 +181,7 @@ class Renderer
     if intersects.length > 0
       intersect = intersects[0]
       if e.button == 2 # right mouse button => delete cube
-        if intersect.object != @plane
+        if intersect.object not in @planes
           x = (intersect.object.position.x - 25) / 50
           y = (intersect.object.position.y - 25) / 50
           z = (intersect.object.position.z - 25) / 50
