@@ -218,12 +218,13 @@ class Renderer
         @scene.add voxel
         @objects.push voxel
       if e.button == 1 # middle mouse button => color picker
+        return if intersect.object in @planes
         x = (intersect.object.position.x - 25) / 50
         y = (intersect.object.position.y - 25) / 50
         z = (intersect.object.position.z - 25) / 50
         vox = @voxels[z][y][x]
         $('#addVoxColor').val('#' + new THREE.Color("rgb(#{vox.r},#{vox.g},#{vox.b})").getHexString())
-        return if vox.r == vox.b == 255 and vox.g == 0
+        return $('#addVoxColor').change() if vox.r == vox.b == 255 and vox.g == 0
         $('#addVoxAlpha').val(vox.a)
         $('#addVoxType').val(vox.t)
         $('#addVoxSpecular').val(vox.s)
