@@ -247,7 +247,11 @@ $('#addVoxAP').click ->
   $('#addVoxColor').val('#ff00ff')
   $('#addVoxAlpha, #addVoxType, #addVoxSpecular').prop('disabled', true)
 $('#addVoxColor').change ->
-  $('#addVoxAlpha, #addVoxType, #addVoxSpecular').prop('disabled', false)
+  switch $(@).val()
+    when '#ff00ff' then $('#addVoxAlpha, #addVoxType, #addVoxSpecular').prop('disabled', true)
+    else
+      $('#addVoxAlpha, #addVoxType, #addVoxSpecular').prop('disabled', false)
+      $('#addVoxType').change()
 $('#addVoxType').change ->
   switch parseInt($(@).val())
     when 1, 2, 4 then $('#addVoxAlpha').prop('disabled', false)
