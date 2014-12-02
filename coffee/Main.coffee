@@ -50,6 +50,7 @@ dropFiles.addEventListener 'drop', (e) ->
 $('#open').click ->
   cb = ->
     $('#openModal').modal 'hide'
+    $('#modeView').click() if $('#modeEdit').parent().hasClass('active')
     if !io.readonly? or io.readonly == 0
       $('#btnExport').show()
     else
@@ -176,6 +177,10 @@ $('#exportJson').click ->
 $('#btnExportPng').click -> renderer.render(true)
 $('#ulSavedModels').parent().on 'show.bs.dropdown', (e) ->
   if $(e.relatedTarget).data('tag') == '#ulSavedModels'
+    if !io? or io.readonly == 1
+      $(@).find('a[data-target=#saveModal]').prop('disabled', true).parent().addClass('disabled')
+    else
+      $(@).find('a[data-target=#saveModal]').prop('disabled', false).parent().removeClass('disabled')
     $('#ulSavedModels li:gt(6)').remove()
     for i in [0...window.localStorage.length] by 1
       key = window.localStorage.key i
@@ -189,8 +194,8 @@ $('#ulSavedModels').parent().on 'show.bs.dropdown', (e) ->
     renderer = new Renderer io
     $('#ulSavedModels li:eq(1) a').text $(@).text()
 $('#saveModelAs').click ->
-  return unless $('#saveModelName').val().length > 0 and io?
-  window.localStorage.setItem $('#saveModelName').val(), new Base64IO(io).export false
+  return if $('#saveModelName').val().length == 0 or !io? or io.readonly
+  window.localStorage.setItem $('#saveModelName').val(), new Base64IO(io).export io.readonly
   $('#saveModal').modal 'hide'
 $('#modeView').click ->
   $(@).parent().addClass('active')
