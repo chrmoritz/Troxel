@@ -41,7 +41,7 @@ class MagicaIO extends IO
         chunkPointer += 12 + chunkSize + chunkChildSize
       throw new Error "missing chunks" if sizeBegin == -1 or sizeEnd == -1 or voxelBegin == -1 or voxelEnd == -1
       # read size chunk
-      [@x, @y, @z] = new Uint32Array ab.slice sizeBegin, sizeEnd
+      [@z, @x, @y] = new Uint32Array ab.slice sizeBegin, sizeEnd
       console.log "dimensions: width: #{@x} height: #{@y} depth: #{@z}"
       # read palette chunk
       palette = []
