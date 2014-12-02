@@ -89,7 +89,6 @@ Renders any Trove blueprint into the given DOM element. It has these parameters:
 * `blueprintId` is the id of the blueprint (the filename without the `.blueprint` file extension)
 * `domElement` is either a DOM element or a JQuery Object representing this DOM element
 * `options` is a optional Object of [render options](#options)
-Returns `true` if it was able to render the blueprint and otherwise (blueprint not found, WebGL not supported) `false`.
 
 ```JavaScript
 Troxel.renderBlueprint('deco_candy_torch_mallow[Laoge]', $('#container'), {
@@ -114,6 +113,19 @@ Returns `true` if it was able to render the voxel model and otherwise (WebGL not
 #### Troxel.webgl()
 
 Returns `true` if the current browser supports WebGL and `false` otherwise.
+
+#### Markup API (data attributes)
+
+If you can't use Java Script to call the Java Script API (for example in wiki templates or forums bb-tags) you can also embedd voxel models with libTroxel using html markup only. Just create a div with the desired size and these data attributes:
+* `data-troxel-blueprint`: set it to the id of the blueprint (the filename without the `.blueprint` file extension)
+* or `data-troxel-base64`: set it to a Base64 formated String containing the voxel data of your model (check out Troxels `Link (share)` export options and use the base64 string starting after `#m=`)
+* and optionally `data-troxel-options`: set it to a JSON containing a Object of [render options](#options)
+
+```html
+<div data-troxel-blueprint="item_tf_candy" data-troxel-options='{"autoRotate": false}' style="width: 300px; height: 300px;">
+    <!-- insert fallback content (like a static image of the rendered model) here -->
+</div>
+```
 
 ### Options
 

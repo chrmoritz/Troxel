@@ -7,9 +7,8 @@ window.Troxel =
   renderBlueprint: (blueprintId, domElement, options) ->
     $.ajax dataType: 'jsonp', url: 'https://chrmoritz.github.io/Troxel/static/Trove.jsonp', jsonpCallback: 'callback', cache: true, success: (data) ->
       model = data[blueprintId]
-      return Troxel.renderBase64(model, domElement, options, blueprintId) if model?
+      Troxel.renderBase64(model, domElement, options, blueprintId) if model?
       console.warn "blueprintId #{blueprintId} not found"
-      return false
   renderBase64: (base64, domElement, options = {}, blueprintId) ->
     unless Troxel.webgl()
       console.warn "WebGL is not supported by your browser"
@@ -32,3 +31,6 @@ window.Troxel =
       info = $("<div><a href='http://chrmoritz.github.io/Troxel/#{link}' target='_blank' class='troxelLink'>Open this model in Troxel</a></div>")
       domElement.append info.css position: 'absolute', bottom: '0px', width: '100%', textAlign: 'center'
     return true
+
+$('div[data-troxel-blueprint]').each -> Troxel.renderBlueprint $(@).data('troxel-blueprint'), @, $(@).data('troxel-options')
+$('div[data-troxel-base64]').each -> Troxel.renderBase64 $(@).data('troxel-base64'), @, $(@).data('troxel-options')
