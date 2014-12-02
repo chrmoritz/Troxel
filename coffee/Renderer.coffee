@@ -6,7 +6,7 @@ class Renderer
     @z = io.z
     @objects = []
     @width = @domContainer.width()
-    @height = if @embedded then @domContainer.height() else window.innerHeight - 55
+    @height = @domContainer.height() - 5
     @scene = new THREE.Scene()
     # roll-over helpers
     rollOverGeo = new THREE.BoxGeometry 50, 50, 50
@@ -246,7 +246,7 @@ class Renderer
 
   onWindowResize: ->
     @width = @domContainer.width()
-    @height = if @embedded then @domContainer.height() else window.innerHeight - 55
+    @height = @domContainer.height() - 5
     @camera.aspect = @width / @height
     @camera.updateProjectionMatrix()
     @renderer.setSize @width, @height

@@ -82,7 +82,7 @@ html(manifest=dev?null:'troxel.appcache')
               li.active: a(href='#tabqb', data-toggle='tab') Qubicle (.qb)
               li: a(href='#tabzox', data-toggle='tab') Zoxel (.zox)
               li: a(href='#tabvox', data-toggle='tab') Magica (.vox)
-              li: a(href='#tabjson', data-toggle='tab') Troxel (JSON)
+              li: a(href='#tabjson', data-toggle='tab') JSON
               li: a#dragTab(href='#tabdrag', data-toggle='tab') Drag & Drop
               li: a#openTroveTab(href='#tabtrove', data-toggle='tab') Trove-Model-List
               li: a(href='#tabnew', data-toggle='tab') empty Model (new)
@@ -221,100 +221,99 @@ html(manifest=dev?null:'troxel.appcache')
             button.btn.btn-default(data-dismiss='modal') Close
             button#saveModelAs.btn.btn-primary Save model locally
 
-    .container-fluid(style='margin-top: 50px;')
-      .row(style='overflow: hidden;')
-        #WebGlContainer.col-xs-10(style='padding: 0; overflow: hidden;')
-        .col-xs-2(style='height: 100%; overflow: auto;')
-          #addPanel.panel.panel-default(style='display: none;')
-            .panel-heading
-              h3.panel-title Add block options
-            .panel-body
-              .form-horizontal
-                .form-group(style='margin-bottom: 10px;')
-                  label.col-sm-4.control-label(for='addVoxColor') Color:
-                  .col-sm-8: .input-group.input-group-sm
-                    input#addVoxColor.form-control.input-sm(type='color', value='#ffb248')
-                    span.input-group-btn: button#addVoxAP.btn.btn-default AP
-                .form-group(style='margin-bottom: 0px;')
-                  label.col-sm-4.control-label(for='addVoxAlpha') Alpha:
-                  .col-sm-8
-                    input#addVoxAlpha(type='range', min=16, max=240, step=32, value=112, disabled)
-                  span.help-block transparent => solid
-                .form-group(style='margin-bottom: 10px;')
-                  label.col-sm-4.control-label(for='addVoxType') Type:
-                  .col-sm-8
-                    select#addVoxType.form-control.input-sm
-                      option(value=0) solid
-                      option(value=1) glass
-                      option(value=2) tiled glass
-                      option(value=3) glowing solid
-                      option(value=4) glowing glass
-                .form-group(style='margin-bottom: 0px;')
-                  label.col-sm-4.control-label(for='addVoxSpecular') Specular:
-                  .col-sm-8
-                    select#addVoxSpecular.form-control.input-sm
-                      option(value=0) rough
-                      option(value=1) metal
-                      option(value=2) water
-                      option(value=3) iridescent
-          .panel.panel-default
-            .panel-heading
-              h3.panel-title Light options
-            .panel-body(style='padding: 5px 15px 0px;')
-              .form-horizontal
-                .form-group(style='margin-bottom: 10px;')
-                  label.col-sm-8.control-label(for='ambLightColor') Ambient light:
-                  .col-sm-4
-                    input#ambLightColor.form-control.input-sm(type='color', value='#606060', style='padding: 5px;')
-              .h5: b: u Directional light:
-              .form-horizontal
-                .form-group(style='margin-bottom: 0px;')
-                  label.col-sm-4.control-label(for='dirLightColor') Color:
-                  .col-sm-8
-                    input#dirLightColor.form-control.input-sm(type='color', value='#ffffff', style='padding: 5px;')
-                .form-group(style='margin-bottom: 10px;')
-                  label.col-sm-4.control-label(for='dirLightIntensity') Intensity:
-                  .col-sm-8
-                    input#dirLightIntensity(type='range', min=0, max=5, step=0.1, value=1, style='margin-top: 5px;')
-                .input-group.input-group-sm(style='margin: 0px -8px 5px;')
-                  span.input-group-addon(style='padding: 5px;') x:
-                  input#dirLightX.form-control(type='text', value='1', style='padding: 5px;')
-                  span.input-group-addon(style='padding: 5px;') y:
-                  input#dirLightY.form-control(type='text', value='0.75', style='padding: 5px;')
-                  span.input-group-addon(style='padding: 5px;') z:
-                  input#dirLightZ.form-control(type='text', value='0.5', style='padding: 5px;')
-                  span.input-group-btn
-                    button#dirLightVector.btn.btn-default(style='padding: 5px;') go
-          .panel.panel-default
-            .panel-heading
-              h3.panel-title Rotate model
-            .panel-body
-              .form-horizontal
-                .form-group(style='margin-bottom: 10px;')
-                  label.col-sm-5.control-label x-axis:
-                  .col-sm-7
-                    .btn-group.btn-group-sm
-                      button.rotateBtn.btn.btn-default(data-rotate='x') cw
-                      button.rotateBtn.btn.btn-default(data-rotate='-x') acw
-                .form-group(style='margin-bottom: 10px;')
-                  label.col-sm-5.control-label y-axis:
-                  .col-sm-7
-                    .btn-group.btn-group-sm
-                      button.rotateBtn.btn.btn-default(data-rotate='y') left
-                      button.rotateBtn.btn.btn-default(data-rotate='-y') right
-                .form-group(style='margin-bottom: 0px;')
-                  label.col-sm-5.control-label z-axis:
-                  .col-sm-7
-                    .btn-group.btn-group-sm
-                      button.rotateBtn.btn.btn-default(data-rotate='z') up
-                      button.rotateBtn.btn.btn-default(data-rotate='-z') down
-          .panel.panel-default
-            .panel-heading
-              h3.panel-title Mirror model
-            .btn-group-vertical.btn-group-sm(style='width: 100%;')
-              button.mirrorBtn.btn.btn-default(data-mirror='x') Mirror x-axis
-              button.mirrorBtn.btn.btn-default(data-mirror='y') Mirror y-axis
-              button.mirrorBtn.btn.btn-default(data-mirror='z') Mirror z-axis
+    div(style="position: absolute; top: 50px; bottom: 0px; width: 100%;")
+      #WebGlContainer(style='position: absolute; right: 220px; left: 0px; height: 100%;')
+      div(style='position: absolute; right: 0px; width: 220px; height: 100%; overflow: auto;')
+        #addPanel.panel.panel-default(style='display: none;')
+          .panel-heading
+            h3.panel-title Add block options
+          .panel-body
+            .form-horizontal
+              .form-group(style='margin-bottom: 10px;')
+                label.col-sm-4.control-label(for='addVoxColor') Color:
+                .col-sm-8: .input-group.input-group-sm
+                  input#addVoxColor.form-control.input-sm(type='color', value='#ffb248')
+                  span.input-group-btn: button#addVoxAP.btn.btn-default AP
+              .form-group(style='margin-bottom: 0px;')
+                label.col-sm-4.control-label(for='addVoxAlpha') Alpha:
+                .col-sm-8
+                  input#addVoxAlpha(type='range', min=16, max=240, step=32, value=112, disabled)
+                span.help-block transparent => solid
+              .form-group(style='margin-bottom: 10px;')
+                label.col-sm-4.control-label(for='addVoxType') Type:
+                .col-sm-8
+                  select#addVoxType.form-control.input-sm
+                    option(value=0) solid
+                    option(value=1) glass
+                    option(value=2) tiled glass
+                    option(value=3) glowing solid
+                    option(value=4) glowing glass
+              .form-group(style='margin-bottom: 0px;')
+                label.col-sm-4.control-label(for='addVoxSpecular') Specular:
+                .col-sm-8
+                  select#addVoxSpecular.form-control.input-sm
+                    option(value=0) rough
+                    option(value=1) metal
+                    option(value=2) water
+                    option(value=3) iridescent
+        .panel.panel-default
+          .panel-heading
+            h3.panel-title Light options
+          .panel-body(style='padding: 5px 15px 0px;')
+            .form-horizontal
+              .form-group(style='margin-bottom: 10px;')
+                label.col-sm-8.control-label(for='ambLightColor') Ambient light:
+                .col-sm-4
+                  input#ambLightColor.form-control.input-sm(type='color', value='#606060', style='padding: 5px;')
+            .h5: b: u Directional light:
+            .form-horizontal
+              .form-group(style='margin-bottom: 0px;')
+                label.col-sm-4.control-label(for='dirLightColor') Color:
+                .col-sm-8
+                  input#dirLightColor.form-control.input-sm(type='color', value='#ffffff', style='padding: 5px;')
+              .form-group(style='margin-bottom: 10px;')
+                label.col-sm-4.control-label(for='dirLightIntensity') Intensity:
+                .col-sm-8
+                  input#dirLightIntensity(type='range', min=0, max=5, step=0.1, value=1, style='margin-top: 5px;')
+              .input-group.input-group-sm(style='margin: 0px -8px 5px;')
+                span.input-group-addon(style='padding: 5px;') x:
+                input#dirLightX.form-control(type='text', value='1', style='padding: 5px;')
+                span.input-group-addon(style='padding: 5px;') y:
+                input#dirLightY.form-control(type='text', value='0.75', style='padding: 5px;')
+                span.input-group-addon(style='padding: 5px;') z:
+                input#dirLightZ.form-control(type='text', value='0.5', style='padding: 5px;')
+                span.input-group-btn
+                  button#dirLightVector.btn.btn-default(style='padding: 5px;') go
+        .panel.panel-default
+          .panel-heading
+            h3.panel-title Rotate model
+          .panel-body
+            .form-horizontal
+              .form-group(style='margin-bottom: 10px;')
+                label.col-sm-5.control-label x-axis:
+                .col-sm-7
+                  .btn-group.btn-group-sm
+                    button.rotateBtn.btn.btn-default(data-rotate='x') cw
+                    button.rotateBtn.btn.btn-default(data-rotate='-x') acw
+              .form-group(style='margin-bottom: 10px;')
+                label.col-sm-5.control-label y-axis:
+                .col-sm-7
+                  .btn-group.btn-group-sm
+                    button.rotateBtn.btn.btn-default(data-rotate='y') left
+                    button.rotateBtn.btn.btn-default(data-rotate='-y') right
+              .form-group(style='margin-bottom: 0px;')
+                label.col-sm-5.control-label z-axis:
+                .col-sm-7
+                  .btn-group.btn-group-sm
+                    button.rotateBtn.btn.btn-default(data-rotate='z') up
+                    button.rotateBtn.btn.btn-default(data-rotate='-z') down
+        .panel.panel-default
+          .panel-heading
+            h3.panel-title Mirror model
+          .btn-group-vertical.btn-group-sm(style='width: 100%;')
+            button.mirrorBtn.btn.btn-default(data-mirror='x') Mirror x-axis
+            button.mirrorBtn.btn.btn-default(data-mirror='y') Mirror y-axis
+            button.mirrorBtn.btn.btn-default(data-mirror='z') Mirror z-axis
 
     script(src='static/jquery-2.1.1.min.js', type='text/javascript')
     script(src='static/bootstrap.min.js', type='text/javascript')
