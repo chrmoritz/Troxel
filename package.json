@@ -1,6 +1,6 @@
 {
   "name": "Troxel",
-  "version": "0.1.0",
+  "version": "0.1.6",
   "description": "WebGL-based voxel viewer and editor",
   "scripts": {
     "start": "coffee server.coffee",
@@ -17,7 +17,7 @@
 	"import": "coffee tools/Importer.coffee"
   },
   "author": "Christian Moritz",
-  "license": "GNU LGPL v3.0",
+  "license": "LGPL-3.0",
   "dependencies": {
     "coffee-script": "~1.8",
     "coffeelint": "~1.6",
