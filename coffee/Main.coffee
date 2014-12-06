@@ -131,7 +131,7 @@ $('#openTroveTab').click ->
   i = 0
   blueprints = new Bloodhound({
     datumTokenizer: (bp) -> bp.value.split(/[\[,\],_]/i),
-    queryTokenizer: Bloodhound.tokenizers.whitespace,
+    queryTokenizer: (bp) -> bp.split(/[\s,_]/i),
     limit: 10000,
     prefetch: {
       url: 'static/Trove.json',
@@ -170,7 +170,7 @@ $('#exportVox').click ->
   $(@).text('Download as Magica Voxel (.vox)').attr 'href', new MagicaIO(io).export() unless $(@).attr('href')?
 $('#exportBase64').click ->
   return if io.readonly
-  $('#exportBase64Ta').val(window.location.toString().split('#')[0] + '/#m=' + new Base64IO(io).export($('#exportBase64Ro').prop('checked'))).fadeIn()
+  $('#exportBase64Ta').val(window.location.toString().split('#')[0] + '#m=' + new Base64IO(io).export($('#exportBase64Ro').prop('checked'))).fadeIn()
 $('#exportJson').click ->
   return if io.readonly
   $('#exportJsonTa').val(new JsonIO(io).export($('#exportJsonPret').prop('checked'))).fadeIn()

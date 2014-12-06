@@ -2,6 +2,17 @@
   "name": "Troxel",
   "version": "0.1.6",
   "description": "WebGL-based voxel viewer and editor",
+  "homepage": "https://chrmoritz.github.io/Troxel/",
+  "bugs": {
+    "url": "https://github.com/chrmoritz/Troxel/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:chrmoritz/Troxel.git"
+  },
+  "engines": {
+    "node": ">=0.10.0"
+  },
   "scripts": {
     "start": "coffee server.coffee",
     "test": "npm run mocha && npm run lint && npm run build",
