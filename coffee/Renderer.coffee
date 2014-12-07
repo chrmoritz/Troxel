@@ -1,38 +1,18 @@
 class Renderer
   constructor: (io, @embedded = false, @domContainer = $('#WebGlContainer')) ->
-    @voxels = io.voxels
-    @x = io.x
-    @y = io.y
-    @z = io.z
-    @objects = []
     @width = @domContainer.width()
     @height = @domContainer.height() - 5
     @scene = new THREE.Scene()
+    @objects = []
+    @reload io, true
     # roll-over helpers
     rollOverGeo = new THREE.BoxGeometry 50, 50, 50
     rollOverMaterial = new THREE.MeshBasicMaterial color: 0xff0000, opacity: 0.5, transparent: true
     @rollOverMesh = new THREE.Mesh rollOverGeo, rollOverMaterial
     @scene.add @rollOverMesh
-    # grid
-    geometry = new THREE.Geometry()
-    for z in [0..@z] by 1
-      geometry.vertices.push new THREE.Vector3       0,       0,  50 * z # bottom grid
-      geometry.vertices.push new THREE.Vector3 50 * @x,       0,  50 * z
-      geometry.vertices.push new THREE.Vector3 50 * @x,       0,  50 * z # back grid
-      geometry.vertices.push new THREE.Vector3 50 * @x, 50 * @y,  50 * z
-    for x in [0..@x] by 1
-      geometry.vertices.push new THREE.Vector3  50 * x,       0,       0 # bottom grid
-      geometry.vertices.push new THREE.Vector3  50 * x,       0, 50 * @z
-      geometry.vertices.push new THREE.Vector3  50 * x,       0,       0 # left grid
-      geometry.vertices.push new THREE.Vector3  50 * x, 50 * @y,       0
-    for y in [0..@y] by 1
-      geometry.vertices.push new THREE.Vector3       0,  50 * y,       0 # left grid
-      geometry.vertices.push new THREE.Vector3 50 * @x,  50 * y,       0
-      geometry.vertices.push new THREE.Vector3 50 * @x,  50 * y,       0 # back grid
-      geometry.vertices.push new THREE.Vector3 50 * @x,  50 * y, 50 * @z
-    material = new THREE.LineBasicMaterial color: 0x000000, opacity: 0.2, transparent: true
-    @grid = new THREE.Line geometry, material, THREE.LinePieces
-    @scene.add @grid
+    # Raycaster
+    @vector = new THREE.Vector3()
+    @raycaster = new THREE.Raycaster()
     # Planes
     @planes = []
     geometry = new THREE.PlaneBufferGeometry 50 * @z, 50 * @y
@@ -63,24 +43,26 @@ class Renderer
     @scene.add plane
     @objects.push plane
     @planes.push plane
-    # Raycaster
-    @vector = new THREE.Vector3()
-    @raycaster = new THREE.Raycaster()
-    # Load Model
-    for z in [0...@z] by 1
-      for y in [0...@y] by 1
-        for x in [0...@x] by 1 when @voxels[z]?[y]?[x]?
-          material = new THREE.MeshLambertMaterial color: new THREE.Color("rgb(#{@voxels[z][y][x].r},#{@voxels[z][y][x].g},#{@voxels[z][y][x].b})"), shading: THREE.FlatShading
-          material.ambient = material.color
-          if @voxels[z][y][x].t in [1, 2, 4] # glass, tiled glass or glowing glass
-            material.transparent = true
-            material.opacity = @voxels[z][y][x].a / 255
-          voxel = new THREE.Mesh new THREE.BoxGeometry(50, 50, 50), material
-          voxel.position.x = x * 50 + 25
-          voxel.position.y = y * 50 + 25
-          voxel.position.z = z * 50 + 25
-          @scene.add voxel
-          @objects.push voxel
+    # grid
+    geometry = new THREE.Geometry()
+    for z in [0..@z] by 1
+      geometry.vertices.push new THREE.Vector3       0,       0,  50 * z # bottom grid
+      geometry.vertices.push new THREE.Vector3 50 * @x,       0,  50 * z
+      geometry.vertices.push new THREE.Vector3 50 * @x,       0,  50 * z # back grid
+      geometry.vertices.push new THREE.Vector3 50 * @x, 50 * @y,  50 * z
+    for x in [0..@x] by 1
+      geometry.vertices.push new THREE.Vector3  50 * x,       0,       0 # bottom grid
+      geometry.vertices.push new THREE.Vector3  50 * x,       0, 50 * @z
+      geometry.vertices.push new THREE.Vector3  50 * x,       0,       0 # left grid
+      geometry.vertices.push new THREE.Vector3  50 * x, 50 * @y,       0
+    for y in [0..@y] by 1
+      geometry.vertices.push new THREE.Vector3       0,  50 * y,       0 # left grid
+      geometry.vertices.push new THREE.Vector3 50 * @x,  50 * y,       0
+      geometry.vertices.push new THREE.Vector3 50 * @x,  50 * y,       0 # back grid
+      geometry.vertices.push new THREE.Vector3 50 * @x,  50 * y, 50 * @z
+    material = new THREE.LineBasicMaterial color: 0x000000, opacity: 0.2, transparent: true
+    @grid = new THREE.Line geometry, material, THREE.LinePieces
+    @scene.add @grid
     # Lights
     @ambientLight = new THREE.AmbientLight 0x606060
     @scene.add @ambientLight
@@ -91,12 +73,6 @@ class Renderer
     @renderer.setClearColor 0x888888
     @renderer.setSize @width, @height
     @domContainer.empty().append @renderer.domElement
-    # Event handlers
-    @domContainer.on        'mousedown', (e) => @onDocumentMouseDown(e)
-    @domContainer.on        'mousemove', (e) => @onDocumentMouseMove(e)
-    document.addEventListener 'keydown', (e) => @onDocumentKeyDown(e)
-    document.addEventListener   'keyup', (e) => @onDocumentKeyUp(e)
-    window.addEventListener    'resize', (e) => @onWindowResize(e)
     # Stats (fps)
     unless @embedded
       @stats = new Stats()
@@ -113,16 +89,23 @@ class Renderer
     @controls.addEventListener 'change', => @render()
     @controls.enabled = false
     @changeEditMode($('#modeEdit').parent().hasClass('active'))
+    # Event handlers
+    @domContainer.on        'mousedown', (e) => @onDocumentMouseDown(e)
+    @domContainer.on        'mousemove', (e) => @onDocumentMouseMove(e)
+    document.addEventListener 'keydown', (e) => @onDocumentKeyDown(e)
+    document.addEventListener   'keyup', (e) => @onDocumentKeyUp(e)
+    window.addEventListener    'resize', (e) => @onWindowResize(e)
     @animate()
     @render()
 
-  reload: (io) ->
+  reload: (io, init = false) ->
     @voxels = io.voxels
     @x = io.x
     @y = io.y
     @z = io.z
-    @scene.remove o for o in @objects when o not in @planes
-    @objects = @planes.slice 0
+    unless init
+      @scene.remove o for o in @objects when o not in @planes
+      @objects = @planes.slice 0
     for z in [0...@z] by 1
       for y in [0...@y] by 1
         for x in [0...@x] by 1 when @voxels[z]?[y]?[x]?
@@ -137,7 +120,7 @@ class Renderer
           voxel.position.z = z * 50 + 25
           @scene.add voxel
           @objects.push voxel
-    @render()
+    @render() unless init
 
   changeEditMode: (@editMode) ->
     if @editMode
