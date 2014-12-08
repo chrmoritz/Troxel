@@ -141,11 +141,11 @@ html(manifest=dev?null:'troxel.appcache')
                     label.col-sm-2.control-label Dimensions:
                     .col-sm-10: .input-group
                       span.input-group-addon x:
-                      input#snewX.form-control(type='text', value='20')
+                      input#snewX.form-control(type='number', value='20')
                       span.input-group-addon y:
-                      input#snewY.form-control(type='text', value='20')
+                      input#snewY.form-control(type='number', value='20')
                       span.input-group-addon z:
-                      input#snewZ.form-control(type='text', value='20')
+                      input#snewZ.form-control(type='number', value='20')
                   .form-group
                     label.col-sm-2.control-label(for='cbnewAp') attachment Point:
                     .col-sm-10: .input-group
@@ -153,11 +153,11 @@ html(manifest=dev?null:'troxel.appcache')
                         input#cbnewAp(type='checkbox', style='margin-right: 3px;')
                         |  add at position:
                       span.input-group-addon x:
-                      input#snewApX.snewApPos.form-control(type='text', value='10', disabled)
+                      input#snewApX.snewApPos.form-control(type='number', value='10', disabled)
                       span.input-group-addon y:
-                      input#snewApY.snewApPos.form-control(type='text', value='10', disabled)
+                      input#snewApY.snewApPos.form-control(type='number', value='10', disabled)
                       span.input-group-addon z:
-                      input#snewApZ.snewApPos.form-control(type='text', value='10', disabled)
+                      input#snewApZ.snewApPos.form-control(type='number', value='10', disabled)
           .modal-footer
             button.btn.btn-default(data-dismiss='modal') Close
             button#open.btn.btn-primary Open model
@@ -221,6 +221,24 @@ html(manifest=dev?null:'troxel.appcache')
             button.btn.btn-default(data-dismiss='modal') Close
             button#saveModelAs.btn.btn-primary Save model locally
 
+    #resizeModal.modal.fade(tabindex='-1', role='dialog')
+      .modal-dialog
+        .modal-content
+          .modal-header
+            button.close(data-dismiss='modal'): span &times;
+            h4.modal-title Resize voxel model ...
+          .modal-body
+            .input-group
+              span.input-group-addon x:
+              input#resizeX.form-control(type='number')
+              span.input-group-addon y:
+              input#resizeY.form-control(type='number')
+              span.input-group-addon z:
+              input#resizeZ.form-control(type='number')
+          .modal-footer
+            button.btn.btn-default(data-dismiss='modal') Close
+            button#resizeBtn.btn.btn-primary Resize voxel model
+
     div(style="position: absolute; top: 50px; bottom: 0px; width: 100%;")
       #WebGlContainer(style='position: absolute; right: 220px; left: 0px; height: 100%;')
       div(style='position: absolute; right: 0px; width: 220px; height: 100%; overflow: auto;')
@@ -256,6 +274,7 @@ html(manifest=dev?null:'troxel.appcache')
                     option(value=1) metal
                     option(value=2) water
                     option(value=3) iridescent
+            button#openResizeModal.btn.btn-default.btn-sm.btn-block(style='margin: 10px 0px -13px;', data-toggle='modal', data-target='#resizeModal') resize voxel model
         .panel.panel-default
           .panel-heading
             h3.panel-title Light options

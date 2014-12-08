@@ -138,3 +138,5 @@ describe 'IO', ->
       io.should.have.ownProperty('z', 'expected io.z to be defined').equal(20, 'expected io.z to be 20')
       io.should.have.ownProperty('voxels', 'expected io.voxels to be defined')
       JSON.parse(JSON.stringify(io.voxels)).should.eql(model.voxels)
+  describe 'resize', ->
+    it 'should be able to resize the voxel model'

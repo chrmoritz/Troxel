@@ -272,3 +272,14 @@ $('#addVoxType').change ->
   switch parseInt($(@).val())
     when 1, 2, 4 then $('#addVoxAlpha').prop('disabled', false)
     when 0, 3 then $('#addVoxAlpha').prop('disabled', true)
+$('#openResizeModal').click ->
+  return unless io?
+  $('#resizeX').val(io.x)
+  $('#resizeY').val(io.y)
+  $('#resizeZ').val(io.z)
+$('#resizeBtn').click ->
+  return if not io? or io.readonly
+  $('#resizeModal').modal 'hide'
+  io.resize(parseInt($('#resizeX').val()), parseInt($('#resizeY').val()), parseInt($('#resizeZ').val()))
+  renderer = new Renderer io # ToDo: implement changing dimensions in renderer.reload
+  history.pushState {voxels: io.voxels, x: io.x, y: io.y, z: io.z}, 'Troxel', '#m=' + new Base64IO(io).export false

@@ -127,4 +127,12 @@ class IO
     else
       delete @voxels[if d then @z - 1 else 0]
 
+  resize: (x, y, z) ->
+    delete @voxels[iz] for iz in [z...@z] by 1 if z < @z
+    @z = z
+    delete @voxels[iz][iy] for iy in [y...@y] by 1 for iz in [0...@z] by 1 when @voxels[iz]? if y < @y
+    @y = y
+    delete @voxels[iz][iy][iz] for ix in [x...@x] by 1 for iy in [0...@y] by 1 when @voxels[iz][iy]? for iz in [0...@z] by 1 when @voxels[iz]? if z < @z
+    @z = z
+
 if typeof module == 'object' then module.exports = IO else window.IO = IO
