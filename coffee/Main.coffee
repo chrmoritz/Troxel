@@ -114,14 +114,14 @@ $('#open').click ->
       x = parseInt $('#snewX').val()
       y = parseInt $('#snewY').val()
       z = parseInt $('#snewZ').val()
-      voxels = {}
+      voxels = []
       if $('#cbnewAp').prop('checked')
         ax = parseInt $('#snewApX').val()
         ay = parseInt $('#snewApY').val()
         az = parseInt $('#snewApZ').val()
         if ax < x && ay < y and az < z
-          voxels[az] = {}
-          voxels[az][ay] = {}
+          voxels[az] = []
+          voxels[az][ay] = []
           voxels[az][ay][ax] = {r: 255, g: 0, b: 255, a: 250, t: 7, s: 7} # ToDo: correct alpha value for attachment point?
       io = new IO x: x, y: y, z: z, voxels: voxels
       cb()
