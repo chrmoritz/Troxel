@@ -309,6 +309,29 @@ html(manifest=dev?null:'troxel.appcache')
                     button.rotateBtn.btn.btn-default(data-rotate='-z') down
         .panel.panel-default
           .panel-heading
+            h3.panel-title Move model
+          .panel-body
+            .form-horizontal
+              .form-group(style='margin-bottom: 10px;')
+                label.col-sm-5.control-label x-axis:
+                .col-sm-7
+                  .btn-group.btn-group-sm
+                    button.moveBtn.btn.btn-default(data-move='x') fw
+                    button.moveBtn.btn.btn-default(data-move='-x') back
+              .form-group(style='margin-bottom: 10px;')
+                label.col-sm-5.control-label y-axis:
+                .col-sm-7
+                  .btn-group.btn-group-sm
+                    button.moveBtn.btn.btn-default(data-move='-y') up
+                    button.moveBtn.btn.btn-default(data-move='y') down
+              .form-group(style='margin-bottom: 0px;')
+                label.col-sm-5.control-label z-axis:
+                .col-sm-7
+                  .btn-group.btn-group-sm
+                    button.moveBtn.btn.btn-default(data-move='z') left
+                    button.moveBtn.btn.btn-default(data-move='-z') right
+        .panel.panel-default
+          .panel-heading
             h3.panel-title Mirror model
           .btn-group-vertical.btn-group-sm(style='width: 100%;')
             button.mirrorBtn.btn.btn-default(data-mirror='x') Mirror x-axis

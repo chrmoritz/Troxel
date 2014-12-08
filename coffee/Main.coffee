@@ -219,6 +219,17 @@ $('.rotateBtn').click ->
     when '-z' then io.rotateZ(false)
   renderer = new Renderer io # ToDo: implement changing dimensions in renderer.reload
   history.pushState {voxels: io.voxels, x: io.x, y: io.y, z: io.z}, 'Troxel', '#m=' + new Base64IO(io).export false
+$('.moveBtn').click ->
+  return unless io?
+  switch $(@).data('move')
+    when  'x' then io.moveX(true, true)
+    when '-x' then io.moveX(false, true)
+    when  'y' then io.moveY(true, true)
+    when '-y' then io.moveY(false, true)
+    when  'z' then io.moveZ(true, true)
+    when '-z' then io.moveZ(false, true)
+  renderer.reload(io)
+  history.pushState {voxels: io.voxels, x: io.x, y: io.y, z: io.z}, 'Troxel', '#m=' + new Base64IO(io).export false
 $('.mirrorBtn').click ->
   return unless io?
   switch $(@).data('mirror')

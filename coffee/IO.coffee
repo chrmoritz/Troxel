@@ -88,4 +88,43 @@ class IO
           @voxels[z][y] = [] unless @voxels[z][y]?
           @voxels[z][y][x] = voxels[@z - z - 1][y][x]
 
+  moveX: (d) ->
+    for z in [0...@z] by 1 when @voxels[z]?
+      for y in [0...@y] by 1 when @voxels[z]?[y]?
+        x0 = @voxels[z][y][if d then 0 else @x - 1]
+        for x in [0...@x - 1] by 1
+          if @voxels[z]?[y]?[if d then x + 1 else @x - 2 - x]?
+            @voxels[z][y][if d then x else @x - 1 - x] = @voxels[z][y][if d then x + 1 else @x - 2 - x]
+          else
+            delete @voxels[z][y][if d then x else @x - 1 - x]
+        if x0?
+          @voxels[z][y][if d then @x - 1 else 0] = x0
+        else
+          delete @voxels[z][y][if d then @x - 1 else 0]
+
+  moveY: (d) ->
+    for z in [0...@z] by 1 when @voxels[z]?
+      y0 = @voxels[z][if d then 0 else @y - 1]
+      for y in [0...@y - 1] by 1
+        if @voxels[z]?[if d then y + 1 else @y - 2 - y]?
+          @voxels[z][if d then y else @y - 1 - y] = @voxels[z][if d then y + 1 else @y - 2 - y]
+        else
+          delete @voxels[z][if d then y else @y - 1 - y]
+      if y0?
+        @voxels[z][if d then @y - 1 else 0] = y0
+      else
+        delete @voxels[z][if d then @y - 1 else 0]
+
+  moveZ: (d) ->
+    z0 = @voxels[if d then 0 else @z - 1]
+    for z in [0...@z - 1] by 1
+      if @voxels[if d then z + 1 else @z - 2 - z]?
+        @voxels[if d then z else @z - 1 - z] = @voxels[if d then z + 1 else @z - 2 - z]
+      else
+        delete @voxels[if d then z else @z - 1 - z]
+    if z0?
+      @voxels[if d then @z - 1 else 0] = z0
+    else
+      delete @voxels[if d then @z - 1 else 0]
+
 if typeof module == 'object' then module.exports = IO else window.IO = IO
