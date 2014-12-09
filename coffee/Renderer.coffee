@@ -45,11 +45,6 @@ class Renderer
     @planes.push plane
     # grid
     geometry = new THREE.Geometry()
-    for z in [0..@z] by 1
-      geometry.vertices.push new THREE.Vector3       0,       0,  50 * z # bottom grid
-      geometry.vertices.push new THREE.Vector3 50 * @x,       0,  50 * z
-      geometry.vertices.push new THREE.Vector3 50 * @x,       0,  50 * z # back grid
-      geometry.vertices.push new THREE.Vector3 50 * @x, 50 * @y,  50 * z
     for x in [0..@x] by 1
       geometry.vertices.push new THREE.Vector3  50 * x,       0,       0 # bottom grid
       geometry.vertices.push new THREE.Vector3  50 * x,       0, 50 * @z
@@ -60,6 +55,11 @@ class Renderer
       geometry.vertices.push new THREE.Vector3 50 * @x,  50 * y,       0
       geometry.vertices.push new THREE.Vector3 50 * @x,  50 * y,       0 # back grid
       geometry.vertices.push new THREE.Vector3 50 * @x,  50 * y, 50 * @z
+    for z in [0..@z] by 1
+      geometry.vertices.push new THREE.Vector3       0,       0,  50 * z # bottom grid
+      geometry.vertices.push new THREE.Vector3 50 * @x,       0,  50 * z
+      geometry.vertices.push new THREE.Vector3 50 * @x,       0,  50 * z # back grid
+      geometry.vertices.push new THREE.Vector3 50 * @x, 50 * @y,  50 * z
     material = new THREE.LineBasicMaterial color: 0x000000, opacity: 0.2, transparent: true
     @grid = new THREE.Line geometry, material, THREE.LinePieces
     @scene.add @grid
