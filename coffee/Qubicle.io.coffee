@@ -173,7 +173,7 @@ class QubicleIO extends IO
     return @voxels[z][y][x].s = 2 if r ==   0 and g ==   0 and b == 128 # water
     return @voxels[z][y][x].s = 3 if r == 128 and g == 128 and b ==   0 # iridescent
     return @voxels[z][y][x].s = 7 if r == 255 and g ==   0 and b == 255 # attachment point
-    console.warn "invalid specular value (r: #{r}, g: #{g}, b: #{b}), falling back to rough"
+    console.warn "invalid specular value (r: #{r}, g: #{g}, b: #{b}), falling back to rough" unless r == g == b == 255 # Trove relies on this fallback often
     @voxels[z][y][x].s = 0
 
   export: (comp) ->
