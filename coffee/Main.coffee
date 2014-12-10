@@ -252,9 +252,9 @@ $('#dirLightIntensity').val(1).change ->
   return unless io?
   renderer.directionalLight.intensity = $(@).val()
   renderer.render()
-$('#dirLightX').val('1')
-$('#dirLightY').val('0.75')
-$('#dirLightZ').val('0.5')
+$('#dirLightX').val('-0.5')
+$('#dirLightY').val('-0.5')
+$('#dirLightZ').val('1')
 $('#dirLightVector').click ->
   return unless io?
   renderer.directionalLight.position.set(parseFloat($('#dirLightX').val()), parseFloat($('#dirLightY').val()), parseFloat($('#dirLightZ').val())).normalize()

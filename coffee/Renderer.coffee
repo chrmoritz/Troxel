@@ -67,7 +67,7 @@ class Renderer
     @ambientLight = new THREE.AmbientLight 0x606060
     @scene.add @ambientLight
     @directionalLight = new THREE.DirectionalLight 0xffffff
-    @directionalLight.position.set(1, 0.75, 0.5).normalize()
+    @directionalLight.position.set(-0.5, -0.5, 1).normalize()
     @scene.add @directionalLight
     @renderer = new THREE.WebGLRenderer antialias: true
     @renderer.setClearColor 0x888888
