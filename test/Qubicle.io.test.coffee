@@ -9,16 +9,16 @@ describe 'QubicleIO', ->
     it 'should be able to successfully import a .qb file', (done) ->
       io = new QubicleIO m: 'test/models/chr_knight.qb', ->
         io.should.have.ownProperty('x', 'expected io.x to be defined').equal(20, 'expected io.x to be 20')
-        io.should.have.ownProperty('y', 'expected io.y to be defined').equal(21, 'expected io.y to be 21')
-        io.should.have.ownProperty('z', 'expected io.z to be defined').equal(20, 'expected io.z to be 20')
+        io.should.have.ownProperty('y', 'expected io.y to be defined').equal(20, 'expected io.y to be 20')
+        io.should.have.ownProperty('z', 'expected io.z to be defined').equal(21, 'expected io.z to be 21')
         io.should.have.ownProperty('voxels', 'expected io.voxels to be defined')
         JSON.parse(JSON.stringify(io.voxels)).should.eql(model.voxels)
         done()
     it 'should be able to successfully import a .qb file (compressed)', (done) ->
       io = new QubicleIO m: 'test/models/chr_knight_compressed.qb', ->
         io.should.have.ownProperty('x', 'expected io.x to be defined').equal(20, 'expected io.x to be 20')
-        io.should.have.ownProperty('y', 'expected io.y to be defined').equal(21, 'expected io.y to be 21')
-        io.should.have.ownProperty('z', 'expected io.z to be defined').equal(20, 'expected io.z to be 20')
+        io.should.have.ownProperty('y', 'expected io.y to be defined').equal(20, 'expected io.y to be 20')
+        io.should.have.ownProperty('z', 'expected io.z to be defined').equal(21, 'expected io.z to be 21')
         io.should.have.ownProperty('voxels', 'expected io.voxels to be defined')
         JSON.parse(JSON.stringify(io.voxels)).should.eql(model.voxels)
         done()

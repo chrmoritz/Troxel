@@ -9,8 +9,8 @@ describe 'ZoxelIO', ->
     it 'should be able to successfully import a .zox file', (done) ->
       io = new ZoxelIO 'test/models/chr_knight.zox', ->
         io.should.have.ownProperty('x', 'expected io.x to be defined').equal(20, 'expected io.x to be 20')
-        io.should.have.ownProperty('y', 'expected io.y to be defined').equal(21, 'expected io.y to be 21')
-        io.should.have.ownProperty('z', 'expected io.z to be defined').equal(20, 'expected io.z to be 20')
+        io.should.have.ownProperty('y', 'expected io.y to be defined').equal(20, 'expected io.y to be 20')
+        io.should.have.ownProperty('z', 'expected io.z to be defined').equal(21, 'expected io.z to be 21')
         io.should.have.ownProperty('voxels', 'expected io.voxels to be defined')
         JSON.parse(JSON.stringify(io.voxels)).should.eql(model.voxels)
         done()
