@@ -41,7 +41,7 @@ class MagicaIO extends IO
         chunkPointer += 12 + chunkSize + chunkChildSize
       throw new Error "missing chunks" if sizeBegin == -1 or sizeEnd == -1 or voxelBegin == -1 or voxelEnd == -1
       # read size chunk
-      [@z, @x, @y] = new Uint32Array ab.slice sizeBegin, sizeEnd
+      [@x, @z, @y] = new Uint32Array ab.slice sizeBegin, sizeEnd # order is x, z, y (normalized with .qb)
       console.log "dimensions: width: #{@x} height: #{@y} depth: #{@z}"
       # read palette chunk
       palette = []
@@ -147,9 +147,9 @@ class MagicaIO extends IO
       console.warn "invalid length of voxel chunk" unless voxelBegin + 4 + 4 * voxelCount == voxelEnd
       rawvoxels = new Uint8Array ab.slice voxelBegin + 4, voxelBegin + 4 + 4 * voxelCount
       for i in [0...4 * voxelCount] by 4
-        @voxels[rawvoxels[i]] = [] unless @voxels[rawvoxels[i]]?
-        @voxels[rawvoxels[i]][rawvoxels[i + 2]] = [] unless @voxels[rawvoxels[i]][rawvoxels[i + 2]]? # order is z, x, y
-        @voxels[rawvoxels[i]][rawvoxels[i + 2]][rawvoxels[i + 1]] = palette[rawvoxels[i + 3] - 1] # if you change it, change it in saving too
+        @voxels[rawvoxels[i + 1]] = [] unless @voxels[rawvoxels[i + 1]]?
+        @voxels[rawvoxels[i + 1]][rawvoxels[i + 2]] = [] unless @voxels[rawvoxels[i + 1]][rawvoxels[i + 2]]?
+        @voxels[rawvoxels[i + 1]][rawvoxels[i + 2]][rawvoxels[i]] = palette[rawvoxels[i + 3] - 1] # order is x, z, y (normalized with .qb)
       console.log "voxels:"
       console.log @voxels
       callback()
@@ -163,9 +163,9 @@ class MagicaIO extends IO
       77, 65, 73, 78 # MAIN
       0, 0, 0, 0 # 0 (main chunk size)
     ]
-    [x1, x2, x3, x4] = new Uint8Array new Uint32Array([@x]).buffer
-    [y1, y2, y3, y4] = new Uint8Array new Uint32Array([@y]).buffer
-    [z1, z2, z3, z4] = new Uint8Array new Uint32Array([@z]).buffer
+    [x1, x2, x3, x4] = new Uint8Array new Uint32Array([@x]).buffer # order is x, z, y
+    [y1, y2, y3, y4] = new Uint8Array new Uint32Array([@z]).buffer # (normalized with .qb)
+    [z1, z2, z3, z4] = new Uint8Array new Uint32Array([@y]).buffer
     sizeChunk = [
       83, 73, 90, 69 # SIZE
       12, 0, 0, 0 # 12 (size chunk size)
@@ -191,10 +191,10 @@ class MagicaIO extends IO
             paletteChunk = paletteChunk.concat [@voxels[z][y][x].r, @voxels[z][y][x].g, @voxels[z][y][x].b, 255]
             i = paletteChunk.length / 4 - 3
             helpPalette[rgba] = i
-          voxelChunk = voxelChunk.concat [z, x, y, i] # change order if changed in loading
+          voxelChunk = voxelChunk.concat [x, z, y, i] # order is x, z, y (normalized with .qb)
     paletteChunk = paletteChunk.concat [255, 255, 255, 255] while paletteChunk.length < 1036 # fill up palette with dummy data
     [s1, s2, s3, s4] = new Uint8Array new Uint32Array([1076 + voxelChunk.length]).buffer
-    data = data.concat [s1, s2, s3, s4] # main chunk: child chunk aize
+    data = data.concat [s1, s2, s3, s4] # main chunk: child chunk size
     data = data.concat sizeChunk
     [s1, s2, s3, s4] = new Uint8Array new Uint32Array([voxelChunk.length + 4]).buffer
     [c1, c2, c3, c4] = new Uint8Array new Uint32Array([voxelChunk.length / 4]).buffer

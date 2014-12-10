@@ -15,29 +15,29 @@ class Renderer
     @raycaster = new THREE.Raycaster()
     # Planes
     @planes = []
-    geometry = new THREE.PlaneBufferGeometry 50 * @z, 50 * @y
+    geometry = new THREE.PlaneBufferGeometry 50 * @x, 50 * @y
     geometry.applyMatrix new THREE.Matrix4().makeRotationY -Math.PI / 2
     plane = new THREE.Mesh geometry
-    plane.position.x = 50 * @x
+    plane.position.x = 50 * @z
     plane.position.y = 25 * @y
-    plane.position.z = 25 * @z
+    plane.position.z = 25 * @x
     plane.visible = false
     @scene.add plane
     @objects.push plane
     @planes.push plane
-    geometry = new THREE.PlaneBufferGeometry 50 * @x, 50 * @z
+    geometry = new THREE.PlaneBufferGeometry 50 * @z, 50 * @x
     geometry.applyMatrix new THREE.Matrix4().makeRotationX -Math.PI / 2
     plane = new THREE.Mesh geometry
-    plane.position.x = 25 * @x
-    plane.position.z = 25 * @z
+    plane.position.x = 25 * @z
+    plane.position.z = 25 * @x
     plane.visible = false
     @scene.add plane
     @objects.push plane
     @planes.push plane
-    geometry = new THREE.PlaneBufferGeometry 50 * @y, 50 * @x
+    geometry = new THREE.PlaneBufferGeometry 50 * @y, 50 * @z
     geometry.applyMatrix new THREE.Matrix4().makeRotationZ -Math.PI / 2
     plane = new THREE.Mesh geometry
-    plane.position.x = 25 * @x
+    plane.position.x = 25 * @z
     plane.position.y = 25 * @y
     plane.visible = false
     @scene.add plane
@@ -46,20 +46,20 @@ class Renderer
     # grid
     geometry = new THREE.Geometry()
     for x in [0..@x] by 1
-      geometry.vertices.push new THREE.Vector3  50 * x,       0,       0 # bottom grid
-      geometry.vertices.push new THREE.Vector3  50 * x,       0, 50 * @z
-      geometry.vertices.push new THREE.Vector3  50 * x,       0,       0 # left grid
-      geometry.vertices.push new THREE.Vector3  50 * x, 50 * @y,       0
+      geometry.vertices.push new THREE.Vector3       0,       0,  50 * x # bottom grid
+      geometry.vertices.push new THREE.Vector3 50 * @z,       0,  50 * x
+      geometry.vertices.push new THREE.Vector3 50 * @z,       0,  50 * x # back grid
+      geometry.vertices.push new THREE.Vector3 50 * @z, 50 * @y,  50 * x
     for y in [0..@y] by 1
       geometry.vertices.push new THREE.Vector3       0,  50 * y,       0 # left grid
-      geometry.vertices.push new THREE.Vector3 50 * @x,  50 * y,       0
-      geometry.vertices.push new THREE.Vector3 50 * @x,  50 * y,       0 # back grid
-      geometry.vertices.push new THREE.Vector3 50 * @x,  50 * y, 50 * @z
+      geometry.vertices.push new THREE.Vector3 50 * @z,  50 * y,       0
+      geometry.vertices.push new THREE.Vector3 50 * @z,  50 * y,       0 # back grid
+      geometry.vertices.push new THREE.Vector3 50 * @z,  50 * y, 50 * @x
     for z in [0..@z] by 1
-      geometry.vertices.push new THREE.Vector3       0,       0,  50 * z # bottom grid
-      geometry.vertices.push new THREE.Vector3 50 * @x,       0,  50 * z
-      geometry.vertices.push new THREE.Vector3 50 * @x,       0,  50 * z # back grid
-      geometry.vertices.push new THREE.Vector3 50 * @x, 50 * @y,  50 * z
+      geometry.vertices.push new THREE.Vector3  50 * z,       0,       0 # bottom grid
+      geometry.vertices.push new THREE.Vector3  50 * z,       0, 50 * @x
+      geometry.vertices.push new THREE.Vector3  50 * z,       0,       0 # left grid
+      geometry.vertices.push new THREE.Vector3  50 * z, 50 * @y,       0
     material = new THREE.LineBasicMaterial color: 0x000000, opacity: 0.2, transparent: true
     @grid = new THREE.Line geometry, material, THREE.LinePieces
     @scene.add @grid
@@ -81,11 +81,11 @@ class Renderer
       @domContainer.append @stats.domElement
     # Controls and Camera
     @camera = new THREE.PerspectiveCamera 45, @width / @height, 1, 10000
-    @camera.position.x = -50 * @y - 20 * @z - 10 * @x
+    @camera.position.x = -50 * @y - 20 * @x - 10 * @z
     @camera.position.y = @y * 50
-    @camera.position.z = @z * 25
+    @camera.position.z = @x * 25
     @controls = new THREE.OrbitControls @camera, @domContainer[0]
-    @controls.target = new THREE.Vector3 @x * 25, @y * 25, @z * 25
+    @controls.target = new THREE.Vector3 @z * 25, @y * 25, @x * 25
     @controls.addEventListener 'change', => @render()
     @controls.enabled = false
     @changeEditMode($('#modeEdit').parent().hasClass('active'))
@@ -115,9 +115,9 @@ class Renderer
             material.transparent = true
             material.opacity = @voxels[z][y][x].a / 255
           voxel = new THREE.Mesh new THREE.BoxGeometry(50, 50, 50), material
-          voxel.position.x = x * 50 + 25
+          voxel.position.x = z * 50 + 25
           voxel.position.y = y * 50 + 25
-          voxel.position.z = z * 50 + 25
+          voxel.position.z = x * 50 + 25
           @scene.add voxel
           @objects.push voxel
     @render() unless init
@@ -165,9 +165,9 @@ class Renderer
       intersect = intersects[0]
       if e.button == 2 # right mouse button => delete cube
         if intersect.object not in @planes
-          x = (intersect.object.position.x - 25) / 50
+          x = (intersect.object.position.z - 25) / 50
           y = (intersect.object.position.y - 25) / 50
-          z = (intersect.object.position.z - 25) / 50
+          z = (intersect.object.position.x - 25) / 50
           delete @voxels[z][y][x]
           delete @voxels[z][y] if @voxels[z][y].filter((e) -> return e != undefined).length == 0
           delete @voxels[z] if @voxels[z].filter((e) -> return e != undefined).length == 0
@@ -185,9 +185,9 @@ class Renderer
         voxel = new THREE.Mesh new THREE.BoxGeometry(50, 50, 50), cubeMaterial
         voxel.position.copy(intersect.point).add(intersect.face.normal)
         voxel.position.divideScalar(50).floor().multiplyScalar(50).addScalar(25)
-        x = (voxel.position.x - 25) / 50
+        x = (voxel.position.z - 25) / 50
         y = (voxel.position.y - 25) / 50
-        z = (voxel.position.z - 25) / 50
+        z = (voxel.position.x - 25) / 50
         return unless 0 <= x < @x and 0 <= y < @y and 0 <= z < @z
         @voxels[z] = [] unless @voxels[z]?
         @voxels[z][y] = [] unless @voxels[z][y]?
@@ -202,9 +202,9 @@ class Renderer
         @objects.push voxel
       if e.button == 1 # middle mouse button => color picker
         return if intersect.object in @planes
-        x = (intersect.object.position.x - 25) / 50
+        x = (intersect.object.position.z - 25) / 50
         y = (intersect.object.position.y - 25) / 50
-        z = (intersect.object.position.z - 25) / 50
+        z = (intersect.object.position.x - 25) / 50
         vox = @voxels[z][y][x]
         $('#addVoxColor').val('#' + new THREE.Color("rgb(#{vox.r},#{vox.g},#{vox.b})").getHexString())
         return $('#addVoxColor').change() if vox.r == vox.b == 255 and vox.g == 0
