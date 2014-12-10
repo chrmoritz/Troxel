@@ -158,16 +158,19 @@ $('#exportQb').click ->
   return if io.readonly
   unless $(@).attr('href')?
     [href, hrefa, hreft, hrefs] = new QubicleIO(io).export($('#exportQbComp').prop('checked'))
-    $(@).text('Download main mash (.qb)').attr 'href', href
-    $('#exportQba').show().attr 'href', hrefa
-    $('#exportQbt').show().attr 'href', hreft
-    $('#exportQbs').show().attr 'href', hrefs
+    filename = $('#exportFilenameQb').val() || 'Model'
+    $(@).text('Download main mash (.qb)').attr('download', "#{filename}.qb").attr 'href', href
+    $('#exportQba').show().attr('download', "#{filename}_a.qb").attr 'href', hrefa
+    $('#exportQbt').show().attr('download', "#{filename}_t.qb").attr 'href', hreft
+    $('#exportQbs').show().attr('download', "#{filename}_s.qb").attr 'href', hrefs
 $('#exportZox').click ->
   return if io.readonly
-  $(@).text('Download as Zoxel (.zox)').attr 'href', new ZoxelIO(io).export() unless $(@).attr('href')?
+  filename = $('#exportFilenameZox').val() || 'Model'
+  $(@).text('Download as Zoxel (.zox)').attr('download', "#{filename}.zox").attr 'href', new ZoxelIO(io).export() unless $(@).attr('href')?
 $('#exportVox').click ->
   return if io.readonly
-  $(@).text('Download as Magica Voxel (.vox)').attr 'href', new MagicaIO(io).export() unless $(@).attr('href')?
+  filename = $('#exportFilenameVox').val() || 'Model'
+  $(@).text('Download as Magica Voxel (.vox)').attr('download', "#{filename}.vox").attr 'href', new MagicaIO(io).export() unless $(@).attr('href')?
 $('#exportBase64').click ->
   return if io.readonly
   $('#exportBase64Ta').val(window.location.toString().split('#')[0] + '#m=' + new Base64IO(io).export($('#exportBase64Ro').prop('checked'))).fadeIn()

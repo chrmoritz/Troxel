@@ -48,7 +48,7 @@ html(manifest=dev?null:'troxel.appcache')
     .navbar.navbar-inverse.navbar-fixed-top(role='navigation', style='margin-bottom: 0px;')
       .container-fluid
         .navbar-header
-          a(href=dev?'/':'/Troxel/').navbar-brand Troxel
+          a.navbar-brand(href=dev?'/':'/Troxel/') Troxel
         .collapse.navbar-collapse
           ul.nav.navbar-nav
             li.dropdown
@@ -105,17 +105,17 @@ html(manifest=dev?null:'troxel.appcache')
               #tabzox.tab-pane.fade
                 .form-horizontal
                   .form-group
-                    label(for='fzox').col-sm-3.control-label Zoxel file (*.zox):
+                    label.col-sm-3.control-label(for='fzox') Zoxel file (*.zox):
                     .col-sm-9: input#fzox(type='file', multiple)
               #tabvox.tab-pane.fade
                 .form-horizontal
                   .form-group
-                    label(for='fvox').col-sm-3.control-label Magica Voxel file (*.vox):
+                    label.col-sm-3.control-label(for='fvox') Magica Voxel file (*.vox):
                     .col-sm-9: input#fvox(type='file', multiple)
               #tabjson.tab-pane.fade
                 .form-horizontal
                   .form-group
-                    label(for='sjson').col-sm-1.control-label JSON:
+                    label.col-sm-1.control-label(for='sjson') JSON:
                     .col-sm-11: textarea#sjson.form-control(rows=7, style='resize: vertical; min-height: 100px;')
               #tabdrag.tab-pane.fade
                 #dropZone Drag files anywhere to this modal to select them
@@ -125,7 +125,7 @@ html(manifest=dev?null:'troxel.appcache')
               #tabtrove.tab-pane.fade
                 .form-horizontal
                   .form-group
-                    label(for='sbtrove').col-sm-2.control-label Blueprint id:
+                    label.col-sm-2.control-label(for='sbtrove') Blueprint id:
                     .col-sm-10: input#sbtrove.form-control(type='text')
                   span.help-block
                     | Hint: Check out
@@ -177,17 +177,37 @@ html(manifest=dev?null:'troxel.appcache')
               li: a(href='#tabexjson', data-toggle='tab') JSON
             .tab-content
               #tabexqb.tab-pane.fade.in.active
-                .checkbox
-                  label
-                    input#exportQbComp(type='checkbox')
-                    | compressed (incompatible with 3rdparty apps like Zoxel)
+                .form-horizontal
+                  .form-group
+                    label.col-sm-2.control-label(for='exportFilenameQb') File name:
+                    .col-sm-10: .input-group
+                      input#exportFilenameQb.form-control(type='text', value='Model')
+                      span.input-group-addon .qb
+                  .form-group
+                    label.col-sm-2.control-label(for='exportQbComp') Options:
+                    .col-sm-10: .checkbox
+                      label
+                        input#exportQbComp(type='checkbox')
+                        | compressed (incompatible with 3rdparty apps like Zoxel)
                 a#exportQb.btn.btn-primary.btn-lg.btn-block(download='Model.qb') Export as Qubicle (.qb) ...
                 a#exportQba.btn.btn-default.btn-block(download='Model_a.qb', style='display: none;') Download alpha map (*_a.qb)
                 a#exportQbt.btn.btn-default.btn-block(download='Model_t.qb', style='display: none;') Download type map (*_t.qb)
                 a#exportQbs.btn.btn-default.btn-block(download='Model_s.qb', style='display: none;') Download specular map (*_s.qb)
               #tabexzox.tab-pane.fade
+                .form-horizontal
+                  .form-group
+                    label.col-sm-2.control-label(for='exportFilenameZox') File name:
+                    .col-sm-10: .input-group
+                      input#exportFilenameZox.form-control(type='text', value='Model')
+                      span.input-group-addon .zox
                 a#exportZox.btn.btn-primary.btn-lg.btn-block(download='Model.zox') Export as Zoxel (.zox) ...
               #tabexvox.tab-pane.fade
+                .form-horizontal
+                  .form-group
+                    label.col-sm-2.control-label(for='exportFilenameVox') File name:
+                    .col-sm-10: .input-group
+                      input#exportFilenameVox.form-control(type='text', value='Model')
+                      span.input-group-addon .vox
                 a#exportVox.btn.btn-primary.btn-lg.btn-block(download='Model.vox') Export as Magica Voxel (.vox) ...
               #tabexbase64.tab-pane.fade
                 .checkbox
