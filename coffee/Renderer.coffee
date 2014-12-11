@@ -215,12 +215,12 @@ class Renderer
 
   onDocumentKeyDown: (e) ->
     switch e.keyCode
-      when 87 then @controls.rotateUp   -0.05 # W
-      when 65 then @controls.rotateLeft -0.05 # A
-      when 83 then @controls.rotateUp    0.05 # S
-      when 68 then @controls.rotateLeft  0.05 # D
-      when 81 then @controls.dollyIn()        # Q
-      when 69 then @controls.dollyOut()       # E
+      when 87 then return @controls.rotateUp   -0.05 # W
+      when 65 then return @controls.rotateLeft -0.05 # A
+      when 83 then return @controls.rotateUp    0.05 # S
+      when 68 then return @controls.rotateLeft  0.05 # D
+      when 81 then return @controls.dollyIn()        # Q
+      when 69 then return @controls.dollyOut()       # E
     return if $('.active #modeView').length == 1
     switch e.keyCode
       when 18 # Alt
