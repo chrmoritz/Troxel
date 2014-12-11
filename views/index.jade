@@ -179,13 +179,13 @@ html(manifest=dev?null:'troxel.appcache')
               #tabexqb.tab-pane.fade.in.active
                 .form-horizontal
                   .form-group
-                    label.col-sm-2.control-label(for='exportFilenameQb') File name:
-                    .col-sm-10: .input-group
+                    label.col-sm-3.control-label(for='exportFilenameQb') File name:
+                    .col-sm-9: .input-group
                       input#exportFilenameQb.form-control(type='text', value='Model')
                       span.input-group-addon .qb
                   .form-group
-                    label.col-sm-2.control-label(for='exportQbComp') Options:
-                    .col-sm-10: .checkbox
+                    label.col-sm-3.control-label(for='exportQbComp') Options:
+                    .col-sm-9: .checkbox
                       label
                         input#exportQbComp(type='checkbox')
                         | compressed (incompatible with 3rdparty apps like Zoxel)
@@ -196,16 +196,16 @@ html(manifest=dev?null:'troxel.appcache')
               #tabexzox.tab-pane.fade
                 .form-horizontal
                   .form-group
-                    label.col-sm-2.control-label(for='exportFilenameZox') File name:
-                    .col-sm-10: .input-group
+                    label.col-sm-3.control-label(for='exportFilenameZox') File name:
+                    .col-sm-9: .input-group
                       input#exportFilenameZox.form-control(type='text', value='Model')
                       span.input-group-addon .zox
                 a#exportZox.btn.btn-primary.btn-lg.btn-block(download='Model.zox') Export as Zoxel (.zox) ...
               #tabexvox.tab-pane.fade
                 .form-horizontal
                   .form-group
-                    label.col-sm-2.control-label(for='exportFilenameVox') File name:
-                    .col-sm-10: .input-group
+                    label.col-sm-3.control-label(for='exportFilenameVox') File name:
+                    .col-sm-9: .input-group
                       input#exportFilenameVox.form-control(type='text', value='Model')
                       span.input-group-addon .vox
                 a#exportVox.btn.btn-primary.btn-lg.btn-block(download='Model.vox') Export as Magica Voxel (.vox) ...

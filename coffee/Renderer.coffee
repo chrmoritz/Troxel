@@ -96,7 +96,6 @@ class Renderer
     document.addEventListener   'keyup', (e) => @onDocumentKeyUp(e)
     window.addEventListener    'resize', (e) => @onWindowResize(e)
     @animate()
-    @render()
 
   reload: (io, init = false) ->
     @voxels = io.voxels
