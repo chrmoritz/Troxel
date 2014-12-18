@@ -155,6 +155,21 @@ class Renderer
     @render()
 
   onDocumentMouseDown: (e) ->
+    getColor = () ->
+      color = new THREE.Color($('#addVoxColor').val())
+      switch $('.active .editNoise').data('editnoise')
+        when 1
+          delta = parseFloat $('#editVoxNoise').val()
+          random = Math.random() * 2 * delta + 1 - delta
+          color.r = color.r * random
+          color.g = color.g * random
+          color.b = color.b * random
+        when 2
+          delta = parseFloat $('#editVoxNoise').val()
+          color.r = color.r * (Math.random() * 2 * delta + 1 - delta)
+          color.g = color.g * (Math.random() * 2 * delta + 1 - delta)
+          color.b = color.b * (Math.random() * 2 * delta + 1 - delta)
+      return color
     return if !@editMode or $('#openModal').css('display') == 'block' or $('#exportModal').css('display') == 'block' or $('#saveModal').css('display') == 'block'
     @vector.set (e.clientX / @width) * 2 - 1, -((e.clientY - 50) / @height) * 2 + 1, 0.5
     @vector.unproject @camera
@@ -162,55 +177,60 @@ class Renderer
     intersects = @raycaster.intersectObjects @objects
     if intersects.length > 0
       intersect = intersects[0]
-      if e.button == 2 # right mouse button => delete cube
-        if intersect.object not in @planes
+      switch e.button
+        when 0 # left mouse button
+          switch $('.active .editTool').data('edittool')
+            when 0 # add voxel
+              color = getColor()
+              cubeMaterial = new THREE.MeshLambertMaterial color: color, ambient: color, shading: THREE.FlatShading
+              a = parseInt($('#addVoxAlpha').val())
+              t = parseInt($('#addVoxType').val())
+              a = 255 if t in [0, 3] # Solid
+              if t in [1, 2, 4] && $('#addVoxColor').val() != '#ff00ff'
+                cubeMaterial.transparent = true
+                cubeMaterial.opacity = a / 255
+              voxel = new THREE.Mesh new THREE.BoxGeometry(50, 50, 50), cubeMaterial
+              voxel.position.copy(intersect.point).add(intersect.face.normal)
+              voxel.position.divideScalar(50).floor().multiplyScalar(50).addScalar(25)
+              x = (voxel.position.z - 25) / 50
+              y = (voxel.position.y - 25) / 50
+              z = (voxel.position.x - 25) / 50
+              return unless 0 <= x < @x and 0 <= y < @y and 0 <= z < @z
+              @voxels[z] = [] unless @voxels[z]?
+              @voxels[z][y] = [] unless @voxels[z][y]?
+              @voxels[z][y][x] = switch $('#addVoxColor').val()
+                when '#ff00ff' then r: 255, g: 0, b: 255, a: 250, t: 7, s: 7
+                else r: Math.floor(color.r * 255), g: Math.floor(color.g * 255), b: Math.floor(color.b * 255), a: a, t: t, s: parseInt($('#addVoxSpecular').val())
+              @scene.add voxel
+              @objects.push voxel
+            when 1 # fill single voxel
+              return if intersect.object in @planes
+        when 2 # right mouse button
+          switch $('.active .editTool').data('edittool')
+            when 0 # delete cube
+              return if intersect.object in @planes
+              x = (intersect.object.position.z - 25) / 50
+              y = (intersect.object.position.y - 25) / 50
+              z = (intersect.object.position.x - 25) / 50
+              delete @voxels[z][y][x]
+              delete @voxels[z][y] if @voxels[z][y].filter((e) -> return e != undefined).length == 0
+              delete @voxels[z] if @voxels[z].filter((e) -> return e != undefined).length == 0
+              @scene.remove intersect.object
+              @objects.splice @objects.indexOf(intersect.object), 1
+            when 1 # fill area
+              return if intersect.object in @planes
+        when 1 # middle mouse button => color picker
+          return if intersect.object in @planes
           x = (intersect.object.position.z - 25) / 50
           y = (intersect.object.position.y - 25) / 50
           z = (intersect.object.position.x - 25) / 50
-          delete @voxels[z][y][x]
-          delete @voxels[z][y] if @voxels[z][y].filter((e) -> return e != undefined).length == 0
-          delete @voxels[z] if @voxels[z].filter((e) -> return e != undefined).length == 0
-          @scene.remove intersect.object
-          @objects.splice @objects.indexOf(intersect.object), 1
-      if e.button == 0 # left mouse button => create cube
-        cubeMaterial = new THREE.MeshLambertMaterial color: new THREE.Color($('#addVoxColor').val()), shading: THREE.FlatShading
-        cubeMaterial.ambient = cubeMaterial.color
-        a = parseInt($('#addVoxAlpha').val())
-        t = parseInt($('#addVoxType').val())
-        a = 255 if t in [0, 3] # Solid
-        if t in [1, 2, 4] && $('#addVoxColor').val() != '#ff00ff'
-          cubeMaterial.transparent = true
-          cubeMaterial.opacity = a / 255
-        voxel = new THREE.Mesh new THREE.BoxGeometry(50, 50, 50), cubeMaterial
-        voxel.position.copy(intersect.point).add(intersect.face.normal)
-        voxel.position.divideScalar(50).floor().multiplyScalar(50).addScalar(25)
-        x = (voxel.position.z - 25) / 50
-        y = (voxel.position.y - 25) / 50
-        z = (voxel.position.x - 25) / 50
-        return unless 0 <= x < @x and 0 <= y < @y and 0 <= z < @z
-        @voxels[z] = [] unless @voxels[z]?
-        @voxels[z][y] = [] unless @voxels[z][y]?
-        @voxels[z][y][x] = switch $('#addVoxColor').val()
-          when '#ff00ff' then r: 255, g: 0, b: 255, a: 250, t: 7, s: 7
-          else
-            r: parseInt($('#addVoxColor').val().substring(1, 3),16)
-            g: parseInt($('#addVoxColor').val().substring(3, 5),16)
-            b: parseInt($('#addVoxColor').val().substring(5, 7),16)
-            a: a, t: t, s: parseInt($('#addVoxSpecular').val())
-        @scene.add voxel
-        @objects.push voxel
-      if e.button == 1 # middle mouse button => color picker
-        return if intersect.object in @planes
-        x = (intersect.object.position.z - 25) / 50
-        y = (intersect.object.position.y - 25) / 50
-        z = (intersect.object.position.x - 25) / 50
-        vox = @voxels[z][y][x]
-        $('#addVoxColor').val('#' + new THREE.Color("rgb(#{vox.r},#{vox.g},#{vox.b})").getHexString())
-        return $('#addVoxColor').change() if vox.r == vox.b == 255 and vox.g == 0
-        $('#addVoxAlpha').val(vox.a)
-        $('#addVoxType').val(vox.t)
-        $('#addVoxSpecular').val(vox.s)
-        return $('#addVoxColor').change()
+          vox = @voxels[z][y][x]
+          $('#addVoxColor').val('#' + new THREE.Color("rgb(#{vox.r},#{vox.g},#{vox.b})").getHexString())
+          return $('#addVoxColor').change() if vox.r == vox.b == 255 and vox.g == 0
+          $('#addVoxAlpha').val(vox.a)
+          $('#addVoxType').val(vox.t)
+          $('#addVoxSpecular').val(vox.s)
+          return $('#addVoxColor').change()
       @render()
 
   onDocumentKeyDown: (e) ->

@@ -264,14 +264,39 @@ html(manifest=dev?null:'troxel.appcache')
       div(style='position: absolute; right: 0px; width: 220px; height: 100%; overflow: auto;')
         #addPanel.panel.panel-default(style='display: none;')
           .panel-heading
-            h3.panel-title Add block options
+            h3.panel-title Editing options
           .panel-body
             .form-horizontal
+              .form-group(style='margin-bottom: 5px;')
+                label.col-sm-3.control-label(for='editTool', style='padding-top: 0px;') Tool:
+                .col-sm-9: .btn-group.btn-group-xs(data-toggle='buttons', style='margin-bottom: 5px;')
+                  label.btn.btn-info.active
+                    input.editTool(type='radio', name='editTool', data-edittool=0, checked)
+                    | add/remove
+                  label.btn.btn-info
+                    input.editTool(type='radio', name='editTool', data-edittool=1)
+                    | fill mode
               .form-group(style='margin-bottom: 10px;')
                 label.col-sm-4.control-label(for='addVoxColor') Color:
                 .col-sm-8: .input-group.input-group-sm
                   input#addVoxColor.form-control.input-sm(type='color', value='#ffb248')
                   span.input-group-btn: button#addVoxAP.btn.btn-default AP
+              .form-group(style='margin-bottom: 5px;')
+                label.col-sm-3.control-label(for='editNoise', style='padding-top: 0px;') Noise:
+                .col-sm-9: .btn-group.btn-group-xs(data-toggle='buttons', style='margin-bottom: 5px;')
+                  label.btn.btn-info.active
+                    input.editNoise(type='radio', name='editNoise', data-editnoise=0, checked)
+                    | none
+                  label.btn.btn-info
+                    input.editNoise(type='radio', name='editNoise', data-editnoise=1)
+                    | bright.
+                  label.btn.btn-info
+                    input.editNoise(type='radio', name='editNoise', data-editnoise=2)
+                    | full rgb
+              .form-group#editVoxNoiseGroup(style='margin-bottom: 0px; display: none;')
+                label.col-sm-4.control-label(for='addVoxAlpha', style='padding-top: 0px;') Intensity:
+                .col-sm-8
+                  input#editVoxNoise(type='range', min=0, max=0.5, step=0.01, value=0.2)
               .form-group(style='margin-bottom: 0px;')
                 label.col-sm-4.control-label(for='addVoxAlpha') Alpha:
                 .col-sm-8

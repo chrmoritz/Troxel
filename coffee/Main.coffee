@@ -286,3 +286,10 @@ $('#resizeBtn').click ->
   io.resize(parseInt($('#resizeX').val()), parseInt($('#resizeY').val()), parseInt($('#resizeZ').val()))
   renderer = new Renderer io # ToDo: implement changing dimensions in renderer.reload
   history.pushState {voxels: io.voxels, x: io.x, y: io.y, z: io.z}, 'Troxel', '#m=' + new Base64IO(io).export false
+$($('.editTool')[0]).parent().button('toggle')
+$($('.editNoise')[0]).parent().button('toggle')
+$('.editNoise').change ->
+  switch $(@).data('editnoise')
+    when 0 then $('#editVoxNoiseGroup').hide()
+    when 1, 2 then $('#editVoxNoiseGroup').show()
+
