@@ -205,6 +205,14 @@ class Renderer
               @objects.push voxel
             when 1 # fill single voxel
               return if intersect.object in @planes
+              x = (intersect.object.position.z - 25) / 50
+              y = (intersect.object.position.y - 25) / 50
+              z = (intersect.object.position.x - 25) / 50
+              color = getColor()
+              intersect.object.material.color = intersect.object.material.ambient = color
+              @voxels[z][y][x].r = Math.floor(color.r * 255)
+              @voxels[z][y][x].g = Math.floor(color.g * 255)
+              @voxels[z][y][x].b = Math.floor(color.b * 255)
         when 2 # right mouse button
           switch $('.active .editTool').data('edittool')
             when 0 # delete cube

@@ -206,7 +206,7 @@ $('#modeView').click ->
   renderer.changeEditMode(false)
   $('#addPanel').fadeOut()
 $('#modeEdit').click ->
-  return if io.readonly
+  return if !io? or io.readonly
   $(@).parent().addClass('active')
   $('#modeView').parent().removeClass('active')
   renderer.changeEditMode(true)
