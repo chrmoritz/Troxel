@@ -34,16 +34,16 @@ $('input[type="file"]').change ->
     $('#filetabs li:last a').tab 'show'
     $('#tabdrag ul').empty()
     $('#tabdrag ul').append $ '<li>' + f.name + '</li>' for f in dragFiles
-dropFiles = document.getElementById 'openModal'
-dropFiles.addEventListener 'dragover', (e) ->
+document.addEventListener 'dragover', (e) ->
   e.stopPropagation()
   e.preventDefault()
   e.dataTransfer.dropEffect = 'copy'
-dropFiles.addEventListener 'drop', (e) ->
+document.addEventListener 'drop', (e) ->
   e.stopPropagation()
   e.preventDefault()
   dragFiles = e.dataTransfer.files
   if dragFiles.length > 0
+    $('#openModal').modal 'show'
     $('#dragTab').click()
     $('#tabdrag ul').empty()
     $('#tabdrag ul').append $ '<li>' + f.name + '</li>' for f in dragFiles
