@@ -108,8 +108,13 @@ class Renderer
     for z in [0...@z] by 1
       for y in [0...@y] by 1
         for x in [0...@x] by 1 when @voxels[z]?[y]?[x]?
-          material = new THREE.MeshLambertMaterial color: new THREE.Color("rgb(#{@voxels[z][y][x].r},#{@voxels[z][y][x].g},#{@voxels[z][y][x].b})"), shading: THREE.FlatShading
+          material = new THREE.MeshPhongMaterial color: new THREE.Color("rgb(#{@voxels[z][y][x].r},#{@voxels[z][y][x].g},#{@voxels[z][y][x].b})")
           material.ambient = material.color
+          if @voxels[z][y][x].t in [3, 4] # glowing solid, glowing glass
+            material.emissive = material.color.multiplyScalar 0.5
+          if @voxels[z][y][x].s == 1 # metal
+            material.specular = material.color
+            material.shininess = 50
           if @voxels[z][y][x].t in [1, 2, 4] # glass, tiled glass or glowing glass
             material.transparent = true
             material.opacity = @voxels[z][y][x].a / 255
@@ -155,17 +160,13 @@ class Renderer
     @render()
 
   onDocumentMouseDown: (e) ->
-    getColor = () ->
-      color = new THREE.Color($('#addVoxColor').val())
+    delta = parseFloat $('#editVoxNoise').val()
+    icolor = new THREE.Color($('#addVoxColor').val())
+    getColor = ->
+      color = icolor
       switch $('.active .editNoise').data('editnoise')
-        when 1
-          delta = parseFloat $('#editVoxNoise').val()
-          random = Math.random() * 2 * delta + 1 - delta
-          color.r = color.r * random
-          color.g = color.g * random
-          color.b = color.b * random
+        when 1 then color.multiplyScalar Math.random() * 2 * delta + 1 - delta
         when 2
-          delta = parseFloat $('#editVoxNoise').val()
           color.r = color.r * (Math.random() * 2 * delta + 1 - delta)
           color.g = color.g * (Math.random() * 2 * delta + 1 - delta)
           color.b = color.b * (Math.random() * 2 * delta + 1 - delta)
@@ -182,14 +183,20 @@ class Renderer
           switch $('.active .editTool').data('edittool')
             when 0 # add voxel
               color = getColor()
-              cubeMaterial = new THREE.MeshLambertMaterial color: color, ambient: color, shading: THREE.FlatShading
+              material = new THREE.MeshPhongMaterial color: color, ambient: color
               a = parseInt($('#addVoxAlpha').val())
               t = parseInt($('#addVoxType').val())
+              s = parseInt($('#addVoxSpecular').val())
               a = 255 if t in [0, 3] # Solid
+              if t in [3, 4] # glowing solid, glowing glass
+                material.emissive = material.color.multiplyScalar 0.5
+              if s == 1 # metal
+                material.specular = material.color
+                material.shininess = 50
               if t in [1, 2, 4] && $('#addVoxColor').val() != '#ff00ff'
-                cubeMaterial.transparent = true
-                cubeMaterial.opacity = a / 255
-              voxel = new THREE.Mesh new THREE.BoxGeometry(50, 50, 50), cubeMaterial
+                material.transparent = true
+                material.opacity = a / 255
+              voxel = new THREE.Mesh new THREE.BoxGeometry(50, 50, 50), material
               voxel.position.copy(intersect.point).add(intersect.face.normal)
               voxel.position.divideScalar(50).floor().multiplyScalar(50).addScalar(25)
               x = (voxel.position.z - 25) / 50
@@ -200,7 +207,7 @@ class Renderer
               @voxels[z][y] = [] unless @voxels[z][y]?
               @voxels[z][y][x] = switch $('#addVoxColor').val()
                 when '#ff00ff' then r: 255, g: 0, b: 255, a: 250, t: 7, s: 7
-                else r: Math.floor(color.r * 255), g: Math.floor(color.g * 255), b: Math.floor(color.b * 255), a: a, t: t, s: parseInt($('#addVoxSpecular').val())
+                else r: Math.floor(color.r * 255), g: Math.floor(color.g * 255), b: Math.floor(color.b * 255), a: a, t: t, s: s
               @scene.add voxel
               @objects.push voxel
             when 1 # fill single voxel
@@ -214,19 +221,19 @@ class Renderer
               @voxels[z][y][x].g = Math.floor(color.g * 255)
               @voxels[z][y][x].b = Math.floor(color.b * 255)
         when 2 # right mouse button
+          return if intersect.object in @planes
+          x = (intersect.object.position.z - 25) / 50
+          y = (intersect.object.position.y - 25) / 50
+          z = (intersect.object.position.x - 25) / 50
           switch $('.active .editTool').data('edittool')
             when 0 # delete cube
-              return if intersect.object in @planes
-              x = (intersect.object.position.z - 25) / 50
-              y = (intersect.object.position.y - 25) / 50
-              z = (intersect.object.position.x - 25) / 50
               delete @voxels[z][y][x]
               delete @voxels[z][y] if @voxels[z][y].filter((e) -> return e != undefined).length == 0
               delete @voxels[z] if @voxels[z].filter((e) -> return e != undefined).length == 0
               @scene.remove intersect.object
               @objects.splice @objects.indexOf(intersect.object), 1
             when 1 # fill area
-              return if intersect.object in @planes
+              return
         when 1 # middle mouse button => color picker
           return if intersect.object in @planes
           x = (intersect.object.position.z - 25) / 50

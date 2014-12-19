@@ -269,7 +269,7 @@ html(manifest=dev?null:'troxel.appcache')
             .form-horizontal
               .form-group(style='margin-bottom: 5px;')
                 label.col-sm-3.control-label(for='editTool', style='padding-top: 0px;') Tool:
-                .col-sm-9: .btn-group.btn-group-xs(data-toggle='buttons', style='margin-bottom: 5px;')
+                .col-sm-9(style='padding-right: 0px;'): .btn-group.btn-group-xs(data-toggle='buttons', style='margin-bottom: 5px;')
                   label.btn.btn-info.active
                     input.editTool(type='radio', name='editTool', data-edittool=0, checked)
                     | add/remove
@@ -283,7 +283,7 @@ html(manifest=dev?null:'troxel.appcache')
                   span.input-group-btn: button#addVoxAP.btn.btn-default AP
               .form-group(style='margin-bottom: 5px;')
                 label.col-sm-3.control-label(for='editNoise', style='padding-top: 0px;') Noise:
-                .col-sm-9: .btn-group.btn-group-xs(data-toggle='buttons', style='margin-bottom: 5px;')
+                .col-sm-9(style='padding-right: 0px;'): .btn-group.btn-group-xs(data-toggle='buttons', style='margin-bottom: 5px;')
                   label.btn.btn-info.active
                     input.editNoise(type='radio', name='editNoise', data-editnoise=0, checked)
                     | none
