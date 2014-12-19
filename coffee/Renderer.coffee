@@ -108,23 +108,25 @@ class Renderer
     for z in [0...@z] by 1
       for y in [0...@y] by 1
         for x in [0...@x] by 1 when @voxels[z]?[y]?[x]?
-          material = new THREE.MeshPhongMaterial color: new THREE.Color("rgb(#{@voxels[z][y][x].r},#{@voxels[z][y][x].g},#{@voxels[z][y][x].b})")
-          material.ambient = material.color
-          if @voxels[z][y][x].t in [3, 4] # glowing solid, glowing glass
-            material.emissive = material.color.multiplyScalar 0.5
-          if @voxels[z][y][x].s == 1 # metal
-            material.specular = material.color
-            material.shininess = 50
-          if @voxels[z][y][x].t in [1, 2, 4] # glass, tiled glass or glowing glass
-            material.transparent = true
-            material.opacity = @voxels[z][y][x].a / 255
-          voxel = new THREE.Mesh new THREE.BoxGeometry(50, 50, 50), material
+          color = new THREE.Color("rgb(#{@voxels[z][y][x].r},#{@voxels[z][y][x].g},#{@voxels[z][y][x].b})")
+          voxel = @getVoxel color, @voxels[z][y][x].a, @voxels[z][y][x].t, @voxels[z][y][x].s
           voxel.position.x = z * 50 + 25
           voxel.position.y = y * 50 + 25
           voxel.position.z = x * 50 + 25
           @scene.add voxel
           @objects.push voxel
     @render() unless init
+
+  getVoxel: (color, a, t, s) ->
+    material = new THREE.MeshPhongMaterial color: color, ambient: color
+    if t in [3, 4] # glowing solid, glowing glass
+      material.emissive = material.color.multiplyScalar 0.5
+    if s == 1 # metal
+      material.specular = material.color
+    if t in [1, 2, 4] # glass, tiled glass or glowing glass
+      material.transparent = true
+      material.opacity = a / 255
+    return new THREE.Mesh new THREE.BoxGeometry(50, 50, 50), material
 
   changeEditMode: (@editMode) ->
     if @editMode
@@ -183,20 +185,14 @@ class Renderer
           switch $('.active .editTool').data('edittool')
             when 0 # add voxel
               color = getColor()
-              material = new THREE.MeshPhongMaterial color: color, ambient: color
               a = parseInt($('#addVoxAlpha').val())
               t = parseInt($('#addVoxType').val())
               s = parseInt($('#addVoxSpecular').val())
               a = 255 if t in [0, 3] # Solid
-              if t in [3, 4] # glowing solid, glowing glass
-                material.emissive = material.color.multiplyScalar 0.5
-              if s == 1 # metal
-                material.specular = material.color
-                material.shininess = 50
-              if t in [1, 2, 4] && $('#addVoxColor').val() != '#ff00ff'
-                material.transparent = true
-                material.opacity = a / 255
-              voxel = new THREE.Mesh new THREE.BoxGeometry(50, 50, 50), material
+              if $('#addVoxColor').val() == '#ff00ff'
+                a = 250
+                t = s = 7
+              voxel = @getVoxel color, a, t, s
               voxel.position.copy(intersect.point).add(intersect.face.normal)
               voxel.position.divideScalar(50).floor().multiplyScalar(50).addScalar(25)
               x = (voxel.position.z - 25) / 50
@@ -205,9 +201,7 @@ class Renderer
               return unless 0 <= x < @x and 0 <= y < @y and 0 <= z < @z
               @voxels[z] = [] unless @voxels[z]?
               @voxels[z][y] = [] unless @voxels[z][y]?
-              @voxels[z][y][x] = switch $('#addVoxColor').val()
-                when '#ff00ff' then r: 255, g: 0, b: 255, a: 250, t: 7, s: 7
-                else r: Math.floor(color.r * 255), g: Math.floor(color.g * 255), b: Math.floor(color.b * 255), a: a, t: t, s: s
+              @voxels[z][y][x] = r: Math.floor(color.r * 255), g: Math.floor(color.g * 255), b: Math.floor(color.b * 255), a: a, t: t, s: s
               @scene.add voxel
               @objects.push voxel
             when 1 # fill single voxel
@@ -216,10 +210,24 @@ class Renderer
               y = (intersect.object.position.y - 25) / 50
               z = (intersect.object.position.x - 25) / 50
               color = getColor()
+              a = parseInt($('#addVoxAlpha').val())
+              t = parseInt($('#addVoxType').val())
+              s = parseInt($('#addVoxSpecular').val())
+              a = 255 if t in [0, 3] # Solid
+              if color.r == 1 and color.g == 0 and color.b == 1
+                a = 250
+                t = s = 7
               intersect.object.material.color = intersect.object.material.ambient = color
+              intersect.object.material.emissive = if t in [3, 4] then intersect.object.material.color.multiplyScalar 0.5 else new THREE.Color 0x000000
+              intersect.object.material.specular = if s == 1 then intersect.object.material.color else new THREE.Color 0x111111
+              intersect.object.material.transparent = t in [1, 2, 4]
+              intersect.object.material.opacity = if t in [1, 2, 4] then a / 255 else 1
               @voxels[z][y][x].r = Math.floor(color.r * 255)
               @voxels[z][y][x].g = Math.floor(color.g * 255)
               @voxels[z][y][x].b = Math.floor(color.b * 255)
+              @voxels[z][y][x].a = a
+              @voxels[z][y][x].t = t
+              @voxels[z][y][x].s = s
         when 2 # right mouse button
           return if intersect.object in @planes
           x = (intersect.object.position.z - 25) / 50
