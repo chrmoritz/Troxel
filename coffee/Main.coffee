@@ -8,9 +8,22 @@ if window.applicationCache.status != window.applicationCache.UNCACHED
         (You can reload this page at any time later to update to the new version.)"
         location.reload()
   updatechecker = setInterval (-> window.applicationCache.update()), 600000
-window.onpopstate = ->
-  for e in decodeURI(window.location.hash).replace('#','').split('&')
-    [param, value] = e.split('=')
+window.onpopstate = (e) ->
+  if e?.state?
+    reload = io? and io.x == e.state.x and io.y == e.state.y and io.z == e.state.z
+    io = new IO e.state
+    if !io.readonly? or io.readonly == 0
+      $('#btnExport').show()
+    else
+      $('#btnExport').hide()
+    $('#btnExportPng').show()
+    if reload
+      return renderer.reload io
+    else
+      return renderer = new Renderer io
+  io = null
+  for hash in decodeURI(window.location.hash).replace('#','').split('&')
+    [param, value] = hash.split('=')
     if param == 'm' # load from base64 data
       io = new Base64IO value
       $('#btnExport').hide() if io.readonly == 1
@@ -27,6 +40,8 @@ window.onpopstate = ->
         $('#btnExportPng').show()
         renderer = new Renderer io
       break
+  unless io?
+    $('#WebGlContainer').empty()
 window.onpopstate()
 $('input[type="file"]').change ->
   if $(@).prop('files').length > 1
@@ -231,7 +246,7 @@ $('.moveBtn').click ->
     when '-y' then io.moveY(false, true)
     when  'z' then io.moveZ(true, true)
     when '-z' then io.moveZ(false, true)
-  renderer.reload(io)
+  renderer.reload io
   history.pushState {voxels: io.voxels, x: io.x, y: io.y, z: io.z}, 'Troxel', '#m=' + new Base64IO(io).export false
 $('.mirrorBtn').click ->
   return unless io?
@@ -239,7 +254,7 @@ $('.mirrorBtn').click ->
     when 'x' then io.mirrorX(true)
     when 'y' then io.mirrorY(true)
     when 'z' then io.mirrorZ(true)
-  renderer.reload(io)
+  renderer.reload io
   history.pushState {voxels: io.voxels, x: io.x, y: io.y, z: io.z}, 'Troxel', '#m=' + new Base64IO(io).export false
 $('.panel-heading').click ->
   $(@).next().toggle()

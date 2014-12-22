@@ -162,6 +162,7 @@ class Renderer
     @render()
 
   onDocumentMouseDown: (e) ->
+    return if !@editMode or $('#openModal').css('display') == 'block' or $('#exportModal').css('display') == 'block' or $('#saveModal').css('display') == 'block'
     delta = parseFloat $('#editVoxNoise').val()
     icolor = new THREE.Color($('#addVoxColor').val())
     getColor = ->
@@ -173,7 +174,6 @@ class Renderer
           color.g = color.g * (Math.random() * 2 * delta + 1 - delta)
           color.b = color.b * (Math.random() * 2 * delta + 1 - delta)
       return color
-    return if !@editMode or $('#openModal').css('display') == 'block' or $('#exportModal').css('display') == 'block' or $('#saveModal').css('display') == 'block'
     @vector.set (e.clientX / @width) * 2 - 1, -((e.clientY - 50) / @height) * 2 + 1, 0.5
     @vector.unproject @camera
     @raycaster.ray.set @camera.position, @vector.sub(@camera.position).normalize()
