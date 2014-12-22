@@ -254,6 +254,8 @@ class Renderer
           $('#addVoxType').val(vox.t)
           $('#addVoxSpecular').val(vox.s)
           return $('#addVoxColor').change()
+      io = {voxels: @voxels, x: @x, y: @y, z: @z}
+      history.pushState io, 'Troxel', '#m=' + new Base64IO(io).export false
       @render()
 
   onDocumentKeyDown: (e) ->
