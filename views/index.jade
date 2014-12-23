@@ -211,7 +211,7 @@ html(manifest=dev?null:'troxel.appcache')
                 a#exportVox.btn.btn-primary.btn-lg.btn-block(download='Model.vox') Export as Magica Voxel (.vox) ...
               #tabexbase64.tab-pane.fade
                 .checkbox
-                  label
+                  label(data-toggle='tooltip', data-placement='right', data-container='body', title='disables exports and edits of your voxel model if checked')
                     input#exportBase64Ro(type='checkbox')
                     | readonly
                 button#exportBase64.btn.btn-primary.btn-lg.btn-block Export as Troxel Link
@@ -270,27 +270,27 @@ html(manifest=dev?null:'troxel.appcache')
               .form-group(style='margin-bottom: 5px;')
                 label.col-sm-3.control-label(for='editTool', style='padding-top: 0px;') Tool:
                 .col-sm-9(style='padding-right: 0px;'): .btn-group.btn-group-xs(data-toggle='buttons', style='margin-bottom: 5px;')
-                  label.btn.btn-info.active
+                  label.btn.btn-info.active(data-toggle='tooltip', data-container='body', data-placement='left', title='LMB = add voxel | RMB = remove voxel | MMB = pick voxel')
                     input.editTool(type='radio', name='editTool', data-edittool=0, checked)
                     | add/remove
-                  label.btn.btn-info
+                  label.btn.btn-info(data-toggle='tooltip', data-container='body', data-placement='left', title='LMB = fill single voxel | RMB = fill connected voxels | MMB = pick voxel')
                     input.editTool(type='radio', name='editTool', data-edittool=1)
                     | fill mode
               .form-group(style='margin-bottom: 10px;')
                 label.col-sm-4.control-label(for='addVoxColor') Color:
                 .col-sm-8: .input-group.input-group-sm
                   input#addVoxColor.form-control.input-sm(type='color', value='#ffb248')
-                  span.input-group-btn: button#addVoxAP.btn.btn-default AP
+                  span.input-group-btn: button#addVoxAP.btn.btn-default(data-toggle='tooltip', data-container='body', data-placement='left', title='adds an attachment point') AP
               .form-group(style='margin-bottom: 5px;')
                 label.col-sm-3.control-label(for='editNoise', style='padding-top: 0px;') Noise:
                 .col-sm-9(style='padding-right: 0px;'): .btn-group.btn-group-xs(data-toggle='buttons', style='margin-bottom: 5px;')
-                  label.btn.btn-info.active
+                  label.btn.btn-info.active(data-toggle='tooltip', data-container='body', data-placement='left', title='no noise in voxel color')
                     input.editNoise(type='radio', name='editNoise', data-editnoise=0, checked)
                     | none
-                  label.btn.btn-info
+                  label.btn.btn-info(data-toggle='tooltip', data-container='body', data-placement='left', title='voxels differ a little bit in brightness')
                     input.editNoise(type='radio', name='editNoise', data-editnoise=1)
                     | bright.
-                  label.btn.btn-info
+                  label.btn.btn-info(data-toggle='tooltip', data-container='body', data-placement='left', title='voxels differ a little bit in color')
                     input.editNoise(type='radio', name='editNoise', data-editnoise=2)
                     | full rgb
               .form-group#editVoxNoiseGroup(style='margin-bottom: 0px; display: none;')
@@ -319,7 +319,7 @@ html(manifest=dev?null:'troxel.appcache')
                     option(value=1) metal
                     option(value=2) water
                     option(value=3) iridescent
-            button#openResizeModal.btn.btn-default.btn-sm.btn-block(style='margin: 10px 0px -13px;', data-toggle='modal', data-target='#resizeModal') resize voxel model
+            button#openResizeModal.btn.btn-default.btn-sm.btn-block(style='margin: 10px 0px -13px;', data-toggle='modal', data-target='#resizeModal', ) resize voxel model
         .panel.panel-default
           .panel-heading
             h3.panel-title Light options
@@ -339,7 +339,7 @@ html(manifest=dev?null:'troxel.appcache')
                 label.col-sm-4.control-label(for='dirLightIntensity') Intensity:
                 .col-sm-8
                   input#dirLightIntensity(type='range', min=0, max=5, step=0.1, value=1, style='margin-top: 5px;')
-            .input-group.input-group-sm(style='margin: 0px -8px 5px;')
+            .input-group.input-group-sm(style='margin: 0px -8px 5px;', data-toggle='tooltip', data-container='body', data-placement='left', title='normal vector for the direction of the directional light')
               span.input-group-addon(style='padding: 5px;') x:
               input#dirLightX.form-control(type='text', value='1', style='padding: 5px;')
               span.input-group-addon(style='padding: 5px;') y:
@@ -357,20 +357,20 @@ html(manifest=dev?null:'troxel.appcache')
                 label.col-sm-5.control-label x-axis:
                 .col-sm-7
                   .btn-group.btn-group-sm
-                    button.rotateBtn.btn.btn-default(data-rotate='x') up
-                    button.rotateBtn.btn.btn-default(data-rotate='-x') down
+                    button.rotateBtn.btn.btn-default(data-rotate='x', data-toggle='tooltip', data-container='body', data-placement='left', title='rotate the voxel model up') up
+                    button.rotateBtn.btn.btn-default(data-rotate='-x', data-toggle='tooltip', data-container='body', data-placement='left', title='rotate the voxel model down') down
               .form-group(style='margin-bottom: 10px;')
                 label.col-sm-5.control-label y-axis:
                 .col-sm-7
                   .btn-group.btn-group-sm
-                    button.rotateBtn.btn.btn-default(data-rotate='y') left
-                    button.rotateBtn.btn.btn-default(data-rotate='-y') right
+                    button.rotateBtn.btn.btn-default(data-rotate='y', data-toggle='tooltip', data-container='body', data-placement='left', title='rotate the voxel model left') left
+                    button.rotateBtn.btn.btn-default(data-rotate='-y', data-toggle='tooltip', data-container='body', data-placement='left', title='rotate the voxel model right') right
               .form-group(style='margin-bottom: 0px;')
                 label.col-sm-5.control-label z-axis:
                 .col-sm-7
                   .btn-group.btn-group-sm
-                    button.rotateBtn.btn.btn-default(data-rotate='z') cw
-                    button.rotateBtn.btn.btn-default(data-rotate='-z') acw
+                    button.rotateBtn.btn.btn-default(data-rotate='z', data-toggle='tooltip', data-container='body', data-placement='left', title='rotate the voxel model clockwise') cw
+                    button.rotateBtn.btn.btn-default(data-rotate='-z', data-toggle='tooltip', data-container='body', data-placement='left', title='rotate the voxel model counterclockwise') ccw
         .panel.panel-default
           .panel-heading
             h3.panel-title Move model
@@ -380,27 +380,27 @@ html(manifest=dev?null:'troxel.appcache')
                 label.col-sm-5.control-label x-axis:
                 .col-sm-7
                   .btn-group.btn-group-sm
-                    button.moveBtn.btn.btn-default(data-move='x') left
-                    button.moveBtn.btn.btn-default(data-move='-x') right
+                    button.moveBtn.btn.btn-default(data-move='x', data-toggle='tooltip', data-container='body', data-placement='left', title='move the voxel model one voxel left') left
+                    button.moveBtn.btn.btn-default(data-move='-x', data-toggle='tooltip', data-container='body', data-placement='left', title='move the voxel model one voxel right') right
               .form-group(style='margin-bottom: 10px;')
                 label.col-sm-5.control-label y-axis:
                 .col-sm-7
                   .btn-group.btn-group-sm
-                    button.moveBtn.btn.btn-default(data-move='-y') up
-                    button.moveBtn.btn.btn-default(data-move='y') down
+                    button.moveBtn.btn.btn-default(data-move='-y', data-toggle='tooltip', data-container='body', data-placement='left', title='move the voxel model one voxel up') up
+                    button.moveBtn.btn.btn-default(data-move='y', data-toggle='tooltip', data-container='body', data-placement='left', title='move the voxel model one voxel down') down
               .form-group(style='margin-bottom: 0px;')
                 label.col-sm-5.control-label z-axis:
                 .col-sm-7
                   .btn-group.btn-group-sm
-                    button.moveBtn.btn.btn-default(data-move='z') fw
-                    button.moveBtn.btn.btn-default(data-move='-z') back
+                    button.moveBtn.btn.btn-default(data-move='z', data-toggle='tooltip', data-container='body', data-placement='left', title='move the voxel model one voxel to the front') fw
+                    button.moveBtn.btn.btn-default(data-move='-z', data-toggle='tooltip', data-container='body', data-placement='left', title='move the voxel model one voxel to the back') back
         .panel.panel-default
           .panel-heading
             h3.panel-title Mirror model
           .btn-group-vertical.btn-group-sm(style='width: 100%;')
-            button.mirrorBtn.btn.btn-default(data-mirror='x') Mirror x-axis
-            button.mirrorBtn.btn.btn-default(data-mirror='y') Mirror y-axis
-            button.mirrorBtn.btn.btn-default(data-mirror='z') Mirror z-axis
+            button.mirrorBtn.btn.btn-default(data-mirror='x', data-toggle='tooltip', data-container='body', data-placement='left', title='mirror the voxel model in x-axis') Mirror x-axis
+            button.mirrorBtn.btn.btn-default(data-mirror='y', data-toggle='tooltip', data-container='body', data-placement='left', title='mirror the voxel model in y-axis') Mirror y-axis
+            button.mirrorBtn.btn.btn-default(data-mirror='z', data-toggle='tooltip', data-container='body', data-placement='left', title='mirror the voxel model in z-axis') Mirror z-axis
 
     script(src='static/jquery-2.1.1.min.js', type='text/javascript')
     script(src='static/bootstrap.min.js', type='text/javascript')
