@@ -73,7 +73,7 @@ LibTroxel is licensed under the same license as Troxel, the [GNU LGPL v3.0](LICE
 In addition to libTroxel, you will need to have these JavaScript libaries loaded: JQuery, Three.js and it's OrbitalControlls. If you want to use our github pages site as a CDN just add these lines to your html:
 
 ```html
-<script src="https://chrmoritz.github.io/Troxel/static/jquery-2.1.1.min.js" type="text/javascript"></script>
+<script src="https://chrmoritz.github.io/Troxel/static/jquery.min.js" type="text/javascript"></script>
 <script src="https://chrmoritz.github.io/Troxel/static/three.min.js" type="text/javascript"></script>
 <script src="https://chrmoritz.github.io/Troxel/static/OrbitControls.min.js" type="text/javascript"></script>
 <script src="https://chrmoritz.github.io/Troxel/static/libTroxel.min.js" type="text/javascript"></script>
