@@ -66,9 +66,11 @@ class Renderer
     # Lights
     @ambientLight = new THREE.AmbientLight 0x606060
     @scene.add @ambientLight
-    @directionalLight = new THREE.DirectionalLight 0xffffff
+    @directionalLight = new THREE.DirectionalLight 0xffffff, 0.3
     @directionalLight.position.set(-0.5, -0.5, 1).normalize()
     @scene.add @directionalLight
+    @spotLight = new THREE.SpotLight 0xffffff, 0.8, 10000
+    @scene.add @spotLight
     @renderer = new THREE.WebGLRenderer antialias: true
     @renderer.setClearColor 0x888888
     @renderer.setSize @width, @height
@@ -122,7 +124,7 @@ class Renderer
     if t in [3, 4] # glowing solid, glowing glass
       material.emissive = material.color.multiplyScalar 0.5
     if s == 1 # metal
-      material.specular = material.color
+      material.specular = material.color.multiplyScalar 0.5
     if t in [1, 2, 4] # glass, tiled glass or glowing glass
       material.transparent = true
       material.opacity = a / 255
@@ -145,6 +147,7 @@ class Renderer
     @stats.update() unless @embedded
 
   render: (exportPng) ->
+    @spotLight.position.copy @camera.position
     @renderer.render @scene, @camera
     window.open @renderer.domElement.toDataURL('image/png'), 'Exported png' if exportPng
 

@@ -1,4 +1,4 @@
-Troxel [![Build Status](https://travis-ci.org/chrmoritz/Troxel.svg?branch=master)](https://travis-ci.org/chrmoritz/Troxel)
+Troxel [![Build Status](https://travis-ci.org/chrmoritz/Troxel.svg?branch=master)](https://travis-ci.org/chrmoritz/Troxel) [![Dependency Status](https://david-dm.org/chrmoritz/Troxel.svg)](https://david-dm.org/chrmoritz/Troxel)
 ======
 
 Troxel is a WebGL-based HTML5-WebApp for viewing and editing voxel models with some additional support for [Trove](http://www.trionworlds.com/trove/) specific features.  Visit [chrmoritz.github.io/Troxel/](http://chrmoritz.github.io/Troxel/) to try it out! You can embed Troxel in your own website too with [libTroxel](#libtroxel).
