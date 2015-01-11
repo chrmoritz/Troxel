@@ -1,0 +1,24 @@
+{
+  "name": "Troxel",
+  "version": "0.2.0",
+  "homepage": "https://chrmoritz.github.io/Troxel/",
+  "authors": [
+    "Christian Moritz <chrmoritz@gmail.com>"
+  ],
+  "description": "WebGL-based voxel viewer and editor",
+  "license": "LGPL-3.0",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test"
+  ],
+  "dependencies": {
+    "catiline": "calvinmetcalf/catiline#~2.9",
+    "stats.min": "https://raw.githubusercontent.com/mrdoob/three.js/master/examples/js/libs/stats.min.js",
+    "typehead.js": "~0.10",
+    "bootstrap": "~3.3",
+    "OrbitControls": "https://raw.githubusercontent.com/mrdoob/three.js/dev/examples/js/controls/OrbitControls.js"
+  }
+}
