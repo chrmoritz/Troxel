@@ -92,7 +92,7 @@ module.exports = (grunt) ->
   grunt.loadNpmTasks 'grunt-contrib-concat'
   grunt.loadNpmTasks 'grunt-contrib-copy'
 
-  grunt.registerTask 'default', ['mochaTest', 'coffeelint', 'clean', 'coffee', 'uglify:main', 'jade']
+  grunt.registerTask 'default', ['mochaTest', 'coffeelint', 'build']
   grunt.registerTask 'mocha', 'mochaTest'
   grunt.registerTask 'test', 'mochaTest'
   grunt.registerTask 'lint', 'coffeelint'

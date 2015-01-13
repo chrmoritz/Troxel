@@ -4,9 +4,12 @@ node_js:
   - '0.10'
 install:
   - npm update
+  - npm install -g bower
+  - bower update
 cache:
   directories:
     - node_modules
+    - bower_components
 deploy:
   provider: heroku
   api_key:
