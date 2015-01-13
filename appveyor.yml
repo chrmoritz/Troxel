@@ -1,0 +1,23 @@
+version: "{build}"
+
+init:
+  - git config --global core.autocrlf input
+
+install:
+  - ps: Install-Product node 0.10
+  - node --version
+  - npm --version
+  - npm install -g grunt-cli
+  - npm install -g bower
+  - npm update
+  - bower update
+
+test_script:
+  - ps: "npm test # PowerShell"
+  - cmd: npm test
+
+cache:
+  - node_modules
+  - bower_components
+
+build: off
