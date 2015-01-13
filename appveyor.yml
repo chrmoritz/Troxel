@@ -13,7 +13,6 @@ install:
 
 test_script:
   - cmd: npm test
-  - ps: "npm test # PowerShell"
 
 cache:
   - node_modules
