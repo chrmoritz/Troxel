@@ -15,28 +15,30 @@
   },
   "scripts": {
     "start": "coffee server.coffee",
-    "test": "npm run mocha && npm run lint && npm run build",
-    "mocha": "mocha -t 5000 --compilers coffee:coffee-script/register",
-    "lint": "coffeelint -f coffeelint.json coffee/*",
+    "test": "grunt",
+    "build": "grunt build",
     "serve": "jekyll serve --baseurl /Troxel -ws dist",
-    "build": "npm run build-clean && npm run build-coffee && npm run build-jade && npm run build-static",
-    "build-clean": "rm -rf dist/* && mkdir -p dist/static && rm -rf js/*",
-    "build-coffee": "coffee -co js coffee && uglifyjs js/IO.js js/Qubicle.io.js js/Magica.io.js js/Zoxel.io.js js/Troxel.io.js js/Renderer.js js/Main.js --screw-ie8 -cmeo dist/static/troxel.min.js && npm run build-lib",
-    "build-lib": "uglifyjs js/IO.js js/Troxel.io.js js/Renderer.js js/libTroxel.js --screw-ie8 -cmeo dist/static/libTroxel.min.js && echo '/*!\n * libTroxel (https://github.com/chrmoritz/Troxel)\n * Copyright 2014 Christian Moritz\n * Licensed under GNU LGPL v3.0 (https://github.com/chrmoritz/Troxel/blob/master/LICENSE.txt)\n */' | cat - dist/static/libTroxel.min.js > tmp && mv tmp dist/static/libTroxel.min.js",
-    "build-jade": "jade -o dist views/index.jade",
-    "build-static": "echo 'callback(' > static/Trove.jsonp && cat static/Trove.json >> static/Trove.jsonp && echo ');' >> static/Trove.jsonp && cp -r static dist && mv dist/static/troxel.appcache dist",
-	"import": "coffee tools/Importer.coffee"
+    "import": "coffee tools/Importer.coffee"
   },
   "author": "Christian Moritz",
   "license": "LGPL-3.0",
   "dependencies": {
-    "coffee-script": "~1.8",
-    "coffeelint": "~1.8",
-    "connect-assets": "~4.3",
-    "express": "~4.10",
-    "jade": "~1.8",
-    "mocha": "~2.1",
-    "should": "~4.5",
-    "uglify-js": "~2.4"
+    "coffee-script": "^1.8.0",
+    "coffeelint": "^1.8.1",
+    "connect-assets": "^4.3.3",
+    "express": "^4.10.7",
+    "grunt": "^0.4.5",
+    "grunt-cli": "^0.1.13",
+    "grunt-coffeelint": "0.0.13",
+    "grunt-contrib-clean": "^0.6.0",
+    "grunt-contrib-coffee": "^0.12.0",
+    "grunt-contrib-concat": "^0.5.0",
+    "grunt-contrib-copy": "^0.7.0",
+    "grunt-contrib-jade": "^0.14.0",
+    "grunt-contrib-uglify": "^0.7.0",
+    "grunt-mocha-test": "^0.12.6",
+    "jade": "^1.8.2",
+    "mocha": "^2.1.0",
+    "should": "^4.5.1"
   }
 }

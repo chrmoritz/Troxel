@@ -5,7 +5,7 @@ util = require 'util'
 console.log = (t) -> process.stdout.write(util.format.apply(util, arguments) + '\n') if t && t.indexOf && ~t.indexOf '%' # supress console.log output
 
 global.URL = createObjectURL: (b) -> b
-global.Blob = (@ab, @options) ->
+global.Blob = (@ab, @options) -> return
 global.atob = (a) -> new Buffer(a, 'base64').toString('binary')
 global.btoa = (b) -> new Buffer(b, 'binary').toString('base64')
 

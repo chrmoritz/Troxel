@@ -9,7 +9,6 @@ cpus = require('os').cpus().length
 SKIP_BLUEPRINTS = ['gm_prop_dungeon_largeblocker.blueprint', 'char_dream_monster_noise_large_torso.blueprint']
 
 models = {}
-jsonPath = process.cwd() + '/static/Trove.json'
 process.chdir(process.argv[2] || 'C:/Program Files/Trove/')
 fs.readdir 'blueprints', (err, files) ->
   throw err if err?
@@ -17,7 +16,7 @@ fs.readdir 'blueprints', (err, files) ->
   failedBlueprints = []
   processedOne = ->
     if --toProcess == 0
-      fs.writeFile jsonPath, JSON.stringify(models), -> thow err if err?
+      fs.writeFile 'tools/Trove.json', JSON.stringify(models), -> thow err if err?
       count = Object.keys(models).length
       process.stdout.write "base64 data of #{count} blueprints successfully written to static/Trove.json\nskipped broken blueprints:\n\n"
       process.stdout.write "#{bp}, " for bp in failedBlueprints
