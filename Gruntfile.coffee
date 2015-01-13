@@ -19,7 +19,7 @@ module.exports = (grunt) ->
     },
     clean: {
       js: 'js',
-      dist: 'dist',
+      dist: 'dist/*',
       static: 'static'
     },
     coffee: {
