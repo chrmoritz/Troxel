@@ -12,11 +12,11 @@ Troxel is a WebGL-based HTML5-WebApp for viewing and editing voxel models with s
   * JSON: raw data output
   * some additions for material maps (multi-layer voxel data) used by Trove
 * WebGL-based 3D-Renderer
-  * basic support for alpha layer
-  * (type and specular are not yet supported)
+  * basic support for all material maps
 * Editor
   * simple add and remove voxel functionality
-  * rotate and mirror model
+  * rotate, mirror, move and resize voxel model
+  * filltool with color noise
 
 ## How to use
 #### Installing
@@ -24,6 +24,9 @@ Troxel is a WebGL-based HTML5-WebApp for viewing and editing voxel models with s
 git clone git@github.com:chrmoritz/Troxel.git
 cd Troxel
 npm update
+npm install -g bower
+bower update
+npm run build
 ```
 ##### Dependencies:
 * [Node.js](http://nodejs.org/) 0.10
@@ -70,12 +73,10 @@ LibTroxel is licensed under the same license as Troxel, the [GNU LGPL v3.0](LICE
 
 #### Dependencies
 
-In addition to libTroxel, you will need to have these JavaScript libaries loaded: JQuery, Three.js and it's OrbitalControlls. If you want to use our github pages site as a CDN just add these lines to your html:
+In addition to libTroxel, you will need to include JQuery into your site. If you want to use our github pages site as a CDN just add these lines to your html:
 
 ```html
 <script src="https://chrmoritz.github.io/Troxel/static/jquery.min.js" type="text/javascript"></script>
-<script src="https://chrmoritz.github.io/Troxel/static/three.min.js" type="text/javascript"></script>
-<script src="https://chrmoritz.github.io/Troxel/static/OrbitControls.min.js" type="text/javascript"></script>
 <script src="https://chrmoritz.github.io/Troxel/static/libTroxel.min.js" type="text/javascript"></script>
 ```
 

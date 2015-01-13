@@ -19,7 +19,8 @@ module.exports = (grunt) ->
     },
     clean: {
       js: 'js',
-      dist: 'dist'
+      dist: 'dist',
+      static: 'static'
     },
     coffee: {
       glob_to_multiple: {
@@ -27,7 +28,8 @@ module.exports = (grunt) ->
         cwd: 'coffee',
         src: '*.coffee',
         dest: 'js/',
-        ext: '.js'
+        ext: '.js',
+        extDot: 'last'
       }
     },
     uglify: {
@@ -39,14 +41,16 @@ module.exports = (grunt) ->
       },
       controls: {
         options: {banner: '// threejs.org/license\n'},
-        files: {'dist/static/OrbitControls.min.js': 'bower_components/OrbitControls/index.js'}
+        files: {'static/OrbitControls.min.js': 'bower_components/OrbitControls/index.js'}
       }
       lib: {
         options: {
+          mangle: false,
           banner: '/*!\n * libTroxel (https://github.com/chrmoritz/Troxel)\n * Copyright 2014 Christian Moritz\n * ' +
                   'Licensed under GNU LGPL v3.0 (https://github.com/chrmoritz/Troxel/blob/master/LICENSE.txt)\n */\n'
         },
-        files: {'dist/static/libTroxel.min.js': ['js/IO.js', 'js/Troxel.io.js', 'js/Renderer.js', 'js/libTroxel.js']}
+        files: {'dist/static/libTroxel.min.js': ['js/IO.js', 'js/Troxel.io.js', 'js/Renderer.js', 'js/libTroxel.js',
+                          'bower_components/threejs/build/three.min.js', 'bower_components/OrbitControls/index.js']}
       }
     },
     jade: {
@@ -65,16 +69,17 @@ module.exports = (grunt) ->
       }
     },
     copy: {
-      json: {src: 'tools/Trove.json', dest: 'dist/static/Trove.json'},
+      json: {src: 'tools/Trove.json', dest: 'static/Trove.json'},
       appcache: {src: 'troxel.appcache', dest: 'dist/troxel.appcache'},
-      bs_css: {src: 'bower_components/bootstrap/dist/css/bootstrap.min.css', dest: 'dist/static/bootstrap.min.css'},
-      bs_theme: {src: 'bower_components/bootstrap/dist/css/bootstrap-theme.min.css', dest: 'dist/static/bootstrap-theme.min.css'},
-      bs_js: {src: 'bower_components/bootstrap/dist/js/bootstrap.min.js', dest: 'dist/static/bootstrap.min.js'},
-      catiline: {src: 'bower_components/catiline/dist/catiline.min.js', dest: 'dist/static/catiline.min.js'},
-      jquery: {src: 'bower_components/jquery/dist/jquery.min.js', dest: 'dist/static/jquery.min.js'},
-      stats: {src: 'bower_components/stats.min/index.js', dest: 'dist/static/stats.min.js'},
-      threejs: {src: 'bower_components/threejs/build/three.min.js', dest: 'dist/static/three.min.js'},
-      typeahead: {src: 'bower_components/typehead.js/dist/typeahead.bundle.min.js', dest: 'dist/static/typeahead.min.js'}
+      bs_css: {src: 'bower_components/bootstrap/dist/css/bootstrap.min.css', dest: 'static/bootstrap.min.css'},
+      bs_theme: {src: 'bower_components/bootstrap/dist/css/bootstrap-theme.min.css', dest: 'static/bootstrap-theme.min.css'},
+      bs_js: {src: 'bower_components/bootstrap/dist/js/bootstrap.min.js', dest: 'static/bootstrap.min.js'},
+      catiline: {src: 'bower_components/catiline/dist/catiline.min.js', dest: 'static/catiline.min.js'},
+      jquery: {src: 'bower_components/jquery/dist/jquery.min.js', dest: 'static/jquery.min.js'},
+      stats: {src: 'bower_components/stats.min/index.js', dest: 'static/stats.min.js'},
+      threejs: {src: 'bower_components/threejs/build/three.min.js', dest: 'static/three.min.js'},
+      typeahead: {src: 'bower_components/typehead.js/dist/typeahead.bundle.min.js', dest: 'static/typeahead.min.js'},
+      dist: {src: 'static/*', dest: 'dist/'}
     }
   }
 
@@ -87,7 +92,7 @@ module.exports = (grunt) ->
   grunt.loadNpmTasks 'grunt-contrib-concat'
   grunt.loadNpmTasks 'grunt-contrib-copy'
 
-  grunt.registerTask 'default', ['mochaTest', 'coffeelint', 'build']
+  grunt.registerTask 'default', ['mochaTest', 'coffeelint', 'clean', 'coffee', 'uglify:main', 'jade']
   grunt.registerTask 'mocha', 'mochaTest'
   grunt.registerTask 'test', 'mochaTest'
   grunt.registerTask 'lint', 'coffeelint'

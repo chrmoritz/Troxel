@@ -1,6 +1,7 @@
 dist
 _site
 js
+static
 Renderer_old.coffee
 Renderer2_old.coffee
 static/Trove.jsonp
