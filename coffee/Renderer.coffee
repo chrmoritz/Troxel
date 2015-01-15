@@ -1,7 +1,7 @@
 class Renderer
   constructor: (io, @embedded = false, @domContainer = $('#WebGlContainer')) ->
     @width = @domContainer.width()
-    @height = @domContainer.height() - 5
+    @height = @domContainer.height() - (if @embedded then 0 else 5)
     @scene = new THREE.Scene()
     @objects = []
     @reload io, true
@@ -284,7 +284,7 @@ class Renderer
 
   onWindowResize: ->
     @width = @domContainer.width()
-    @height = @domContainer.height() - 5
+    @height = @domContainer.height() - (if @embedded then 0 else 5)
     @camera.aspect = @width / @height
     @camera.updateProjectionMatrix()
     @renderer.setSize @width, @height

@@ -23,9 +23,14 @@ window.Troxel =
     renderer.directionalLight.intensity = options.directionalLightIntensity if options.directionalLightIntensity?
     if options.directionalLightVector? && options.directionalLightVector.x? && options.directionalLightVector.y? && options.directionalLightVector.z?
       renderer.directionalLight.position.set(options.directionalLightVector.x, options.directionalLightVector.y, options.directionalLightVector.z).normalize()
+    renderer.spotLight.color = new THREE.Color options.spotLightColor if options.spotLightColor?
+    renderer.spotLight.intensity = options.spotLightIntensity if options.spotLightIntensity?
     if !options.autoRotate? || options.autoRotate
       renderer.controls.autoRotate = true
       renderer.controls.autoRotateSpeed = options.autoRotateSpeed if options.autoRotateSpeed?
+    renderer.controls.noZoom = true if options.noZoom? and options.noZoom
+    renderer.controls.noPan = true if options.noPan? and options.noPan
+    renderer.controls.noRotate = true if options.noRotate? and options.noRotate
     if !options.showInfoLabel? || options.showInfoLabel
       link = if blueprintId? then '#b=' + blueprintId else '#m=' + base64
       info = $("<div><a href='http://chrmoritz.github.io/Troxel/#{link}' target='_blank' class='troxelLink'>Open this model in Troxel</a></div>")

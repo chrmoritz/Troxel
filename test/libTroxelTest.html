@@ -9,12 +9,17 @@
     <script type="text/javascript">
       Troxel.renderBlueprint('deco_candy_torch_mallow[Laoge]', $('#container'), {
         autoRotate: true, // default to true (auto rotate enabled)
-        autoRotateSpeed: 4.0, // default to 2.0 (30 seconds per round when fps is 60)
+        autoRotateSpeed: -4.0, // default to 2.0 (30 seconds per round when fps is 60)
         rendererClearColor: 0x9c9c9c, // default to 0x888888
         ambientLightColor: 0x707070, // default to 0x606060
         directionalLightColor: 0xeeeeee, // default to 0xffffff
-        directionalLightIntensity: 0.9, // default to 1.0
-        directionalLightVector: {x: 0.58, y: 0.58, z: 0.58}, // default to (1, 0.75, 0.5) (don't need to be a normal vector)
+        directionalLightIntensity: 0.9, // default to 0.3
+        directionalLightVector: {x: 0.58, y: 0.58, z: 0.58}, // default to (-0.5, -0.5, 1) (don't need to be a normal vector)
+        spotLightColor: 0xffaaaa, // default to 0xffffff
+        spotLightIntensity: 1.0, // default to 0.8
+        noRotate: false, // default to false
+        noPan: false, // default to false
+        noZoom: false, // default to false
         showInfoLabel: true // you can hide the 'Open this model in Troxel' link if you want to move it somewhere else in your layout
       });
     </script>

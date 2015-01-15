@@ -12,7 +12,7 @@ static/three.min.js
 static/bootstrap-theme.min.css
 static/bootstrap.min.css
 static/bootstrap.min.js
-static/jquery-2.1.1.min.js
+static/jquery.min.js
 static/troxel.min.js
 static/catiline.min.js
 static/OrbitControls.min.js
