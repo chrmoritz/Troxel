@@ -266,9 +266,17 @@ $('#dirLightColor').val('#ffffff').change ->
   return unless io?
   renderer.directionalLight.color = new THREE.Color($(@).val())
   renderer.render()
-$('#dirLightIntensity').val(1).change ->
+$('#dirLightIntensity').val(0.3).change ->
   return unless io?
   renderer.directionalLight.intensity = $(@).val()
+  renderer.render()
+$('#spotLightColor').val('#ffffff').change ->
+  return unless io?
+  renderer.spotLight.color = new THREE.Color($(@).val())
+  renderer.render()
+$('#spotLightIntensity').val(0.8).change ->
+  return unless io?
+  renderer.spotLight.intensity = $(@).val()
   renderer.render()
 $('#dirLightX').val('-0.5')
 $('#dirLightY').val('-0.5')
