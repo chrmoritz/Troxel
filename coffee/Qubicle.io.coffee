@@ -143,6 +143,7 @@ class QubicleIO extends IO
   addColorValues: (x, y, z, r, g, b) ->
     @voxels[z] = [] unless @voxels[z]?
     @voxels[z][y] = [] unless @voxels[z][y]?
+    return @voxels[z][y][x] = {r: 255, g: 0, b: 255, a: 250, t: 7, s: 7} if r == b == 255 and g == 0 # attachment point
     @voxels[z][y][x] = {r: r, g: g, b: b, a: 255, t: 0, s: 0}
 
   addAlphaValues: (x, y, z, r, g, b) ->
