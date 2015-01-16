@@ -19,7 +19,8 @@
     "stats.min": "https://raw.githubusercontent.com/mrdoob/three.js/master/examples/js/libs/stats.min.js",
     "typehead.js": "~0.10",
     "bootstrap": "~3.3",
-    "OrbitControls": "https://raw.githubusercontent.com/mrdoob/three.js/dev/examples/js/controls/OrbitControls.js",
-    "threejs": "r69"
+    "OrbitControls": "https://raw.githubusercontent.com/mrdoob/three.js/master/examples/js/controls/OrbitControls.js",
+    "threejs": "r70",
+    "jquery": "~2.1.3"
   }
 }
