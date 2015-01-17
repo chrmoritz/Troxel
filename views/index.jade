@@ -91,27 +91,27 @@ html(manifest=dev?null:'troxel.appcache')
                 .form-horizontal
                   .form-group
                     label.col-sm-3.control-label(for='fqb') Main mesh (*.qb):
-                    .col-sm-9: input#fqb(type='file', multiple)
+                    .col-sm-9: input#fqb(type='file', accept='.qb', style='margin-top: 5px;', multiple)
                   .form-group
                     label.col-sm-3.control-label(for='fqba') Alpha map (*_a.qb):
-                    .col-sm-9: input#fqba(type='file', multiple)
+                    .col-sm-9: input#fqba(type='file', accept='.qb', style='margin-top: 5px;', multiple)
                   .form-group
                     label.col-sm-3.control-label(for='fqbt') Type map (*_t.qb):
-                    .col-sm-9: input#fqbt(type='file', multiple)
+                    .col-sm-9: input#fqbt(type='file', accept='.qb', style='margin-top: 5px;', multiple)
                   .form-group
                     label.col-sm-3.control-label(for='fqbs') Specular map (*_s.qb):
-                    .col-sm-9: input#fqbs(type='file', multiple)
+                    .col-sm-9: input#fqbs(type='file', accept='.qb', style='margin-top: 5px;', multiple)
                   span.help-block Alpha, Type and Specular map are optional (only the main mesh is required)
               #tabzox.tab-pane.fade
                 .form-horizontal
                   .form-group
                     label.col-sm-3.control-label(for='fzox') Zoxel file (*.zox):
-                    .col-sm-9: input#fzox(type='file', multiple)
+                    .col-sm-9: input#fzox(type='file', accept='.zox', style='margin-top: 5px;', multiple)
               #tabvox.tab-pane.fade
                 .form-horizontal
                   .form-group
                     label.col-sm-3.control-label(for='fvox') Magica Voxel file (*.vox):
-                    .col-sm-9: input#fvox(type='file', multiple)
+                    .col-sm-9: input#fvox(type='file', accept='.vox', style='margin-top: 5px;', multiple)
               #tabjson.tab-pane.fade
                 .form-horizontal
                   .form-group
