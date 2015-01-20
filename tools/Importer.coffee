@@ -11,7 +11,7 @@ SKIP_BLUEPRINTS = ['gm_prop_dungeon_largeblocker.blueprint', 'char_dream_monster
 models = {}
 jsonPath = process.cwd() + '/tools/Trove.json'
 process.chdir(process.argv[2] || 'C:/Program Files/Trove/')
-exec 'del /q qbexport\\*', {timeout: 60000}, (err, stdout, stderr) ->
+exec 'del /q qbexport\\* & del /q %appdata%\\Trove\\DevTool.log', {timeout: 60000}, (err, stdout, stderr) ->
   throw err if err?
   fs.readdir 'blueprints', (err, files) ->
     throw err if err?
@@ -29,22 +29,21 @@ exec 'del /q qbexport\\*', {timeout: 60000}, (err, stdout, stderr) ->
       f = files.pop()
       return unless f? # all files processed
       if f.length > 10 and f.indexOf('.blueprint') == f.length - 10 and f not in SKIP_BLUEPRINTS
-        exec 'devtool_dungeon_blueprint_to_QB.bat blueprints/' + f, {timeout: 5000}, (err, stdout, stderr) ->
-          # "Trove.exe -tool copyblueprint -generatemaps 1 blueprints/#{f} qbexport/#{f.substring(0, f.length - 10)}.qb"
-          if err?
+        exec "Trove.exe -tool copyblueprint -generatemaps 1 blueprints\\#{f} qbexport\\#{f.substring(0, f.length - 10)}.qb", {timeout: 5000}, (err, stdout, stderr) ->
+          if err? and err.killed and err.signal? and err.code != 1 # ignore devtool error code 1
             failedBlueprints.push(f)
             processedOne()
-            process.stdout.write "#{toProcess} blueprints remaining: skipped #{f} because of trove devtool not responding\n"
+            process.stderr.write "#{toProcess} blueprints remaining: skipped #{f} because of trove devtool not responding\n"
             return setImmediate processSny
           qbf = 'qbexport/' + f.substring 0, f.length - 10
           io = new QubicleIO m: qbf + '.qb', a: qbf + '_a.qb', t: qbf + '_t.qb', s: qbf + '_s.qb', ->
             if io.error or (io.x == 1 and io.y == 1 and io.z == 1 and !io.voxels[0]?)
               failedBlueprints.push(f)
               processedOne()
-              return process.stdout.write "#{toProcess} blueprints remaining: skipped #{f} because of invalid qubicle matrix height\n"
+              return process.stderr.write "#{toProcess} blueprints remaining: skipped #{f} because of invalid qubicle matrix height\n"
             models[f.substring(0, f.length - 10)] = new Base64IO(io).export(true)
-            processedOne()
             process.stdout.write "#{toProcess} blueprints remaining: #{f}\n"
+            processedOne()
           setImmediate processSny
       else
         processedOne()
