@@ -41,7 +41,7 @@ module.exports = (grunt) ->
       },
       controls: {
         options: {banner: '// threejs.org/license\n'},
-        files: {'static/OrbitControls.min.js': 'bower_components/OrbitControls/index.js'}
+        files: {'static/js/OrbitControls.min.js': 'bower_components/OrbitControls/index.js'}
       }
       lib: {
         options: {
@@ -71,15 +71,16 @@ module.exports = (grunt) ->
     copy: {
       json: {src: 'tools/Trove.json', dest: 'static/Trove.json'},
       appcache: {src: 'troxel.appcache', dest: 'dist/troxel.appcache'},
-      bs_css: {src: 'bower_components/bootstrap/dist/css/bootstrap.min.css', dest: 'static/bootstrap.min.css'},
-      bs_theme: {src: 'bower_components/bootstrap/dist/css/bootstrap-theme.min.css', dest: 'static/bootstrap-theme.min.css'},
-      bs_js: {src: 'bower_components/bootstrap/dist/js/bootstrap.min.js', dest: 'static/bootstrap.min.js'},
-      catiline: {src: 'bower_components/catiline/dist/catiline.min.js', dest: 'static/catiline.min.js'},
-      jquery: {src: 'bower_components/jquery/dist/jquery.min.js', dest: 'static/jquery.min.js'},
-      stats: {src: 'bower_components/stats.min/index.js', dest: 'static/stats.min.js'},
-      threejs: {src: 'bower_components/threejs/build/three.min.js', dest: 'static/three.min.js'},
-      typeahead: {src: 'bower_components/typehead.js/dist/typeahead.bundle.min.js', dest: 'static/typeahead.min.js'},
-      dist: {src: 'static/*', dest: 'dist/'}
+      bs_css: {src: 'bower_components/bootstrap/dist/css/bootstrap.min.css', dest: 'static/css/bootstrap.min.css'},
+      bs_theme: {src: 'bower_components/bootstrap/dist/css/bootstrap-theme.min.css', dest: 'static/css/bootstrap-theme.min.css'},
+      bs_js: {src: 'bower_components/bootstrap/dist/js/bootstrap.min.js', dest: 'static/js/bootstrap.min.js'},
+      font: {src: 'bower_components/bootstrap/dist/fonts/*', dest: 'static/fonts/', expand: true, flatten: true},
+      catiline: {src: 'bower_components/catiline/dist/catiline.min.js', dest: 'static/js/catiline.min.js'},
+      jquery: {src: 'bower_components/jquery/dist/jquery.min.js', dest: 'static/js/jquery.min.js'},
+      stats: {src: 'bower_components/stats.min/index.js', dest: 'static/js/stats.min.js'},
+      threejs: {src: 'bower_components/threejs/build/three.min.js', dest: 'static/js/three.min.js'},
+      typeahead: {src: 'bower_components/typehead.js/dist/typeahead.bundle.min.js', dest: 'static/js/typeahead.min.js'},
+      dist: {src: 'static/**', dest: 'dist/'}
     }
   }
 

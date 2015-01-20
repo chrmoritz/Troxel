@@ -7,16 +7,20 @@ CACHE MANIFEST
 # rev {{ site.time }}
 {% endif %}
 index.html
-static/stats.min.js
-static/three.min.js
-static/bootstrap-theme.min.css
-static/bootstrap.min.css
-static/bootstrap.min.js
-static/jquery.min.js
+static/js/stats.min.js
+static/js/three.min.js
+static/css/bootstrap-theme.min.css
+static/css/bootstrap.min.css
+static/js/bootstrap.min.js
+static/js/jquery.min.js
+static/js/catiline.min.js
+static/js/OrbitControls.min.js
+static/js/typeahead.min.js
+static/fonts/glyphicons-halflings-regular.eot
+static/fonts/glyphicons-halflings-regular.svg
+static/fonts/glyphicons-halflings-regular.ttf
+static/fonts/glyphicons-halflings-regular.woff
 static/troxel.min.js
-static/catiline.min.js
-static/OrbitControls.min.js
-static/typeahead.min.js
 
 NETWORK:
 *
