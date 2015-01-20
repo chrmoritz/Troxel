@@ -69,7 +69,13 @@ class Renderer
     @directionalLight = new THREE.DirectionalLight 0xffffff, 0.3
     @directionalLight.position.set(-0.5, -0.5, 1).normalize()
     @scene.add @directionalLight
-    @spotLight = new THREE.SpotLight 0xffffff, 0.8, 10000
+    @spotLight = new THREE.SpotLight 0xffffff, 0.7, 10000
+    target = new THREE.Object3D
+    target.position.x = @z * 25
+    target.position.y = @y * 25
+    target.position.z = @x * 25
+    @scene.add target
+    @spotLight.target = target
     @scene.add @spotLight
     @renderer = new THREE.WebGLRenderer antialias: true
     @renderer.setClearColor 0x888888

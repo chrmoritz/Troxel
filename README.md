@@ -139,7 +139,7 @@ If you can't use Java Script to call the Java Script API (for example in wiki te
 * `directionalLightIntensity`: the intensity of the direction light as a Float (default to `0.3`)
 * `directionalLightVector`: the vector direction of the directional light as an Object (default to `{x: -0.5, y: -0.5, z: 1}`,  don't need to be a normal vector)
 * `spotLightColor`: the color of the spot light (default to `0xffffff`)
-* `spotLightIntensity`: the intensity of the spot light as a Float (default to `0.8`)
+* `spotLightIntensity`: the intensity of the spot light as a Float (default to `0.7`)
 * `noRotate`: disables the rotate controls if set to `true`
 * `noPan`: disables the pan controls if set to `true`
 * `noZoom`: disables the zoom controls if set to `true`

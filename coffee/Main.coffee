@@ -279,7 +279,7 @@ $('#spotLightColor').val('#ffffff').change ->
   return unless io?
   renderer.spotLight.color = new THREE.Color($(@).val())
   renderer.render()
-$('#spotLightIntensity').val(0.8).change ->
+$('#spotLightIntensity').val(0.7).change ->
   return unless io?
   renderer.spotLight.intensity = $(@).val()
   renderer.render()
