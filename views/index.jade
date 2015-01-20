@@ -187,7 +187,7 @@ html(manifest=dev?null:'troxel.appcache')
                     label.col-sm-3.control-label(for='exportQbComp') Options:
                     .col-sm-9: .checkbox
                       label
-                        input#exportQbComp(type='checkbox')
+                        input#exportQbComp(type='checkbox', checked)
                         | compressed (incompatible with 3rdparty apps like Zoxel)
                 a#exportQb.btn.btn-primary.btn-lg.btn-block(download='Model.qb') Export as Qubicle (.qb) ...
                 a#exportQba.btn.btn-default.btn-block(download='Model_a.qb', style='display: none;') Download alpha map (*_a.qb)
@@ -264,6 +264,7 @@ html(manifest=dev?null:'troxel.appcache')
       div(style='position: absolute; right: 0px; width: 220px; height: 100%; overflow: auto;')
         #addPanel.panel.panel-default(style='display: none;')
           .panel-heading
+            button.btn.btn-default.btn-sm.pull-right(style='margin-top: -6px;'): span.glyphicon.glyphicon-minus
             h3.panel-title Editing options
           .panel-body
             .form-horizontal
@@ -322,6 +323,7 @@ html(manifest=dev?null:'troxel.appcache')
             button#openResizeModal.btn.btn-default.btn-sm.btn-block(style='margin: 10px 0px -13px;', data-toggle='modal', data-target='#resizeModal', ) resize voxel model
         .panel.panel-default
           .panel-heading
+            button.btn.btn-default.btn-sm.pull-right(style='margin-top: -6px;'): span.glyphicon.glyphicon-minus
             h3.panel-title Light options
           .panel-body(style='padding: 5px 15px 0px;')
             .form-horizontal
@@ -360,6 +362,7 @@ html(manifest=dev?null:'troxel.appcache')
                   input#spotLightIntensity(type='range', min=0, max=3, step=0.01, value=0.8, style='margin-top: 5px;')
         .panel.panel-default
           .panel-heading
+            button.btn.btn-default.btn-sm.pull-right(style='margin-top: -6px;'): span.glyphicon.glyphicon-minus
             h3.panel-title Rotate model
           .panel-body
             .form-horizontal
@@ -383,6 +386,7 @@ html(manifest=dev?null:'troxel.appcache')
                     button.rotateBtn.btn.btn-default(data-rotate='-z', data-toggle='tooltip', data-container='body', data-placement='left', title='rotate the voxel model counterclockwise') ccw
         .panel.panel-default
           .panel-heading
+            button.btn.btn-default.btn-sm.pull-right(style='margin-top: -6px;'): span.glyphicon.glyphicon-minus
             h3.panel-title Move model
           .panel-body
             .form-horizontal
@@ -406,6 +410,7 @@ html(manifest=dev?null:'troxel.appcache')
                     button.moveBtn.btn.btn-default(data-move='-z', data-toggle='tooltip', data-container='body', data-placement='left', title='move the voxel model one voxel to the back') back
         .panel.panel-default
           .panel-heading
+            button.btn.btn-default.btn-sm.pull-right(style='margin-top: -6px;'): span.glyphicon.glyphicon-minus
             h3.panel-title Mirror model
           .btn-group-vertical.btn-group-sm(style='width: 100%;')
             button.mirrorBtn.btn.btn-default(data-mirror='x', data-toggle='tooltip', data-container='body', data-placement='left', title='mirror the voxel model in x-axis') Mirror x-axis

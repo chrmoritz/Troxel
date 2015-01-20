@@ -257,6 +257,11 @@ $('.mirrorBtn').click ->
   renderer.reload io
   history.pushState {voxels: io.voxels, x: io.x, y: io.y, z: io.z}, 'Troxel', '#m=' + new Base64IO(io).export false
 $('.panel-heading').click ->
+  span = $(@).find('button span')
+  if span.hasClass('glyphicon-minus')
+    span.removeClass('glyphicon-minus').addClass('glyphicon-plus')
+  else
+    span.removeClass('glyphicon-plus').addClass('glyphicon-minus')
   $(@).next().toggle()
 $('#ambLightColor').val('#606060').change ->
   return unless io?
