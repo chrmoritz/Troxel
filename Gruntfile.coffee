@@ -92,8 +92,9 @@ module.exports = (grunt) ->
   grunt.loadNpmTasks 'grunt-contrib-jade'
   grunt.loadNpmTasks 'grunt-contrib-concat'
   grunt.loadNpmTasks 'grunt-contrib-copy'
+  grunt.loadNpmTasks 'grunt-continue'
 
-  grunt.registerTask 'default', ['mochaTest', 'coffeelint', 'build']
+  grunt.registerTask 'default', ['continue:on', 'coffeelint', 'mochaTest', 'continue:off', 'build', 'continue:fail-on-warning']
   grunt.registerTask 'mocha', 'mochaTest'
   grunt.registerTask 'test', 'mochaTest'
   grunt.registerTask 'lint', 'coffeelint'
