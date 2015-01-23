@@ -15,7 +15,7 @@
   },
   "scripts": {
     "start": "coffee server.coffee",
-    "test": "grunt -v",
+    "test": "grunt --ci",
     "build": "grunt build",
     "serve": "jekyll serve --baseurl /Troxel -ws dist",
     "import": "coffee tools/Importer.coffee"

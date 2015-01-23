@@ -94,6 +94,8 @@ module.exports = (grunt) ->
   grunt.loadNpmTasks 'grunt-contrib-copy'
   grunt.loadNpmTasks 'grunt-continue'
 
+  grunt.option 'verbose', true if grunt.option 'ci' # no need to initialize Gruntfile verbose
+
   grunt.registerTask 'default', ['continue:on', 'coffeelint', 'mochaTest', 'continue:off', 'build', 'continue:fail-on-warning']
   grunt.registerTask 'mocha', 'mochaTest'
   grunt.registerTask 'test', 'mochaTest'

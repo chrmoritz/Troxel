@@ -9,11 +9,9 @@ matrix:
   allow_failures:
     - nodejs_version: "1.0"
 
-init:
-  - git config --global core.autocrlf input
-
 install:
-  - ps: Install-Product node $env:nodejs_version
+  - dir C:\avvm\node
+  - ps: Update-NodeJsInstallation (Get-NodeJsLatestBuild $env:nodejs_version)
   - node --version
   - npm --version
   - npm update
@@ -21,7 +19,7 @@ install:
   - bower update
 
 test_script:
-  - cmd: npm test
+  - npm test
 
 cache:
   - node_modules
