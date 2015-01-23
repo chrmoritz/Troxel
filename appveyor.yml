@@ -1,14 +1,23 @@
 version: "{build}"
 
+environment:
+  matrix:
+  - nodejs_version: "0.10" # node.js
+  - nodejs_version: "1.0"  # io.js
+
+matrix:
+  allow_failures:
+    - nodejs_version: "1.0"
+
 init:
   - git config --global core.autocrlf input
 
 install:
-  - ps: Install-Product node 0.10
+  - ps: Install-Product node $env:nodejs_version
   - node --version
   - npm --version
-  - npm install -g bower
   - npm update
+  - npm install -g bower
   - bower update
 
 test_script:
