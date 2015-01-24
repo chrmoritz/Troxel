@@ -268,7 +268,7 @@ html(manifest=dev?null:'troxel.appcache')
             h3.panel-title Editing options
           .panel-body
             .form-horizontal
-              .form-group(style='margin-bottom: 5px;')
+              .form-group(style='margin-bottom: 0px;')
                 label.col-sm-3.control-label(for='editTool', style='padding-top: 0px;') Tool:
                 .col-sm-9(style='padding-right: 0px;'): .btn-group.btn-group-xs(data-toggle='buttons', style='margin-bottom: 5px;')
                   label.btn.btn-info.active(data-toggle='tooltip', data-container='body', data-placement='left', title='LMB = add voxel | RMB = remove voxel | MMB = pick voxel')
@@ -277,6 +277,11 @@ html(manifest=dev?null:'troxel.appcache')
                   label.btn.btn-info(data-toggle='tooltip', data-container='body', data-placement='left', title='LMB = fill single voxel | RMB = fill connected voxels | MMB = pick voxel')
                     input.editTool(type='radio', name='editTool', data-edittool=1)
                     | fill mode
+              #fillSameColorDiv.form-group(style='margin-bottom: 0px; display: none;')
+                .col-sm-offset-3.col-sm-9: .checkbox(style='padding-top: 0px;')
+                  label(data-toggle='tooltip', data-container='body', data-placement='left', title='Enable this to fill only voxels with the same color or disable it to fill all connected voxels (rightclick)')
+                    input#fillSameColor(type='checkbox', checked)
+                    | same color only
               .form-group(style='margin-bottom: 10px;')
                 label.col-sm-4.control-label(for='addVoxColor') Color:
                 .col-sm-8: .input-group.input-group-sm

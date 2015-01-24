@@ -321,3 +321,8 @@ $('.editNoise').change ->
     when 0 then $('#editVoxNoiseGroup').hide()
     when 1, 2 then $('#editVoxNoiseGroup').show()
 $('[data-toggle="tooltip"]').tooltip()
+$('#fillSameColor').prop('checked', true)
+$('.editTool').change ->
+  switch $(@).data('edittool')
+    when 1 then $('#fillSameColorDiv').show()
+    else $('#fillSameColorDiv').hide()

@@ -113,8 +113,8 @@ class Renderer
     unless init
       @scene.remove o for o in @objects when o not in @planes
       @objects = @planes.slice 0
-    for z in [0...@z] by 1
-      for y in [0...@y] by 1
+    for z in [0...@z] by 1 when @voxels[z]?
+      for y in [0...@y] by 1 when @voxels[z]?[y]?
         for x in [0...@x] by 1 when @voxels[z]?[y]?[x]?
           color = new THREE.Color("rgb(#{@voxels[z][y][x].r},#{@voxels[z][y][x].g},#{@voxels[z][y][x].b})")
           voxel = @getVoxel color, @voxels[z][y][x].a, @voxels[z][y][x].t, @voxels[z][y][x].s
@@ -173,15 +173,16 @@ class Renderer
   onDocumentMouseDown: (e) ->
     return if !@editMode or $('#openModal').css('display') == 'block' or $('#exportModal').css('display') == 'block' or $('#saveModal').css('display') == 'block'
     delta = parseFloat $('#editVoxNoise').val()
-    icolor = new THREE.Color($('#addVoxColor').val())
-    getColor = ->
-      color = icolor
-      switch $('.active .editNoise').data('editnoise')
+    getColor = (color, noise) ->
+      switch noise
         when 1 then color.multiplyScalar Math.random() * 2 * delta + 1 - delta
         when 2
           color.r = color.r * (Math.random() * 2 * delta + 1 - delta)
           color.g = color.g * (Math.random() * 2 * delta + 1 - delta)
           color.b = color.b * (Math.random() * 2 * delta + 1 - delta)
+      color.r = 1 if color.r > 1
+      color.g = 1 if color.g > 1
+      color.b = 1 if color.b > 1
       return color
     @vector.set (e.clientX / @width) * 2 - 1, -((e.clientY - 50) / @height) * 2 + 1, 0.5
     @vector.unproject @camera
@@ -193,7 +194,7 @@ class Renderer
         when 0 # left mouse button
           switch $('.active .editTool').data('edittool')
             when 0 # add voxel
-              color = getColor()
+              color = getColor new THREE.Color($('#addVoxColor').val()), $('.active .editNoise').data('editnoise')
               a = parseInt($('#addVoxAlpha').val())
               t = parseInt($('#addVoxType').val())
               s = parseInt($('#addVoxSpecular').val())
@@ -218,7 +219,7 @@ class Renderer
               x = (intersect.object.position.z - 25) / 50
               y = (intersect.object.position.y - 25) / 50
               z = (intersect.object.position.x - 25) / 50
-              color = getColor()
+              color = getColor new THREE.Color($('#addVoxColor').val()), $('.active .editNoise').data('editnoise')
               a = parseInt($('#addVoxAlpha').val())
               t = parseInt($('#addVoxType').val())
               s = parseInt($('#addVoxSpecular').val())
@@ -250,7 +251,41 @@ class Renderer
               @scene.remove intersect.object
               @objects.splice @objects.indexOf(intersect.object), 1
             when 1 # fill area
-              return
+              fillArea = (x, y, z, colorMatch) ->
+                connected = (x, y, z) -> @voxels[z]?[y]?[x]? and !@voxels[z][y][x].filled and (!colorMatch or (v.r == @voxels[z][y][x].r and
+                  v.g == @voxels[z][y][x].g and v.b == @voxels[z][y][x].b and v.a == @voxels[z][y][x].a and v.t == @voxels[z][y][x].t and v.s == @voxels[z][y][x].s))
+                v = {r: @voxels[z][y][x].r, g: @voxels[z][y][x].g, b: @voxels[z][y][x].b, a: @voxels[z][y][x].a, t: @voxels[z][y][x].t, s: @voxels[z][y][x].s}
+                color = getColor new THREE.Color(baseColor), editNoise
+                @voxels[z][y][x].r = Math.floor(color.r * 255)
+                @voxels[z][y][x].g = Math.floor(color.g * 255)
+                @voxels[z][y][x].b = Math.floor(color.b * 255)
+                a = parseInt($('#addVoxAlpha').val())
+                t = parseInt($('#addVoxType').val())
+                s = parseInt($('#addVoxSpecular').val())
+                a = 255 if t in [0, 3] # Solid
+                if color.r == 1 and color.g == 0 and color.b == 1
+                  a = 250
+                  t = s = 7
+                @voxels[z][y][x].a = a
+                @voxels[z][y][x].t = t
+                @voxels[z][y][x].s = s
+                @voxels[z][y][x].filled = true
+                fillArea.call @, x + 1, y    , z    , colorMatch if connected.call @, x + 1, y    , z
+                fillArea.call @, x - 1, y    , z    , colorMatch if connected.call @, x - 1, y    , z
+                fillArea.call @, x    , y + 1, z    , colorMatch if connected.call @, x    , y + 1, z
+                fillArea.call @, x    , y - 1, z    , colorMatch if connected.call @, x    , y - 1, z
+                fillArea.call @, x    , y    , z + 1, colorMatch if connected.call @, x    , y    , z + 1
+                fillArea.call @, x    , y    , z - 1, colorMatch if connected.call @, x    , y    , z - 1
+              baseColor = $('#addVoxColor').val()
+              editNoise = $('.active .editNoise').data('editnoise')
+              fillArea.call @, x, y, z, $('#fillSameColor').prop('checked')
+              for z in [0...@z] by 1 when @voxels[z]?
+                for y in [0...@y] by 1 when @voxels[z]?[y]?
+                  for x in [0...@x] by 1 when @voxels[z]?[y]?[x]?
+                    delete @voxels[z][y][x].filled if @voxels[z][y][x].filled
+              io = {voxels: @voxels, x: @x, y: @y, z: @z}
+              @reload io
+              return history.pushState io, 'Troxel', '#m=' + new Base64IO(io).export false
         when 1 # middle mouse button => color picker
           return if intersect.object in @planes
           x = (intersect.object.position.z - 25) / 50

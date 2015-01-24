@@ -24,7 +24,7 @@ class Base64IO extends IO
           if vox? # apply vox data repeat often (if vox not empty)
             @voxels[z] = [] unless @voxels[z]?
             @voxels[z][y] = [] unless @voxels[z][y]?
-            @voxels[z][y][x] = vox
+            @voxels[z][y][x] = {r: vox.r, g: vox.g, b: vox.b, a: vox.a, s: vox.s, t: vox.t}
           r--
     console.warn "There shouldn't be any bytes left" unless i == data.length
     console.log "voxels:" unless @readonly
