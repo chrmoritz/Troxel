@@ -84,12 +84,13 @@ In addition to libTroxel, you will need to include JQuery into your site. If you
 
 Create somewhere in your layout a `<div>` element and set it's size to the size the rendered model should have. You can add a fallback content inside it, which will be shown if the model is  not available or your users browser doesn't support WebGL.
 
-#### Troxel.renderBlueprint(blueprintId, domElement, [options])
+#### Troxel.renderBlueprint(blueprintId, domElement, [options], [callback])
 
 Renders any Trove blueprint into the given DOM element. It has these parameters:
 * `blueprintId` is the id of the blueprint (the filename without the `.blueprint` file extension)
 * `domElement` is either a DOM element or a JQuery Object representing this DOM element
-* `options` is a optional Object of [render options](#options)
+* `options` is an optional Object of [render options](#options)
+* `callback` is an optional callback function which is called with a null argument when the blueprint is loaded or with an Error argument as soon as an error occurs
 
 ```JavaScript
 Troxel.renderBlueprint('deco_candy_torch_mallow[Laoge]', $('#container'), {
@@ -108,7 +109,7 @@ Troxel.renderBlueprint('deco_candy_torch_mallow[Laoge]', $('#container'), {
 Renders any voxel model represented in Troxel's Base64 format into the given DOM element. It has these parameters:
 * `base64` is a Base64 formated String containing the voxel data of your model (check out Troxels `Link (share)` export options and use the base64 string starting after `#m=`)
 * `domElement` is either a DOM element or a JQuery Object representing this DOM element
-* `options` is a optional Object of [render options](#options)
+* `options` is an optional Object of [render options](#options)
 Returns `true` if it was able to render the voxel model and otherwise (WebGL not supported) `false`.
 
 #### Troxel.webgl()

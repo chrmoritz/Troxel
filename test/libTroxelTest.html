@@ -21,6 +21,12 @@
         noPan: false, // default to false
         noZoom: false, // default to false
         showInfoLabel: true // you can hide the 'Open this model in Troxel' link if you want to move it somewhere else in your layout
+      }, function(error){
+        if (error !== null){
+          throw error;
+        }
+        // Do some stuff here
+        console.log("Model loaded!");
       });
     </script>
   </body>
