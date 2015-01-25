@@ -172,14 +172,12 @@ class Renderer
 
   onDocumentMouseDown: (e) ->
     return if !@editMode or $('#openModal').css('display') == 'block' or $('#exportModal').css('display') == 'block' or $('#saveModal').css('display') == 'block'
-    delta = parseFloat $('#editVoxNoise').val()
-    getColor = (color, noise) ->
-      switch noise
-        when 1 then color.multiplyScalar Math.random() * 2 * delta + 1 - delta
-        when 2
-          color.r = color.r * (Math.random() * 2 * delta + 1 - delta)
-          color.g = color.g * (Math.random() * 2 * delta + 1 - delta)
-          color.b = color.b * (Math.random() * 2 * delta + 1 - delta)
+    getColor = (color, noiseBright, noiseRgb) ->
+      color.multiplyScalar Math.random() * 2 * noiseBright + 1 - noiseBright if noiseBright > 0
+      if noiseRgb > 0
+        color.r = color.r * (Math.random() * 2 * noiseRgb + 1 - noiseRgb)
+        color.g = color.g * (Math.random() * 2 * noiseRgb + 1 - noiseRgb)
+        color.b = color.b * (Math.random() * 2 * noiseRgb + 1 - noiseRgb)
       color.r = 1 if color.r > 1
       color.g = 1 if color.g > 1
       color.b = 1 if color.b > 1
@@ -194,7 +192,7 @@ class Renderer
         when 0 # left mouse button
           switch $('.active .editTool').data('edittool')
             when 0 # add voxel
-              color = getColor new THREE.Color($('#addVoxColor').val()), $('.active .editNoise').data('editnoise')
+              color = getColor new THREE.Color($('#addVoxColor').val()), parseFloat $('#editVoxNoiseBright').val(), parseFloat $('#editVoxNoiseRgb').val()
               a = parseInt($('#addVoxAlpha').val())
               t = parseInt($('#addVoxType').val())
               s = parseInt($('#addVoxSpecular').val())
@@ -219,7 +217,7 @@ class Renderer
               x = (intersect.object.position.z - 25) / 50
               y = (intersect.object.position.y - 25) / 50
               z = (intersect.object.position.x - 25) / 50
-              color = getColor new THREE.Color($('#addVoxColor').val()), $('.active .editNoise').data('editnoise')
+              color = getColor new THREE.Color($('#addVoxColor').val()), parseFloat $('#editVoxNoiseBright').val(), parseFloat $('#editVoxNoiseRgb').val()
               a = parseInt($('#addVoxAlpha').val())
               t = parseInt($('#addVoxType').val())
               s = parseInt($('#addVoxSpecular').val())
@@ -255,7 +253,7 @@ class Renderer
                 connected = (x, y, z) -> @voxels[z]?[y]?[x]? and !@voxels[z][y][x].filled and (!colorMatch or (v.r == @voxels[z][y][x].r and
                   v.g == @voxels[z][y][x].g and v.b == @voxels[z][y][x].b and v.a == @voxels[z][y][x].a and v.t == @voxels[z][y][x].t and v.s == @voxels[z][y][x].s))
                 v = {r: @voxels[z][y][x].r, g: @voxels[z][y][x].g, b: @voxels[z][y][x].b, a: @voxels[z][y][x].a, t: @voxels[z][y][x].t, s: @voxels[z][y][x].s}
-                color = getColor new THREE.Color(baseColor), editNoise
+                color = getColor new THREE.Color(baseColor), noiseBright, noiseRgb
                 @voxels[z][y][x].r = Math.floor(color.r * 255)
                 @voxels[z][y][x].g = Math.floor(color.g * 255)
                 @voxels[z][y][x].b = Math.floor(color.b * 255)
@@ -277,7 +275,8 @@ class Renderer
                 fillArea.call @, x    , y    , z + 1, colorMatch if connected.call @, x    , y    , z + 1
                 fillArea.call @, x    , y    , z - 1, colorMatch if connected.call @, x    , y    , z - 1
               baseColor = $('#addVoxColor').val()
-              editNoise = $('.active .editNoise').data('editnoise')
+              noiseBright = parseFloat $('#editVoxNoiseBright').val()
+              noiseRgb = parseFloat $('#editVoxNoiseRgb').val()
               fillArea.call @, x, y, z, $('#fillSameColor').prop('checked')
               for z in [0...@z] by 1 when @voxels[z]?
                 for y in [0...@y] by 1 when @voxels[z]?[y]?

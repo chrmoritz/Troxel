@@ -303,6 +303,9 @@ $('#addVoxType').change ->
   switch parseInt($(@).val())
     when 1, 2, 4 then $('#addVoxAlpha').prop('disabled', false)
     when 0, 3 then $('#addVoxAlpha').prop('disabled', true)
+$('#addVoxAlpha').val(112)
+$('#editVoxNoiseBright').val(0)
+$('#editVoxNoiseRgb').val(0)
 $('#openResizeModal').click ->
   return unless io?
   $('#resizeX').val(io.x)
@@ -315,14 +318,9 @@ $('#resizeBtn').click ->
   renderer = new Renderer io # ToDo: implement changing dimensions in renderer.reload
   history.pushState {voxels: io.voxels, x: io.x, y: io.y, z: io.z}, 'Troxel', '#m=' + new Base64IO(io).export false
 $($('.editTool')[0]).parent().button('toggle')
-$($('.editNoise')[0]).parent().button('toggle')
-$('.editNoise').change ->
-  switch $(@).data('editnoise')
-    when 0 then $('#editVoxNoiseGroup').hide()
-    when 1, 2 then $('#editVoxNoiseGroup').show()
-$('[data-toggle="tooltip"]').tooltip()
 $('#fillSameColor').prop('checked', true)
 $('.editTool').change ->
   switch $(@).data('edittool')
     when 1 then $('#fillSameColorDiv').show()
     else $('#fillSameColorDiv').hide()
+$('[data-toggle="tooltip"]').tooltip()
