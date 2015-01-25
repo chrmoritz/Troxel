@@ -7,16 +7,16 @@ window.Troxel =
   renderBlueprint: (blueprintId, domElement, options, cb) ->
     unless Troxel.webgl()
       console.warn "WebGL is not supported by your browser"
-      cb new Error "WebGl is not supported"
+      cb new Error "WebGl is not supported" if typeof cb == 'function'
     $.ajax dataType: 'jsonp', url: 'https://chrmoritz.github.io/Troxel/static/Trove.jsonp', jsonpCallback: 'callback', cache: true, success: (data) ->
       model = data[blueprintId]
       result = false
       result = Troxel.renderBase64(model, domElement, options, blueprintId) if model?
       if result
-        cb null
+        cb null if typeof cb == 'function'
       else
         console.warn "blueprintId #{blueprintId} not found"
-        cb new Error "blueprintId #{blueprintId} not found"
+        cb new Error "blueprintId #{blueprintId} not found" if typeof cb == 'function'
   renderBase64: (base64, domElement, options = {}, blueprintId) ->
     unless Troxel.webgl()
       console.warn "WebGL is not supported by your browser"
