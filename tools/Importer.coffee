@@ -16,13 +16,13 @@ exec 'del /q qbexport\\* & del /q %appdata%\\Trove\\DevTool.log', {timeout: 6000
   fs.readdir 'blueprints', (err, files) ->
     throw err if err?
     toProcess = files.length
-    failedBlueprints = []
+    failedBlueprints = SKIP_BLUEPRINTS
     processedOne = ->
       if --toProcess == 0
         fs.writeFile jsonPath, JSON.stringify(models), -> thow err if err?
         count = Object.keys(models).length
         process.stdout.write "base64 data of #{count} blueprints successfully written to static/Trove.json\nskipped broken blueprints:\n\n"
-        process.stdout.write "#{bp}, " for bp in failedBlueprints
+        process.stdout.write " * #{bp}\n" for bp in failedBlueprints
         process.stdout.write "\n"
         exec 'del /q qbexport\\*', {timeout: 60000}, (err, stdout, stderr) -> throw err if err?
     processSny = -> # Trove doesn't like spawning 1k+ instances at the same time ;-)
