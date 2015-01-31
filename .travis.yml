@@ -21,4 +21,4 @@ deploy:
   app: troxel
   on:
     repo: chrmoritz/Troxel
-    node: 0.10
+    condition: $TRAVIS_NODE_VERSION =~ 0.10
