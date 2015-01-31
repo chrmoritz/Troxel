@@ -10,8 +10,7 @@ matrix:
     - nodejs_version: "1.0"
 
 install:
-  - dir C:\avvm\node
-  - ps: Update-NodeJsInstallation (Get-NodeJsLatestBuild $env:nodejs_version)
+  - ps: Install-Product node $env:nodejs_version
   - node --version
   - npm --version
   - npm update
