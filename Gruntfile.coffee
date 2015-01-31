@@ -1,6 +1,12 @@
 module.exports = (grunt) ->
   grunt.initConfig {
     pkg: grunt.file.readJSON('package.json'),
+    coffeelint: {
+      app: ['coffee/*.coffee', 'test/*.coffee'],
+      options: {
+        configFile: 'coffeelint.json'
+      }
+    },
     mochaTest: {
       test: {
         options: {
@@ -10,17 +16,20 @@ module.exports = (grunt) ->
         },
         src: 'test/*.coffee'
       }
-    }
-    coffeelint: {
-      app: ['coffee/*.coffee', 'test/*.coffee'],
-      options: {
-        configFile: 'coffeelint.json'
-      }
     },
     clean: {
       js: 'js',
       dist: 'dist/*',
       static: 'static'
+    },
+    bower: {
+      install: {
+        options: {
+          targetDir: 'static',
+          layout: (type, component, source) -> type
+          verbose: true
+        }
+      }
     },
     coffee: {
       glob_to_multiple: {
@@ -71,28 +80,22 @@ module.exports = (grunt) ->
     copy: {
       json: {src: 'tools/Trove.json', dest: 'static/Trove.json'},
       appcache: {src: 'troxel.appcache', dest: 'dist/troxel.appcache'},
-      bs_css: {src: 'bower_components/bootstrap/dist/css/bootstrap.min.css', dest: 'static/css/bootstrap.min.css'},
-      bs_theme: {src: 'bower_components/bootstrap/dist/css/bootstrap-theme.min.css', dest: 'static/css/bootstrap-theme.min.css'},
-      bs_js: {src: 'bower_components/bootstrap/dist/js/bootstrap.min.js', dest: 'static/js/bootstrap.min.js'},
-      font: {src: 'bower_components/bootstrap/dist/fonts/*', dest: 'static/fonts/', expand: true, flatten: true},
-      catiline: {src: 'bower_components/catiline/dist/catiline.min.js', dest: 'static/js/catiline.min.js'},
-      jquery: {src: 'bower_components/jquery/dist/jquery.min.js', dest: 'static/js/jquery.min.js'},
-      stats: {src: 'bower_components/stats.min/index.js', dest: 'static/js/stats.min.js'},
-      threejs: {src: 'bower_components/threejs/build/three.min.js', dest: 'static/js/three.min.js'},
+      stats: {src: 'bower_components/stats/index.js', dest: 'static/js/stats.min.js'},
       typeahead: {src: 'bower_components/typehead.js/dist/typeahead.bundle.min.js', dest: 'static/js/typeahead.min.js'},
       dist: {src: 'static/**', dest: 'dist/'}
     }
   }
 
+  grunt.loadNpmTasks 'grunt-continue'
   grunt.loadNpmTasks 'grunt-mocha-test'
   grunt.loadNpmTasks 'grunt-coffeelint'
   grunt.loadNpmTasks 'grunt-contrib-clean'
+  grunt.loadNpmTasks 'grunt-bower-task'
   grunt.loadNpmTasks 'grunt-contrib-coffee'
   grunt.loadNpmTasks 'grunt-contrib-uglify'
   grunt.loadNpmTasks 'grunt-contrib-jade'
   grunt.loadNpmTasks 'grunt-contrib-concat'
   grunt.loadNpmTasks 'grunt-contrib-copy'
-  grunt.loadNpmTasks 'grunt-continue'
 
   grunt.option 'verbose', true if grunt.option 'ci' # no need to initialize Gruntfile verbose
 
@@ -100,4 +103,4 @@ module.exports = (grunt) ->
   grunt.registerTask 'mocha', 'mochaTest'
   grunt.registerTask 'test', 'mochaTest'
   grunt.registerTask 'lint', 'coffeelint'
-  grunt.registerTask 'build', ['clean', 'coffee', 'uglify', 'jade', 'concat', 'copy']
+  grunt.registerTask 'build', ['clean', 'bower', 'coffee', 'uglify', 'jade', 'concat', 'copy']

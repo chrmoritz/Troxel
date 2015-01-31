@@ -15,8 +15,6 @@ install:
   - node --version
   - npm --version
   - npm update
-  - npm install -g bower
-  - bower update
 
 test_script:
   - npm test

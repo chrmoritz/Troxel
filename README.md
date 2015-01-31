@@ -24,8 +24,6 @@ Troxel is a WebGL-based HTML5-WebApp for viewing and editing voxel models with s
 git clone git@github.com:chrmoritz/Troxel.git
 cd Troxel
 npm update
-npm install -g bower
-bower update
 npm run build
 ```
 ##### Dependencies:

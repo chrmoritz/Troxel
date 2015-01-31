@@ -8,8 +8,6 @@ node_js:
 
 install:
   - npm update
-  - npm install -g bower
-  - bower update
 
 cache:
   directories:
