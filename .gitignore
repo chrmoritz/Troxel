@@ -3,7 +3,7 @@ dist
 js
 
 # Jekyll cache
-_site
+.jekyll
 
 # Bower
 bower_components

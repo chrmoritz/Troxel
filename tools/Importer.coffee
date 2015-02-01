@@ -49,4 +49,4 @@ exec 'del /q qbexport\\* & del /q %appdata%\\Trove\\DevTool.log', {timeout: 6000
         processedOne()
         process.stdout.write "#{toProcess} blueprints remaining: skipped #{f} because not a blueprint\n"
         setImmediate processSny
-    processSny() for i in [0...cpus] by 1
+    processSny() for i in [0...cpus*2] by 1

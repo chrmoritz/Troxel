@@ -52,13 +52,15 @@ npm run build
 ```
 npm run serve
 ```
-*Note: You need the jekyll gem installed (`gem install jekyll`) for this.*
+*The static page will be served by Jekyll (like on GitHub Pages) and grunt will watch for source file changes and automatically recompile these changes and update Jekyll.*
+
+**Note:** *You need the jekyll gem installed (`gem install jekyll`) for this.*
 
 #### Importing Trove's blueprints
 ```
 npm run import -- <UNIX-style path to Trove folder>
 ```
-*Note: You have to run this on a Windows machine, because it depends on Trove's devtool for converting `.blueprint` into `.qb`.*
+**Note:** *You have to run this on a Windows machine, because it depends on Trove's devtool for converting `.blueprint` into `.qb`.*
 
 libTroxel
 ======

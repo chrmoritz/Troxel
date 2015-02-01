@@ -81,6 +81,37 @@ module.exports = (grunt) ->
       appcache: {src: 'tools/troxel.appcache', dest: 'dist/troxel.appcache'},
       stats: {src: 'bower_components/stats/index.js', dest: 'dist/static/js/stats.min.js'},
       typeahead: {src: 'bower_components/typehead.js/dist/typeahead.bundle.min.js', dest: 'dist/static/js/typeahead.min.js'}
+    },
+    pages: {
+      serve: {
+        options: {
+          src: 'dist',
+          dest: '.jekyll',
+          baseurl: '/Troxel',
+          serve: true,
+          watch: true
+        }
+      }
+    },
+    watch: {
+      coffee: {
+        files: 'coffee/*',
+        tasks: ['coffee', 'uglify:main']
+      },
+      jade: {
+        files: 'views/*',
+        tasks: 'jade'
+      },
+      appcache: {
+        files: 'tools/troxel.appcache',
+        tasks: 'copy:appcache'
+      }
+    },
+    concurrent: {
+      serve: ['watch', 'pages'],
+      options: {
+        logConcurrentOutput: true
+      }
     }
   }
 
@@ -94,11 +125,15 @@ module.exports = (grunt) ->
   grunt.loadNpmTasks 'grunt-contrib-jade'
   grunt.loadNpmTasks 'grunt-contrib-concat'
   grunt.loadNpmTasks 'grunt-contrib-copy'
+  grunt.loadNpmTasks 'grunt-jekyll-pages'
+  grunt.loadNpmTasks 'grunt-contrib-watch'
+  grunt.loadNpmTasks 'grunt-concurrent'
 
   grunt.option 'verbose', true if grunt.option 'ci' # no need to initialize Gruntfile verbose
 
-  grunt.registerTask 'default', ['continue:on', 'coffeelint', 'mochaTest', 'continue:off', 'build', 'continue:fail-on-warning']
-  grunt.registerTask 'mocha', 'mochaTest'
-  grunt.registerTask 'test', 'mochaTest'
-  grunt.registerTask 'lint', 'coffeelint'
+  grunt.registerTask 'default', ['continue:on', 'test', 'continue:off', 'build', 'continue:fail-on-warning']
+  grunt.registerTask 'test', ['coffeelint', 'mochaTest']
   grunt.registerTask 'build', ['clean', 'bower', 'coffee', 'uglify', 'jade', 'concat', 'copy']
+  grunt.registerTask 'lint', 'coffeelint'
+  grunt.registerTask 'mocha', 'mochaTest'
+  grunt.registerTask 'serve', 'concurrent:serve'
