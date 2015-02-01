@@ -2,9 +2,9 @@ module.exports = (grunt) ->
   grunt.initConfig {
     pkg: grunt.file.readJSON('package.json'),
     coffeelint: {
-      app: ['coffee/*.coffee', 'test/*.coffee'],
+      app: ['coffee/*.coffee', 'test/*.coffee', 'tools/*.coffee'],
       options: {
-        configFile: 'coffeelint.json'
+        configFile: 'tools/coffeelint.json'
       }
     },
     mochaTest: {
@@ -19,13 +19,12 @@ module.exports = (grunt) ->
     },
     clean: {
       js: 'js',
-      dist: 'dist/*',
-      static: 'static'
+      dist: 'dist/*'
     },
     bower: {
       install: {
         options: {
-          targetDir: 'static',
+          targetDir: 'dist/static',
           layout: (type, component, source) -> type
           verbose: true
         }
@@ -50,7 +49,7 @@ module.exports = (grunt) ->
       },
       controls: {
         options: {banner: '// threejs.org/license\n'},
-        files: {'static/js/OrbitControls.min.js': 'bower_components/OrbitControls/index.js'}
+        files: {'dist/static/js/OrbitControls.min.js': 'bower_components/OrbitControls/index.js'}
       }
       lib: {
         options: {
@@ -78,11 +77,10 @@ module.exports = (grunt) ->
       }
     },
     copy: {
-      json: {src: 'tools/Trove.json', dest: 'static/Trove.json'},
-      appcache: {src: 'troxel.appcache', dest: 'dist/troxel.appcache'},
-      stats: {src: 'bower_components/stats/index.js', dest: 'static/js/stats.min.js'},
-      typeahead: {src: 'bower_components/typehead.js/dist/typeahead.bundle.min.js', dest: 'static/js/typeahead.min.js'},
-      dist: {src: 'static/**', dest: 'dist/'}
+      json: {src: 'tools/Trove.json', dest: 'dist/static/Trove.json'},
+      appcache: {src: 'tools/troxel.appcache', dest: 'dist/troxel.appcache'},
+      stats: {src: 'bower_components/stats/index.js', dest: 'dist/static/js/stats.min.js'},
+      typeahead: {src: 'bower_components/typehead.js/dist/typeahead.bundle.min.js', dest: 'dist/static/js/typeahead.min.js'}
     }
   }
 

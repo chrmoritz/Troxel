@@ -14,7 +14,7 @@
     "node": ">=0.10.0"
   },
   "scripts": {
-    "start": "coffee server.coffee",
+    "start": "coffee tools/devServer.coffee",
     "test": "grunt --ci",
     "build": "grunt build",
     "serve": "jekyll serve --baseurl /Troxel -ws dist",
