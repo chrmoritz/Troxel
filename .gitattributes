@@ -1,0 +1,6 @@
+# Auto detect text files and enforce LF (unix) line endings
+* text eol=lf
+
+# binary files
+*.qb binary
+*.vox binary
