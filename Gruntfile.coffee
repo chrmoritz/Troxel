@@ -2,10 +2,10 @@ module.exports = (grunt) ->
   grunt.initConfig {
     pkg: grunt.file.readJSON('package.json'),
     coffeelint: {
-      unix: ['coffee/*.coffee', 'test/*.coffee', 'tools/*.coffee'],
       options: {
         configFile: 'tools/coffeelint.json'
       },
+      unix: ['coffee/*.coffee', 'test/*.coffee', 'tools/*.coffee'],
       win: {
         files: {
           src: ['coffee/*.coffee', 'test/*.coffee', 'tools/*.coffee']
@@ -57,10 +57,6 @@ module.exports = (grunt) ->
       main: {
         files: {'dist/static/troxel.min.js': ['js/IO.js', 'js/Qubicle.io.js', 'js/Magica.io.js', 'js/Zoxel.io.js', 'js/Troxel.io.js', 'js/Renderer.js', 'js/Main.js']}
       },
-      controls: {
-        options: {banner: '// threejs.org/license\n'},
-        files: {'dist/static/js/OrbitControls.min.js': 'bower_components/OrbitControls/index.js'}
-      }
       lib: {
         options: {
           mangle: false,
@@ -69,6 +65,10 @@ module.exports = (grunt) ->
         },
         files: {'dist/static/libTroxel.min.js': ['js/IO.js', 'js/Troxel.io.js', 'js/Renderer.js', 'js/libTroxel.js',
                           'bower_components/threejs/build/three.min.js', 'bower_components/OrbitControls/index.js']}
+      },
+      controls: {
+        options: {banner: '// threejs.org/license\n'},
+        files: {'dist/static/js/OrbitControls.min.js': 'bower_components/OrbitControls/index.js'}
       }
     },
     jade: {
@@ -118,10 +118,10 @@ module.exports = (grunt) ->
       }
     },
     concurrent: {
-      serve: ['watch', 'pages'],
       options: {
         logConcurrentOutput: true
-      }
+      },
+      serve: ['watch', 'pages']
     }
   }
 
