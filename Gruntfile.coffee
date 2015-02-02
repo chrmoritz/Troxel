@@ -2,9 +2,19 @@ module.exports = (grunt) ->
   grunt.initConfig {
     pkg: grunt.file.readJSON('package.json'),
     coffeelint: {
-      app: ['coffee/*.coffee', 'test/*.coffee', 'tools/*.coffee'],
+      unix: ['coffee/*.coffee', 'test/*.coffee', 'tools/*.coffee'],
       options: {
         configFile: 'tools/coffeelint.json'
+      },
+      win: {
+        files: {
+          src: ['coffee/*.coffee', 'test/*.coffee', 'tools/*.coffee']
+        },
+        options: {
+          'line_endings': {
+            'level': 'ignore'
+          }
+        }
       }
     },
     mochaTest: {
@@ -129,11 +139,11 @@ module.exports = (grunt) ->
   grunt.loadNpmTasks 'grunt-contrib-watch'
   grunt.loadNpmTasks 'grunt-concurrent'
 
-  grunt.option 'verbose', true if grunt.option 'ci' # no need to initialize Gruntfile verbose
+  grunt.option 'verbose', true if process.env.CI # no need to initialize Gruntfile verbose
 
   grunt.registerTask 'default', ['continue:on', 'test', 'continue:off', 'build', 'continue:fail-on-warning']
-  grunt.registerTask 'test', ['coffeelint', 'mochaTest']
+  grunt.registerTask 'test', ['lint', 'mochaTest']
   grunt.registerTask 'build', ['clean', 'bower', 'coffee', 'uglify', 'jade', 'concat', 'copy']
-  grunt.registerTask 'lint', 'coffeelint'
+  grunt.registerTask 'lint', -> grunt.task.run(if process.platform == 'win32' then 'coffeelint:win' else 'coffeelint:unix')
   grunt.registerTask 'mocha', 'mochaTest'
   grunt.registerTask 'serve', 'concurrent:serve'
