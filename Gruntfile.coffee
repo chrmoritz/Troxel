@@ -59,7 +59,6 @@ module.exports = (grunt) ->
       },
       lib: {
         options: {
-          mangle: false,
           banner: '/*!\n * libTroxel (https://github.com/chrmoritz/Troxel)\n * Copyright 2014 Christian Moritz\n * ' +
                   'Licensed under GNU LGPL v3.0 (https://github.com/chrmoritz/Troxel/blob/master/LICENSE.txt)\n */\n'
         },
