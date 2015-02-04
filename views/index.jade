@@ -260,6 +260,24 @@ html(manifest=dev?null:'troxel.appcache')
             button.btn.btn-default(data-dismiss='modal') Close
             button#resizeBtn.btn.btn-primary Resize voxel model
 
+    #updateModal.modal.fade(tabindex='-1', role='dialog')
+      .modal-dialog
+        .modal-content
+          .modal-header
+            button.close(data-dismiss='modal'): span &times;
+            h4.modal-title A new version of Troxel is available!
+          .modal-body
+            include:markdown Recent_Changes.md
+            i Do you want to reload this page now to update and continue your work in the new version? (you can manually reload the page later to update too)
+          .modal-footer.form-inline
+            button#updateLater.btn.btn-default Close and remind me in:
+            select#remindUpdateTime.form-control(style="margin: 0px 10px 0px 3px;")
+              option(value=600000) 10 minutes
+              option(value=1800000) 30 minutes
+              option(value=3600000) 1 hour
+              option(value=7200000) 2 hours
+            button(onclick="javascript:location.reload();").btn.btn-primary Update now
+
     div(style="position: absolute; top: 50px; bottom: 0px; width: 100%;")
       #WebGlContainer(style='position: absolute; right: 220px; left: 0px; height: 100%;')
       div(style='position: absolute; right: 0px; width: 220px; height: 100%; overflow: auto;')

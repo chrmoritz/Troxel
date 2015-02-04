@@ -138,11 +138,9 @@ module.exports = (grunt) ->
   grunt.loadNpmTasks 'grunt-contrib-watch'
   grunt.loadNpmTasks 'grunt-concurrent'
 
-  grunt.option 'verbose', true if process.env.CI # no need to initialize Gruntfile verbose
-
   grunt.registerTask 'default', ['continue:on', 'test', 'continue:off', 'build', 'continue:fail-on-warning']
   grunt.registerTask 'test', ['lint', 'mochaTest']
   grunt.registerTask 'build', ['clean', 'bower', 'coffee', 'uglify', 'jade', 'concat', 'copy']
   grunt.registerTask 'lint', -> grunt.task.run(if process.platform == 'win32' then 'coffeelint:win' else 'coffeelint:unix')
   grunt.registerTask 'mocha', 'mochaTest'
-  grunt.registerTask 'serve', 'concurrent:serve'
+  grunt.registerTask 'serve', ['build', 'concurrent:serve']

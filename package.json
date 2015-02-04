@@ -43,6 +43,7 @@
     "grunt-jekyll-pages": "^0.4.0",
     "grunt-mocha-test": "^0.12.6",
     "jade": "^1.8.2",
+    "marked": "^0.3.3",
     "mocha": "^2.1.0",
     "should": "^4.5.1"
   }

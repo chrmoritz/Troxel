@@ -277,7 +277,7 @@ class Renderer
                   @voxels[z][y][x].t = 7
                   @voxels[z][y][x].s = 7
                 else
-                   @voxels[z][y][x].a = a
+                  @voxels[z][y][x].a = a
                   @voxels[z][y][x].t = t
                   @voxels[z][y][x].s = s
                 (@voxels[z    ][y    ][x + 1].filled = true; toFill.push [z    , y    , x + 1]) if connected.call @, z    , y    , x + 1

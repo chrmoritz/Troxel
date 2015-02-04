@@ -4,10 +4,12 @@ renderer = null
 if window.applicationCache.status != window.applicationCache.UNCACHED
   window.applicationCache.addEventListener 'updateready', ->
     if window.applicationCache.status == window.applicationCache.UPDATEREADY
-      if confirm "A new version of Troxel is available! Do you want to reload this page now to update?
-        (You can reload this page at any time later to update to the new version.)"
-        location.reload()
+      $('#updateModal').modal 'show'
+      clearInterval updatechecker
   updatechecker = setInterval (-> window.applicationCache.update()), 600000
+$('#updateLater').click ->
+  updatechecker = setInterval (-> window.applicationCache.update()), parseInt($('#remindUpdateTime').val())
+  $('#updateModal').modal 'hide'
 window.onpopstate = (e) ->
   if e?.state?
     reload = io? and io.x == e.state.x and io.y == e.state.y and io.z == e.state.z
