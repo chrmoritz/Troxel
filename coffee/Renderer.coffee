@@ -249,39 +249,48 @@ class Renderer
               @scene.remove intersect.object
               @objects.splice @objects.indexOf(intersect.object), 1
             when 1 # fill area
-              fillArea = (x, y, z, colorMatch) ->
-                connected = (x, y, z) -> @voxels[z]?[y]?[x]? and !@voxels[z][y][x].filled and (!colorMatch or (v.r == @voxels[z][y][x].r and
+              connected = (z, y, x) -> @voxels[z]?[y]?[x]? and !@voxels[z][y][x].filled and (!colorMatch or (v.r == @voxels[z][y][x].r and
                   v.g == @voxels[z][y][x].g and v.b == @voxels[z][y][x].b and v.a == @voxels[z][y][x].a and v.t == @voxels[z][y][x].t and v.s == @voxels[z][y][x].s))
+              baseColor = $('#addVoxColor').val()
+              noiseBright = parseFloat $('#editVoxNoiseBright').val()
+              noiseRgb = parseFloat $('#editVoxNoiseRgb').val()
+              colorMatch = $('#fillSameColor').prop('checked')
+              a = parseInt($('#addVoxAlpha').val())
+              t = parseInt($('#addVoxType').val())
+              s = parseInt($('#addVoxSpecular').val())
+              a = 255 if t in [0, 3] # Solid
+              console.time 'fill'
+              toFill = [[z, y, x]]
+              @voxels[z][y][x].filled = true
+              while toFill.length > 0
+                [z, y, x] = toFill.pop()
                 v = {r: @voxels[z][y][x].r, g: @voxels[z][y][x].g, b: @voxels[z][y][x].b, a: @voxels[z][y][x].a, t: @voxels[z][y][x].t, s: @voxels[z][y][x].s}
                 color = getColor new THREE.Color(baseColor), noiseBright, noiseRgb
                 @voxels[z][y][x].r = Math.floor(color.r * 255)
                 @voxels[z][y][x].g = Math.floor(color.g * 255)
                 @voxels[z][y][x].b = Math.floor(color.b * 255)
-                a = parseInt($('#addVoxAlpha').val())
-                t = parseInt($('#addVoxType').val())
-                s = parseInt($('#addVoxSpecular').val())
-                a = 255 if t in [0, 3] # Solid
-                if color.r == 1 and color.g == 0 and color.b == 1
-                  a = 250
-                  t = s = 7
                 @voxels[z][y][x].a = a
                 @voxels[z][y][x].t = t
                 @voxels[z][y][x].s = s
-                @voxels[z][y][x].filled = true
-                fillArea.call @, x + 1, y    , z    , colorMatch if connected.call @, x + 1, y    , z
-                fillArea.call @, x - 1, y    , z    , colorMatch if connected.call @, x - 1, y    , z
-                fillArea.call @, x    , y + 1, z    , colorMatch if connected.call @, x    , y + 1, z
-                fillArea.call @, x    , y - 1, z    , colorMatch if connected.call @, x    , y - 1, z
-                fillArea.call @, x    , y    , z + 1, colorMatch if connected.call @, x    , y    , z + 1
-                fillArea.call @, x    , y    , z - 1, colorMatch if connected.call @, x    , y    , z - 1
-              baseColor = $('#addVoxColor').val()
-              noiseBright = parseFloat $('#editVoxNoiseBright').val()
-              noiseRgb = parseFloat $('#editVoxNoiseRgb').val()
-              fillArea.call @, x, y, z, $('#fillSameColor').prop('checked')
+                if color.r == 1 and color.g == 0 and color.b == 1
+                  @voxels[z][y][x].a = 250
+                  @voxels[z][y][x].t = 7
+                  @voxels[z][y][x].s = 7
+                else
+                   @voxels[z][y][x].a = a
+                  @voxels[z][y][x].t = t
+                  @voxels[z][y][x].s = s
+                (@voxels[z    ][y    ][x + 1].filled = true; toFill.push [z    , y    , x + 1]) if connected.call @, z    , y    , x + 1
+                (@voxels[z    ][y    ][x - 1].filled = true; toFill.push [z    , y    , x - 1]) if connected.call @, z    , y    , x - 1
+                (@voxels[z    ][y + 1][x    ].filled = true; toFill.push [z    , y + 1, x    ]) if connected.call @, z    , y + 1, x
+                (@voxels[z    ][y - 1][x    ].filled = true; toFill.push [z    , y - 1, x    ]) if connected.call @, z    , y - 1, x
+                (@voxels[z + 1][y    ][x    ].filled = true; toFill.push [z + 1, y    , x    ]) if connected.call @, z + 1, y    , x
+                (@voxels[z - 1][y    ][x    ].filled = true; toFill.push [z - 1, y    , x    ]) if connected.call @, z - 1, y    , x
               for z in [0...@z] by 1 when @voxels[z]?
                 for y in [0...@y] by 1 when @voxels[z]?[y]?
                   for x in [0...@x] by 1 when @voxels[z]?[y]?[x]?
                     delete @voxels[z][y][x].filled if @voxels[z][y][x].filled
+              console.timeEnd 'fill'
               io = {voxels: @voxels, x: @x, y: @y, z: @z}
               @reload io
               return history.pushState io, 'Troxel', '#m=' + new Base64IO(io).export false
