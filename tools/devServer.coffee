@@ -2,7 +2,7 @@ express = require 'express'
 app     = express()
 
 app.use '/Troxel/static', express.static 'dist/static'
-app.use require('connect-assets') paths: ['coffee']
+app.use require('connect-assets') paths: ['coffee'], fingerprinting: true
 app.set 'views', 'views'
 app.set 'view engine', 'jade'
 
