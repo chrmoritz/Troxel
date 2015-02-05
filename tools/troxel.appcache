@@ -6,7 +6,7 @@ CACHE MANIFEST
 {% else %}
 # rev {{ site.time }}
 {% endif %}
-index.html
+./
 static/js/stats.min.js
 static/js/three.min.js
 static/css/bootstrap-theme.min.css
@@ -22,6 +22,7 @@ static/fonts/glyphicons-halflings-regular.ttf
 static/fonts/glyphicons-halflings-regular.woff
 static/fonts/glyphicons-halflings-regular.woff2
 static/troxel.min.js
+static/Trove.json
 
 NETWORK:
 *
