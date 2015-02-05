@@ -308,7 +308,7 @@ $('#addVoxType').change ->
     when 0, 3 then $('#addVoxAlpha').prop('disabled', true)
 $('#addVoxAlpha').val(112)
 $('#editVoxNoiseBright').val(0)
-$('#editVoxNoiseRgb').val(0)
+$('#editVoxNoiseHSL').val(0)
 $('#openResizeModal').click ->
   return unless io?
   $('#resizeX').val(io.x)

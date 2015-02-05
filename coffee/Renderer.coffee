@@ -172,15 +172,14 @@ class Renderer
 
   onDocumentMouseDown: (e) ->
     return if !@editMode or $('#openModal').css('display') == 'block' or $('#exportModal').css('display') == 'block' or $('#saveModal').css('display') == 'block'
-    getColor = (color, noiseBright, noiseRgb) ->
+    getColor = (color, noiseBright, noiseHSL) ->
       color.multiplyScalar Math.random() * 2 * noiseBright + 1 - noiseBright if noiseBright > 0
-      if noiseRgb > 0
-        color.r = color.r * (Math.random() * 2 * noiseRgb + 1 - noiseRgb)
-        color.g = color.g * (Math.random() * 2 * noiseRgb + 1 - noiseRgb)
-        color.b = color.b * (Math.random() * 2 * noiseRgb + 1 - noiseRgb)
-      color.r = 1 if color.r > 1
-      color.g = 1 if color.g > 1
-      color.b = 1 if color.b > 1
+      if noiseHSL > 0
+        hsl = color.getHSL()
+        hsl.h = (hsl.h + 0.1 * (Math.random() * 2 * noiseHSL - noiseHSL)) %% 1
+        hsl.s = Math.max(0, Math.min(1, hsl.s + Math.random() * 2 * noiseHSL - noiseHSL))
+        hsl.l = Math.max(0, Math.min(1, hsl.l + Math.random() * 2 * noiseHSL - noiseHSL))
+        color.setHSL hsl.h, hsl.s, hsl.l
       return color
     @vector.set (e.clientX / @width) * 2 - 1, -((e.clientY - 50) / @height) * 2 + 1, 0.5
     @vector.unproject @camera
@@ -192,7 +191,7 @@ class Renderer
         when 0 # left mouse button
           switch $('.active .editTool').data('edittool')
             when 0 # add voxel
-              color = getColor new THREE.Color($('#addVoxColor').val()), parseFloat $('#editVoxNoiseBright').val(), parseFloat $('#editVoxNoiseRgb').val()
+              color = getColor new THREE.Color($('#addVoxColor').val()), parseFloat $('#editVoxNoiseBright').val(), parseFloat $('#editVoxNoiseHSL').val()
               a = parseInt($('#addVoxAlpha').val())
               t = parseInt($('#addVoxType').val())
               s = parseInt($('#addVoxSpecular').val())
@@ -217,7 +216,7 @@ class Renderer
               x = (intersect.object.position.z - 25) / 50
               y = (intersect.object.position.y - 25) / 50
               z = (intersect.object.position.x - 25) / 50
-              color = getColor new THREE.Color($('#addVoxColor').val()), parseFloat $('#editVoxNoiseBright').val(), parseFloat $('#editVoxNoiseRgb').val()
+              color = getColor new THREE.Color($('#addVoxColor').val()), parseFloat $('#editVoxNoiseBright').val(), parseFloat $('#editVoxNoiseHSL').val()
               a = parseInt($('#addVoxAlpha').val())
               t = parseInt($('#addVoxType').val())
               s = parseInt($('#addVoxSpecular').val())
@@ -253,13 +252,12 @@ class Renderer
                   v.g == @voxels[z][y][x].g and v.b == @voxels[z][y][x].b and v.a == @voxels[z][y][x].a and v.t == @voxels[z][y][x].t and v.s == @voxels[z][y][x].s))
               baseColor = $('#addVoxColor').val()
               noiseBright = parseFloat $('#editVoxNoiseBright').val()
-              noiseRgb = parseFloat $('#editVoxNoiseRgb').val()
+              noiseRgb = parseFloat $('#editVoxNoiseHSL').val()
               colorMatch = $('#fillSameColor').prop('checked')
               a = parseInt($('#addVoxAlpha').val())
               t = parseInt($('#addVoxType').val())
               s = parseInt($('#addVoxSpecular').val())
               a = 255 if t in [0, 3] # Solid
-              console.time 'fill'
               toFill = [[z, y, x]]
               @voxels[z][y][x].filled = true
               while toFill.length > 0
@@ -290,7 +288,6 @@ class Renderer
                 for y in [0...@y] by 1 when @voxels[z]?[y]?
                   for x in [0...@x] by 1 when @voxels[z]?[y]?[x]?
                     delete @voxels[z][y][x].filled if @voxels[z][y][x].filled
-              console.timeEnd 'fill'
               io = {voxels: @voxels, x: @x, y: @y, z: @z}
               @reload io
               return history.pushState io, 'Troxel', '#m=' + new Base64IO(io).export false

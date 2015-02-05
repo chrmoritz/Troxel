@@ -310,9 +310,9 @@ html(manifest=dev?null:'troxel.appcache')
                 .col-sm-6
                   input#editVoxNoiseBright(type='range', min=0, max=0.3, step=0.01, value=0, data-toggle='tooltip', data-container='body', data-placement='left', title='Brightness noise of the color (R/G/B multiplied by the same random number)')
               .form-group(style='margin-bottom: 0px;')
-                label.col-sm-6.control-label(for='editVoxNoiseRgb', style='padding-top: 0px;') Noise-RGB:
+                label.col-sm-6.control-label(for='editVoxNoiseHSL', style='padding-top: 0px;') Noise-HSL:
                 .col-sm-6
-                  input#editVoxNoiseRgb(type='range', min=0, max=0.3, step=0.01, value=0, data-toggle='tooltip', data-container='body', data-placement='left', title='RGB noise of the color (R/G/B multiplied by different random number)')
+                  input#editVoxNoiseHSL(type='range', min=0, max=0.3, step=0.01, value=0, data-toggle='tooltip', data-container='body', data-placement='left', title='HSL noise of the color (hue/saturation/lightness multiplied by different random number)')
               .form-group(style='margin-bottom: 0px;')
                 label.col-sm-4.control-label(for='addVoxAlpha') Alpha:
                 .col-sm-8
