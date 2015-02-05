@@ -173,7 +173,11 @@ class Renderer
   onDocumentMouseDown: (e) ->
     return if !@editMode or $('#openModal').css('display') == 'block' or $('#exportModal').css('display') == 'block' or $('#saveModal').css('display') == 'block'
     getColor = (color, noiseBright, noiseHSL) ->
-      color.multiplyScalar Math.random() * 2 * noiseBright + 1 - noiseBright if noiseBright > 0
+      if noiseBright > 0
+        color.multiplyScalar Math.random() * 2 * noiseBright + 1 - noiseBright
+        color.r = 1 if color.r > 1
+        color.g = 1 if color.g > 1
+        color.b = 1 if color.b > 1
       if noiseHSL > 0
         hsl = color.getHSL()
         hsl.h = (hsl.h + 0.1 * (Math.random() * 2 * noiseHSL - noiseHSL)) %% 1
