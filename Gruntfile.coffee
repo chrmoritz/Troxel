@@ -71,8 +71,11 @@ module.exports = (grunt) ->
       }
     },
     jade: {
-      compile:{
+      index:{
         files: 'dist/index.html': 'views/index.jade'
+      },
+      changelog:{
+        files: 'dist/static/Recent_Changes.html': 'views/Recent_Changes.jade'
       }
     },
     concat: {
