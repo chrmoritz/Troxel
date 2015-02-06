@@ -37,7 +37,7 @@ class MagicaIO extends IO
           when "RGBA"
             paletteBegin = chunkPointer + 12
             console.warn "invalid length of palette chunk" unless chunkSize == 1024
-            paletteLength =  chunkSize
+            paletteLength = chunkSize
         chunkPointer += 12 + chunkSize + chunkChildSize
       throw new Error "missing chunks" if sizeBegin == -1 or sizeEnd == -1 or voxelBegin == -1 or voxelEnd == -1
       # read size chunk
@@ -57,7 +57,7 @@ class MagicaIO extends IO
           {r: 255, g: 102, b: 102, a: 255, t: 0, s: 0}, {r: 255, g: 102, b:  51, a: 255, t: 0, s: 0}, {r: 255, g: 102, b:   0, a: 255, t: 0, s: 0},
           {r: 255, g:  51, b: 255, a: 255, t: 0, s: 0}, {r: 255, g:  51, b: 204, a: 255, t: 0, s: 0}, {r: 255, g:  51, b: 153, a: 255, t: 0, s: 0},
           {r: 255, g:  51, b: 102, a: 255, t: 0, s: 0}, {r: 255, g:  51, b:  51, a: 255, t: 0, s: 0}, {r: 255, g:  51, b:   0, a: 255, t: 0, s: 0},
-          {r: 255, g:   0, b: 255, a: 255, t: 0, s: 0}, {r: 255, g:   0, b: 204, a: 255, t: 0, s: 0}, {r: 255, g:   0, b: 153, a: 255, t: 0, s: 0},
+          {r: 255, g:   0, b: 255, a: 250, t: 7, s: 7}, {r: 255, g:   0, b: 204, a: 255, t: 0, s: 0}, {r: 255, g:   0, b: 153, a: 255, t: 0, s: 0},
           {r: 255, g:   0, b: 102, a: 255, t: 0, s: 0}, {r: 255, g:   0, b:  51, a: 255, t: 0, s: 0}, {r: 255, g:   0, b:   0, a: 255, t: 0, s: 0},
           {r: 204, g: 255, b: 255, a: 255, t: 0, s: 0}, {r: 204, g: 255, b: 204, a: 255, t: 0, s: 0}, {r: 204, g: 255, b: 153, a: 255, t: 0, s: 0},
           {r: 204, g: 255, b: 102, a: 255, t: 0, s: 0}, {r: 204, g: 255, b:  51, a: 255, t: 0, s: 0}, {r: 204, g: 255, b:   0, a: 255, t: 0, s: 0},
@@ -137,7 +137,10 @@ class MagicaIO extends IO
       else
         rawpalette = new Uint8Array ab.slice paletteBegin, paletteBegin + paletteLength
         for i in [0...paletteLength] by 4
-          palette.push {r: rawpalette[i], g: rawpalette[i + 1], b: rawpalette[i + 2], a: 255, t: 0, s: 0}
+          if rawpalette[i] == 255 and rawpalette[i + 1] == 0 and rawpalette[i + 2] == 255
+            palette.push {r: 255, g: 0, b: 255, a: 250, t: 7, s: 7} # attachment point
+          else
+            palette.push {r: rawpalette[i], g: rawpalette[i + 1], b: rawpalette[i + 2], a: 255, t: 0, s: 0}
         console.log "palette:"
         console.log palette
       # read voxel chunk

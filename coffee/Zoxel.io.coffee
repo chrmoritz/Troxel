@@ -18,6 +18,8 @@ class ZoxelIO extends IO
           @voxels[z] = [] unless @voxels[z]?
           @voxels[z][y] = [] unless @voxels[z][y]?
           @voxels[z][y][x] = {r: (c & 0xff000000) >>> 24, g: (c & 0x00ff0000) >>> 16, b: (c & 0x0000ff00) >>> 8, a: 255, t: 0, s: 0}
+          if @voxels[z][y][x].r == 255 and @voxels[z][y][x].g == 0 and @voxels[z][y][x].b == 255
+            @voxels[z][y][x] = {r: 255, g: 0, b: 255, a: 250, t: 7, s: 7} # attachment point
       console.log "voxels:"
       console.log @voxels
       callback()
