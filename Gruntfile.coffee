@@ -141,8 +141,8 @@ module.exports = (grunt) ->
   grunt.loadNpmTasks 'grunt-contrib-watch'
   grunt.loadNpmTasks 'grunt-concurrent'
 
-  grunt.registerTask 'default', ['continue:on', 'test', 'continue:off', 'build', 'continue:fail-on-warning']
-  grunt.registerTask 'test', ['lint', 'mochaTest']
+  grunt.registerTask 'default', ['test', 'build']
+  grunt.registerTask 'test', ['continue:on', 'lint', 'continue:off', 'mochaTest', 'continue:fail-on-warning']
   grunt.registerTask 'build', ['clean', 'bower', 'coffee', 'uglify', 'jade', 'concat', 'copy']
   grunt.registerTask 'lint', -> grunt.task.run(if process.platform == 'win32' then 'coffeelint:win' else 'coffeelint:unix')
   grunt.registerTask 'mocha', 'mochaTest'

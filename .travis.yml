@@ -6,12 +6,8 @@ node_js:
   - '0.10'
   - '0.11'
 
-install:
-  - npm update
-
 cache:
   directories:
-    - node_modules
     - bower_components
 
 deploy:

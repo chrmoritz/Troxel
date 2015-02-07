@@ -13,13 +13,12 @@ install:
   - ps: Install-Product node $env:nodejs_version
   - node --version
   - npm --version
-  - npm update
+  - npm install
 
 test_script:
   - npm test
 
 cache:
-  - node_modules
   - bower_components
 
 build: off

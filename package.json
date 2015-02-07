@@ -15,7 +15,8 @@
   },
   "scripts": {
     "start": "coffee tools/devServer.coffee",
-    "test": "grunt",
+    "test": "grunt test",
+    "prepublish": "grunt build",
     "build": "grunt build",
     "serve": "grunt serve",
     "import": "coffee tools/Importer.coffee"
