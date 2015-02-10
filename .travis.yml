@@ -3,19 +3,10 @@ language: node_js
 sudo: false
 
 node_js:
-  - 0.10
-  - 0.12
-  - iojs
+  - '0.10'
+  - '0.12'
+  - 'iojs'
 
 cache:
   directories:
     - bower_components
-
-deploy:
-  provider: heroku
-  api_key:
-    secure: pWgnbzutxqWigSVfFFvvCcfyNz8oVxPxmiZO7omj7IyfaJoAa6BkSM4+D5TSWG4RQ0R2EGTJDnlGQIf5M+QeNJ/bmBhb5IBdNHDAAkRERniu3N2LLC87jDziV3JJfba3wt8ckgbnru7P63oyKryNpbYO0MQkx9tn3x2Q+ORpCUo=
-  app: troxel
-  on:
-    repo: chrmoritz/Troxel
-    condition: $TRAVIS_NODE_VERSION =~ 0.10
