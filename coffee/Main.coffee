@@ -1,3 +1,4 @@
+'use strict'
 io = null
 dragFiles = null
 renderer = null

@@ -1,3 +1,4 @@
+'use strict'
 window.Troxel =
   webgl: -> try
     canvas = document.createElement 'canvas'

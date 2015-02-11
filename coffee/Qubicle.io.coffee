@@ -1,4 +1,5 @@
 # http://www.minddesk.com/wiki/index.php?title=Qubicle_Constructor_1:Data_Exchange_With_Qubicle_Binary
+'use strict'
 class QubicleIO extends IO
   constructor: (files, callback) ->
     return if super(files)

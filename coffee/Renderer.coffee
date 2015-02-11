@@ -1,3 +1,4 @@
+'use strict'
 class Renderer
   constructor: (io, @embedded = false, @domContainer = $('#WebGlContainer')) ->
     @width = @domContainer.width()

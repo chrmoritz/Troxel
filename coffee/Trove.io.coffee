@@ -1,6 +1,6 @@
 # ToDo: implement .blueprint loading
 # ToDo: implement .blueprint saving
-
+'use strict'
 class TroveIO extends IO
   constructor: (file, callback) ->
     return if super(file)

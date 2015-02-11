@@ -1,3 +1,4 @@
+'use strict'
 class Base64IO extends IO
   constructor: (base64) ->
     return if super(base64)
