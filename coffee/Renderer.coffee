@@ -31,7 +31,6 @@ class Renderer
     @controls = new THREE.OrbitControls @camera, @domContainer[0]
     @controls.target = new THREE.Vector3 @z * 25, @y * 25, @x * 25
     @controls.addEventListener 'change', => @render()
-    @controls.enabled = false
     # Event handlers
     document.addEventListener 'keydown', (e) => @onDocumentKeyDown(e)
     window.addEventListener    'resize', (e) => @onWindowResize(e)
