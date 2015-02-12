@@ -35,7 +35,7 @@ class Renderer
     # Event handlers
     document.addEventListener 'keydown', (e) => @onDocumentKeyDown(e)
     window.addEventListener    'resize', (e) => @onWindowResize(e)
-    @animate()
+    @animate() if @embedded
 
   getVoxel: (color, a, t, s) ->
     material = new THREE.MeshPhongMaterial color: color, ambient: color

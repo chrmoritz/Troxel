@@ -2,10 +2,6 @@
 class Editor extends Renderer
   constructor: (io, @embedded = false, @domContainer = $('#WebGlContainer')) ->
     @objects = []
-    @stats = new Stats()
-    @stats.domElement.style.position = 'absolute'
-    @stats.domElement.style.top = '0px'
-    @domContainer.append @stats.domElement
     super(io, @embedded, @domContainer)
     # roll-over helpers
     rollOverGeo = new THREE.BoxGeometry 50, 50, 50
@@ -65,6 +61,10 @@ class Editor extends Renderer
     material = new THREE.LineBasicMaterial color: 0x000000, opacity: 0.2, transparent: true
     @grid = new THREE.Line geometry, material, THREE.LinePieces
     @scene.add @grid
+    @stats = new Stats()
+    @stats.domElement.style.position = 'absolute'
+    @stats.domElement.style.top = '0px'
+    @domContainer.append @stats.domElement
     @changeEditMode($('#modeEdit').parent().hasClass('active'))
     # Event handlers
     @domContainer.on        'mousedown', (e) => @onDocumentMouseDown(e)
