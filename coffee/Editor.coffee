@@ -238,7 +238,7 @@ class Editor extends Renderer
       @render()
 
   onDocumentKeyDown: (e) ->
-    super(e)
+    return unless super(e)?
     return if $('.active #modeView').length == 1
     switch e.keyCode
       when 18 # Alt

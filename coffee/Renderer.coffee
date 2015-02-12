@@ -30,6 +30,7 @@ class Renderer
     @camera.position.z = @x * 25
     @controls = new THREE.OrbitControls @camera, @domContainer[0]
     @controls.target = new THREE.Vector3 @z * 25, @y * 25, @x * 25
+    @controls.noKeys = true
     @controls.addEventListener 'change', => @render()
     # Event handlers
     document.addEventListener 'keydown', (e) => @onDocumentKeyDown(e)
@@ -79,12 +80,17 @@ class Renderer
 
   onDocumentKeyDown: (e) ->
     switch e.keyCode
-      when 87 then return @controls.rotateUp   -0.05 # W
-      when 65 then return @controls.rotateLeft -0.05 # A
-      when 83 then return @controls.rotateUp    0.05 # S
-      when 68 then return @controls.rotateLeft  0.05 # D
-      when 81 then return @controls.dollyIn()        # Q
-      when 69 then return @controls.dollyOut()       # E
+      when 87 then @controls.rotateUp   -0.05 # W
+      when 65 then @controls.rotateLeft -0.05 # A
+      when 83 then @controls.rotateUp    0.05 # S
+      when 68 then @controls.rotateLeft  0.05 # D
+      when 81 then @controls.dollyIn()        # Q
+      when 69 then @controls.dollyOut()       # E
+      when 37 then @controls.pan  7.0,  0     # left
+      when 38 then @controls.pan  0  ,  7.0   # up
+      when 39 then @controls.pan -7.0,  0     # right
+      when 40 then @controls.pan  0  , -7.0   # bottom
+      else true
 
   onWindowResize: ->
     @width = @domContainer.width()
