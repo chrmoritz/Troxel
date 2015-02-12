@@ -1,7 +1,7 @@
 'use strict'
 io = null
 dragFiles = null
-renderer = null
+editor = null
 if window.applicationCache.status != window.applicationCache.UNCACHED
   window.applicationCache.addEventListener 'updateready', ->
     if window.applicationCache.status == window.applicationCache.UPDATEREADY
@@ -22,9 +22,9 @@ window.onpopstate = (e) ->
       $('#btnExport').hide()
     $('#btnExportPng').show()
     if reload
-      return renderer.reload io
+      return editor.reload io
     else
-      return renderer = new Renderer io
+      return editor = new Editor io
   io = null
   for hash in decodeURI(window.location.hash).replace('#','').split('&')
     [param, value] = hash.split('=')
@@ -33,7 +33,7 @@ window.onpopstate = (e) ->
       $('#btnExport').hide() if io.readonly == 1
       $('#btnExport').show() if io.readonly == 0
       $('#btnExportPng').show()
-      renderer = new Renderer io
+      editor = new Editor io
       break
     if param == 'b' # load Trove model from blueprint id
       $.getJSON 'static/Trove.json', (data) ->
@@ -42,7 +42,7 @@ window.onpopstate = (e) ->
         io = new Base64IO model
         $('#btnExport').hide()
         $('#btnExportPng').show()
-        renderer = new Renderer io
+        editor = new Editor io
       break
   unless io?
     $('#WebGlContainer').empty()
@@ -75,7 +75,7 @@ $('#open').click ->
     else
       $('#btnExport').hide()
     $('#btnExportPng').show()
-    renderer = new Renderer io
+    editor = new Editor io
     history.pushState {voxels: io.voxels, x: io.x, y: io.y, z: io.z}, 'Troxel', '#m=' + new Base64IO(io).export false
   console.log '##################################################'
   switch $('#filetabs li.active a').attr('href')
@@ -127,7 +127,7 @@ $('#open').click ->
         $('#openModal').modal 'hide'
         $('#btnExport').hide()
         $('#btnExportPng').show()
-        renderer = new Renderer io
+        editor = new Editor io
         history.pushState {voxels: io.voxels, x: io.x, y: io.y, z: io.z}, 'Troxel', '#b=' + $('#sbtrove').val()
     when '#tabnew'
       x = parseInt $('#snewX').val()
@@ -196,7 +196,7 @@ $('#exportBase64').click ->
 $('#exportJson').click ->
   return if io.readonly
   $('#exportJsonTa').val(new JsonIO(io).export($('#exportJsonPret').prop('checked'))).fadeIn()
-$('#btnExportPng').click -> renderer.render(true)
+$('#btnExportPng').click -> editor.render(true)
 $('#ulSavedModels').parent().on 'show.bs.dropdown', (e) ->
   if $(e.relatedTarget).data('tag') == '#ulSavedModels'
     if !io? or io.readonly == 1
@@ -213,7 +213,7 @@ $('#ulSavedModels').parent().on 'show.bs.dropdown', (e) ->
     $('#btnExport').show() if !io.readonly? or io.readonly == 0
     $('#btnExportPng').show()
     history.pushState {voxels: io.voxels, x: io.x, y: io.y, z: io.z}, 'Toxel', '#m=' + $(@).data 'model'
-    renderer = new Renderer io
+    editor = new Editor io
     $('#ulSavedModels li:eq(1) a').text $(@).text()
 $('#saveModelAs').click ->
   return if $('#saveModelName').val().length == 0 or !io? or io.readonly
@@ -222,13 +222,13 @@ $('#saveModelAs').click ->
 $('#modeView').click ->
   $(@).parent().addClass('active')
   $('#modeEdit').parent().removeClass('active')
-  renderer.changeEditMode(false)
+  editor.changeEditMode(false)
   $('#addPanel').fadeOut()
 $('#modeEdit').click ->
   return if !io? or io.readonly
   $(@).parent().addClass('active')
   $('#modeView').parent().removeClass('active')
-  renderer.changeEditMode(true)
+  editor.changeEditMode(true)
   $('#addPanel').fadeIn()
 $('.rotateBtn').click ->
   return unless io?
@@ -239,7 +239,7 @@ $('.rotateBtn').click ->
     when '-y' then io.rotateY(false)
     when  'z' then io.rotateZ(true)
     when '-z' then io.rotateZ(false)
-  renderer = new Renderer io # ToDo: implement changing dimensions in renderer.reload
+  editor = new Editor io # ToDo: implement changing dimensions in renderer.reload
   history.pushState {voxels: io.voxels, x: io.x, y: io.y, z: io.z}, 'Troxel', '#m=' + new Base64IO(io).export false
 $('.moveBtn').click ->
   return unless io?
@@ -250,7 +250,7 @@ $('.moveBtn').click ->
     when '-y' then io.moveY(false, true)
     when  'z' then io.moveZ(true, true)
     when '-z' then io.moveZ(false, true)
-  renderer.reload io
+  editor.reload io
   history.pushState {voxels: io.voxels, x: io.x, y: io.y, z: io.z}, 'Troxel', '#m=' + new Base64IO(io).export false
 $('.mirrorBtn').click ->
   return unless io?
@@ -258,7 +258,7 @@ $('.mirrorBtn').click ->
     when 'x' then io.mirrorX(true)
     when 'y' then io.mirrorY(true)
     when 'z' then io.mirrorZ(true)
-  renderer.reload io
+  editor.reload io
   history.pushState {voxels: io.voxels, x: io.x, y: io.y, z: io.z}, 'Troxel', '#m=' + new Base64IO(io).export false
 $('.panel-heading').click ->
   span = $(@).find('button span')
@@ -269,31 +269,31 @@ $('.panel-heading').click ->
   $(@).next().toggle()
 $('#ambLightColor').val('#606060').change ->
   return unless io?
-  renderer.ambientLight.color = new THREE.Color($(@).val())
-  renderer.render()
+  editor.ambientLight.color = new THREE.Color($(@).val())
+  editor.render()
 $('#dirLightColor').val('#ffffff').change ->
   return unless io?
-  renderer.directionalLight.color = new THREE.Color($(@).val())
-  renderer.render()
+  editor.directionalLight.color = new THREE.Color($(@).val())
+  editor.render()
 $('#dirLightIntensity').val(0.3).change ->
   return unless io?
-  renderer.directionalLight.intensity = $(@).val()
-  renderer.render()
+  editor.directionalLight.intensity = $(@).val()
+  editor.render()
 $('#spotLightColor').val('#ffffff').change ->
   return unless io?
-  renderer.spotLight.color = new THREE.Color($(@).val())
-  renderer.render()
+  editor.spotLight.color = new THREE.Color($(@).val())
+  editor.render()
 $('#spotLightIntensity').val(0.7).change ->
   return unless io?
-  renderer.spotLight.intensity = $(@).val()
-  renderer.render()
+  editor.spotLight.intensity = $(@).val()
+  editor.render()
 $('#dirLightX').val('-0.5')
 $('#dirLightY').val('-0.5')
 $('#dirLightZ').val('1')
 $('#dirLightVector').click ->
   return unless io?
-  renderer.directionalLight.position.set(parseFloat($('#dirLightX').val()), parseFloat($('#dirLightY').val()), parseFloat($('#dirLightZ').val())).normalize()
-  renderer.render()
+  editor.directionalLight.position.set(parseFloat($('#dirLightX').val()), parseFloat($('#dirLightY').val()), parseFloat($('#dirLightZ').val())).normalize()
+  editor.render()
 $('#addVoxAP').click ->
   $('#addVoxColor').val('#ff00ff')
   $('#addVoxAlpha, #addVoxType, #addVoxSpecular').prop('disabled', true)
@@ -319,7 +319,7 @@ $('#resizeBtn').click ->
   return if not io? or io.readonly
   $('#resizeModal').modal 'hide'
   io.resize(parseInt($('#resizeX').val()), parseInt($('#resizeY').val()), parseInt($('#resizeZ').val()))
-  renderer = new Renderer io # ToDo: implement changing dimensions in renderer.reload
+  editor = new Editor io # ToDo: implement changing dimensions in renderer.reload
   history.pushState {voxels: io.voxels, x: io.x, y: io.y, z: io.z}, 'Troxel', '#m=' + new Base64IO(io).export false
 $($('.editTool')[0]).parent().button('toggle')
 $('#fillSameColor').prop('checked', true)

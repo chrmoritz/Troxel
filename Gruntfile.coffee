@@ -55,7 +55,7 @@ module.exports = (grunt) ->
         screwIE8: true
       },
       main: {
-        files: {'dist/static/troxel.min.js': ['js/IO.js', 'js/Qubicle.io.js', 'js/Magica.io.js', 'js/Zoxel.io.js', 'js/Troxel.io.js', 'js/Renderer.js', 'js/Main.js']}
+        files: {'dist/static/troxel.min.js': ['js/IO.js', 'js/Qubicle.io.js', 'js/Magica.io.js', 'js/Zoxel.io.js', 'js/Troxel.io.js', 'js/Renderer.js', 'js/Editor.js', 'js/Main.js']}
       },
       lib: {
         options: {
