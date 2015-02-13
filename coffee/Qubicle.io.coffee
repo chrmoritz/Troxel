@@ -199,39 +199,39 @@ class QubicleIO extends IO
 
     exportValues = (vox) ->
       if vox?
-        data = data.concat [vox.r, vox.g, vox.b, 255]
-        data_a = data_a.concat switch vox.a
-          when 250 then [255,   0, 255, 255] # attachment point
-          when 255 then [255, 255, 255, 255] # solid (type map set to non transparent type)
-          when 240 then [240, 240, 240, 255] # Nearly Solid
-          when 208 then [208, 208, 208, 255] #      |
-          when 176 then [176, 176, 176, 255] #      |
-          when 144 then [144, 144, 144, 255] #      |
-          when 112 then [112, 112, 112, 255] #      |
-          when  80 then [ 80,  80,  80, 255] #      |
-          when  48 then [ 48,  48,  48, 255] #      V
-          when  16 then [ 16,  16,  16, 255] # Very Transparent
-          else          [112, 112, 112, 255] # fallback
-        data_t = data_t.concat switch vox.t
-          when 0 then [255, 255, 255, 255] # solid (default)
-          when 1 then [128, 128, 128, 255] # glass
-          when 2 then [ 64,  64,  64, 255] # tiled glass
-          when 3 then [255,   0,   0, 255] # glowing solid
-          when 4 then [255, 255,   0, 255] # glowing glass
-          when 7 then [255,   0, 255, 255] # attachment point
-          else        [255, 255, 255, 255] # fallback to solid (default)
-        data_s = data_s.concat switch vox.s
-          when 0 then [128,   0,   0, 255] # rough (default)
-          when 1 then [  0, 128,   0, 255] # metal
-          when 2 then [  0,   0, 128, 255] # water
-          when 3 then [128, 128,   0, 255] # iridescent
-          when 7 then [255,   0, 255, 255] # attachment point
-          else        [128,   0,   0, 255] # fallback to rough (default)
+        data.push vox.r, vox.g, vox.b, 255
+        switch vox.a
+          when 250 then data_a.push 255,   0, 255, 255 # attachment point
+          when 255 then data_a.push 255, 255, 255, 255 # solid (type map set to non transparent type)
+          when 240 then data_a.push 240, 240, 240, 255 # Nearly Solid
+          when 208 then data_a.push 208, 208, 208, 255 #      |
+          when 176 then data_a.push 176, 176, 176, 255 #      |
+          when 144 then data_a.push 144, 144, 144, 255 #      |
+          when 112 then data_a.push 112, 112, 112, 255 #      |
+          when  80 then data_a.push  80,  80,  80, 255 #      |
+          when  48 then data_a.push  48,  48,  48, 255 #      V
+          when  16 then data_a.push  16,  16,  16, 255 # Very Transparent
+          else          data_a.push 112, 112, 112, 255 # fallback
+        switch vox.t
+          when 0 then data_t.push 255, 255, 255, 255 # solid (default)
+          when 1 then data_t.push 128, 128, 128, 255 # glass
+          when 2 then data_t.push  64,  64,  64, 255 # tiled glass
+          when 3 then data_t.push 255,   0,   0, 255 # glowing solid
+          when 4 then data_t.push 255, 255,   0, 255 # glowing glass
+          when 7 then data_t.push 255,   0, 255, 255 # attachment point
+          else        data_t.push 255, 255, 255, 255 # fallback to solid (default)
+        switch vox.s
+          when 0 then data_s.push 128,   0,   0, 255 # rough (default)
+          when 1 then data_s.push   0, 128,   0, 255 # metal
+          when 2 then data_s.push   0,   0, 128, 255 # water
+          when 3 then data_s.push 128, 128,   0, 255 # iridescent
+          when 7 then data_s.push 255,   0, 255, 255 # attachment point
+          else        data_s.push 128,   0,   0, 255 # fallback to rough (default)
       else
-        data   = data.concat   [0, 0, 0, 0]
-        data_a = data_a.concat [0, 0, 0, 0]
-        data_t = data_t.concat [0, 0, 0, 0]
-        data_s = data_s.concat [0, 0, 0, 0]
+        data.push   0, 0, 0, 0
+        data_a.push 0, 0, 0, 0
+        data_t.push 0, 0, 0, 0
+        data_s.push 0, 0, 0, 0
 
     equal = (a, b) ->
       return true if !a? and !b?
@@ -254,16 +254,16 @@ class QubicleIO extends IO
             (if equal vox[i + r - 1], vox[i + r] then r++ else break) while i + r <= lastVox
             if r > 1
               [c1, c2, c3, c4] = new Uint8Array new Uint32Array([r]).buffer
-              data   = data.concat   [2, 0, 0, 0, c1, c2, c3, c4] # CODEFLAG + count
-              data_a = data_a.concat [2, 0, 0, 0, c1, c2, c3, c4]
-              data_t = data_t.concat [2, 0, 0, 0, c1, c2, c3, c4]
-              data_s = data_s.concat [2, 0, 0, 0, c1, c2, c3, c4]
+              data.push   2, 0, 0, 0, c1, c2, c3, c4 # CODEFLAG + count
+              data_a.push 2, 0, 0, 0, c1, c2, c3, c4
+              data_t.push 2, 0, 0, 0, c1, c2, c3, c4
+              data_s.push 2, 0, 0, 0, c1, c2, c3, c4
             exportValues vox[i] # push data
             i += r
-        data   = data.concat   [6, 0, 0, 0] # NEXTSLICEFLAG
-        data_a = data_a.concat [6, 0, 0, 0]
-        data_t = data_t.concat [6, 0, 0, 0]
-        data_s = data_s.concat [6, 0, 0, 0]
+        data.push   6, 0, 0, 0 # NEXTSLICEFLAG
+        data_a.push 6, 0, 0, 0
+        data_t.push 6, 0, 0, 0
+        data_s.push 6, 0, 0, 0
     else
       exportValues @voxels[z]?[y]?[x] for x in [0...@x] by 1 for y in [0...@y] by 1 for z in [0...@z] by 1
     console.log "export Qubicle:"

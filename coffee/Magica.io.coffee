@@ -193,22 +193,20 @@ class MagicaIO extends IO
           i = helpPalette[rgba]
           unless i?
             throw new Error "To many colors for Magica Voxel palette" unless paletteChunk.length < 1036
-            paletteChunk = paletteChunk.concat [@voxels[z][y][x].r, @voxels[z][y][x].g, @voxels[z][y][x].b, 255]
+            paletteChunk.push @voxels[z][y][x].r, @voxels[z][y][x].g, @voxels[z][y][x].b, 255
             i = paletteChunk.length / 4 - 3
             helpPalette[rgba] = i
-          voxelChunk = voxelChunk.concat [x, z, y, i] # order is x, z, y (normalized with .qb)
-    paletteChunk = paletteChunk.concat [255, 255, 255, 255] while paletteChunk.length < 1036 # fill up palette with dummy data
+          voxelChunk.push x, z, y, i # order is x, z, y (normalized with .qb)
+    paletteChunk.push 255, 255, 255, 255 while paletteChunk.length < 1036 # fill up palette with dummy data
     [s1, s2, s3, s4] = new Uint8Array new Uint32Array([1076 + voxelChunk.length]).buffer
-    data = data.concat [s1, s2, s3, s4] # main chunk: child chunk size
+    data.push s1, s2, s3, s4 # main chunk: child chunk size
     data = data.concat sizeChunk
     [s1, s2, s3, s4] = new Uint8Array new Uint32Array([voxelChunk.length + 4]).buffer
     [c1, c2, c3, c4] = new Uint8Array new Uint32Array([voxelChunk.length / 4]).buffer
-    data = data.concat [
-      88, 89, 90, 73 # XYZI
-      s1, s2, s3, s4 # size of voxel chunk
-      0, 0, 0, 0 # 0 (no child chunks)
-      c1, c2, c3, c4 # voxel count
-    ]
+    data.push 88, 89, 90, 73, # XYZI
+              s1, s2, s3, s4, # size of voxel chunk
+               0,  0,  0,  0, # 0, (no child chunks)
+              c1, c2, c3, c4  # voxel count
     data = data.concat voxelChunk
     data = data.concat paletteChunk
     console.log "export Magica:"

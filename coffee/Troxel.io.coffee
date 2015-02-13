@@ -47,7 +47,7 @@ class Base64IO extends IO
       (if equal vox[i + r - 1], vox[i + r], i + r then r++ else break) while r < 128
       data.push 127 + r if r > 1 # 1xxxxxxx wheree x^7 = r - 1
       if vox[i]?
-        data = data.concat [8 * vox[i].t + vox[i].s, vox[i].r, vox[i].g, vox[i].b, vox[i].a] # 00tttsss where t^3 is type and s^3 specular followed by r^8 g^8 b^8 a^8
+        data.push 8 * vox[i].t + vox[i].s, vox[i].r, vox[i].g, vox[i].b, vox[i].a # 00tttsss where t^3 is type and s^3 specular followed by r^8 g^8 b^8 a^8
       else
         data.push 64 # 01000000 for empty
       i += r
