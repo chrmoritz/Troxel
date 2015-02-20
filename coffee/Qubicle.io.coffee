@@ -111,8 +111,7 @@ class QubicleIO extends IO
             ia += 4
             break if data[ia-4] == 6 and data[ia-3] == 0 and data[ia-2] == 0 and data[ia-1] == 0 # NEXTSLICEFLAG
             if data[ia-4] == 2 and data[ia-3] == 0 and data[ia-2] == 0 and data[ia-1] == 0 # CODEFLAG
-              count = new Uint32Array(new Uint8Array([data[ia], data[ia+1], data[ia+2], data[ia+3]]).buffer)[0]
-              console.log "high voxel repeat count: #{count}" if count > 255
+              count = data[ia] + (data[ia+1]<<8) + (data[ia+2]<<16) + (data[ia+3]<<24)
               if data[ia+7] > 0 # if vox exists
                 for j in [0...count] by 1
                   ix = index % x

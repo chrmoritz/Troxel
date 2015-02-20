@@ -24,7 +24,6 @@ class MagicaIO extends IO
       sizeBegin = sizeEnd = voxelBegin = voxelEnd = paletteBegin = paletteLength = -1
       while chunkPointer < 20 + mainChunkSize + mainChunkChildSize
         chunkId = (String.fromCharCode char for char in new Uint8Array ab.slice chunkPointer, chunkPointer + 4).join ''
-        console.log new Uint8Array ab.slice chunkPointer, chunkPointer + 12##
         [chunkSize, chunkChildSize] = new Uint32Array ab.slice chunkPointer + 4, chunkPointer + 12
         console.log "found child chunk: #{chunkId} with begin: #{chunkPointer + 12}, size: #{chunkSize} and childSize: #{chunkChildSize} (expected 0)"
         switch chunkId
