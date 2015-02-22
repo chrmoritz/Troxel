@@ -4,7 +4,7 @@ class Renderer
     @width = @domContainer.width()
     @height = @domContainer.height() - (if @embedded then 0 else 5)
     @scene = new THREE.Scene()
-    @reload io, true
+    @reload io, 2, true
     # Lights
     @ambientLight = new THREE.AmbientLight 0x606060
     @scene.add @ambientLight
@@ -48,7 +48,7 @@ class Renderer
       material.opacity = a / 255
     return new THREE.Mesh new THREE.BoxGeometry(50, 50, 50), material
 
-  reload: (io, init = false) ->
+  reload: (io, rendererVersion = 2, init = false) ->
     @voxels = io.voxels
     @x = io.x
     @y = io.y
@@ -56,16 +56,52 @@ class Renderer
     unless init
       @scene.remove o for o in @objects when o not in @planes
       @objects = @planes.slice 0
-    for z in [0...@z] by 1 when @voxels[z]?
-      for y in [0...@y] by 1 when @voxels[z]?[y]?
-        for x in [0...@x] by 1 when @voxels[z]?[y]?[x]?
-          color = new THREE.Color("rgb(#{@voxels[z][y][x].r},#{@voxels[z][y][x].g},#{@voxels[z][y][x].b})")
-          voxel = @getVoxel color, @voxels[z][y][x].a, @voxels[z][y][x].t, @voxels[z][y][x].s
-          voxel.position.x = z * 50 + 25
-          voxel.position.y = y * 50 + 25
-          voxel.position.z = x * 50 + 25
-          @scene.add voxel
-          @objects.push voxel unless @embedded
+    switch rendererVersion
+      when 2 # new renderer
+        matrix = new THREE.Matrix4() # dummy matrix
+        px = new THREE.PlaneGeometry 50, 50 # back
+        px.applyMatrix matrix.makeRotationY Math.PI / 2
+        px.applyMatrix matrix.makeTranslation 25, 0, 0
+        nx = new THREE.PlaneGeometry 50, 50 # front
+        nx.applyMatrix matrix.makeRotationY -Math.PI / 2
+        nx.applyMatrix matrix.makeTranslation -25, 0, 0
+        py = new THREE.PlaneGeometry 50, 50 # top
+        py.applyMatrix matrix.makeRotationX -Math.PI / 2
+        py.applyMatrix matrix.makeTranslation 0, 25, 0
+        ny = new THREE.PlaneGeometry 50, 50 # bottom
+        ny.applyMatrix matrix.makeRotationX Math.PI / 2
+        ny.applyMatrix matrix.makeTranslation 0, -25, 0
+        pz = new THREE.PlaneGeometry 50, 50 # right
+        pz.applyMatrix matrix.makeTranslation 0, 0, 25
+        nz = new THREE.PlaneGeometry 50, 50 # left
+        nz.applyMatrix matrix.makeRotationY Math.PI
+        nz.applyMatrix matrix.makeTranslation 0, 0, -25
+        for z in [0...@z] by 1 when @voxels[z]?
+          for y in [0...@y] by 1 when @voxels[z]?[y]?
+            for x in [0...@x] by 1 when @voxels[z]?[y]?[x]?
+              geometry = new THREE.Geometry()
+              color = new THREE.Color("rgb(#{@voxels[z][y][x].r},#{@voxels[z][y][x].g},#{@voxels[z][y][x].b})")
+              matrix.makeTranslation z * 50 + 25, y * 50 + 25, x * 50 + 25 # position
+              geometry.merge px, matrix if !@voxels[z + 1]?[y]?[x]? # back
+              geometry.merge nx, matrix if !@voxels[z - 1]?[y]?[x]? # front
+              geometry.merge py, matrix if !@voxels[z]?[y + 1]?[x]? # top
+              geometry.merge ny, matrix if !@voxels[z]?[y - 1]?[x]? # bottom
+              geometry.merge pz, matrix if !@voxels[z]?[y]?[x + 1]? # right
+              geometry.merge nz, matrix if !@voxels[z]?[y]?[x - 1]? # left
+              if geometry.vertices.length != 0
+                mat = new THREE.MeshPhongMaterial color: color, ambient: color
+                @scene.add new THREE.Mesh geometry, mat
+      else # legacy renderer
+        for z in [0...@z] by 1 when @voxels[z]?
+          for y in [0...@y] by 1 when @voxels[z]?[y]?
+            for x in [0...@x] by 1 when @voxels[z]?[y]?[x]?
+              color = new THREE.Color("rgb(#{@voxels[z][y][x].r},#{@voxels[z][y][x].g},#{@voxels[z][y][x].b})")
+              voxel = @getVoxel color, @voxels[z][y][x].a, @voxels[z][y][x].t, @voxels[z][y][x].s
+              voxel.position.x = z * 50 + 25
+              voxel.position.y = y * 50 + 25
+              voxel.position.z = x * 50 + 25
+              @scene.add voxel
+              @objects.push voxel unless @embedded
     @render() unless init
 
   animate: ->
