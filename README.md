@@ -134,8 +134,10 @@ If you can't use Java Script to call the Java Script API (for example in wiki te
 
 Options                    | Description                                                                           | Default
 ---------------------------|---------------------------------------------------------------------------------------|-----------
-`autoRotate`               | set to `true` to automatically rotate around the voxel model                          | `true`
+`autoRotate`               | set it to `true` to automatically rotate around the voxel model                       | `true`
 `autoRotateSpeed`          | the rotation speed in full rotation per minute at 60 fps (set to negative values to change the auto rotate direction)                                                                       | `2.0` (30 sec / rotation @60fps)
+`rendererVersion`          | set it to `1` for the BoxGeometry or `2` for the new experimental vertex renderer     | `1`
+`rendererAntialias`        | disables the antialiasing of the renderer if set to                                   | `true`
 `rendererClearColor`       | the color of the background behind the voxel model                                    | `0x888888`
 `ambientLightColor`        | the color of the ambient light                                                        | `0x606060`
 `directionalLightColor`    | the color of the directional light                                                    | `0xffffff`

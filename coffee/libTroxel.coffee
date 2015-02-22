@@ -24,7 +24,7 @@ window.Troxel =
       return false
     domElement = $(domElement).empty().css('position', 'relative')
     io = new Base64IO base64
-    renderer = new Renderer io, true, domElement
+    renderer = new Renderer io, true, domElement, options.rendererVersion || 1, option.rendererAntialias || true
     # Options
     renderer.renderer.setClearColor options.rendererClearColor if options.rendererClearColor?
     renderer.ambientLight.color = new THREE.Color options.ambientLightColor if options.ambientLightColor?
