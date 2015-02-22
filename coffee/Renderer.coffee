@@ -48,6 +48,17 @@ class Renderer
       material.opacity = a / 255
     return new THREE.Mesh new THREE.BoxGeometry(50, 50, 50), material
 
+  getMaterial: (color, a, t, s) ->
+    material = new THREE.MeshPhongMaterial color: color, ambient: color
+    if t in [3, 4] # glowing solid, glowing glass
+      material.emissive = material.color.multiplyScalar 0.5
+    if s == 1 # metal
+      material.specular = material.color.multiplyScalar 0.5
+    if t in [1, 2, 4] # glass, tiled glass or glowing glass
+      material.transparent = true
+      material.opacity = a / 255
+    return material
+
   reload: (io, rendererVersion = 2, init = false) ->
     @voxels = io.voxels
     @x = io.x
@@ -82,14 +93,15 @@ class Renderer
               geometry = new THREE.Geometry()
               color = new THREE.Color("rgb(#{@voxels[z][y][x].r},#{@voxels[z][y][x].g},#{@voxels[z][y][x].b})")
               matrix.makeTranslation z * 50 + 25, y * 50 + 25, x * 50 + 25 # position
-              geometry.merge px, matrix if !@voxels[z + 1]?[y]?[x]? # back
-              geometry.merge nx, matrix if !@voxels[z - 1]?[y]?[x]? # front
-              geometry.merge py, matrix if !@voxels[z]?[y + 1]?[x]? # top
-              geometry.merge ny, matrix if !@voxels[z]?[y - 1]?[x]? # bottom
-              geometry.merge pz, matrix if !@voxels[z]?[y]?[x + 1]? # right
-              geometry.merge nz, matrix if !@voxels[z]?[y]?[x - 1]? # left
+              # ToDo: tiled glass, mixed transparency (low transparence voxels next to high transparency voxels...)
+              geometry.merge px, matrix if !@voxels[z+1]?[y]?[x]? or (@voxels[z+1][y][x].t in [1, 2, 4] and @voxels[z][y][x].t not in [1, 2, 4]) # back
+              geometry.merge nx, matrix if !@voxels[z-1]?[y]?[x]? or (@voxels[z-1][y][x].t in [1, 2, 4] and @voxels[z][y][x].t not in [1, 2, 4]) # front
+              geometry.merge py, matrix if !@voxels[z]?[y+1]?[x]? or (@voxels[z][y+1][x].t in [1, 2, 4] and @voxels[z][y][x].t not in [1, 2, 4]) # top
+              geometry.merge ny, matrix if !@voxels[z]?[y-1]?[x]? or (@voxels[z][y-1][x].t in [1, 2, 4] and @voxels[z][y][x].t not in [1, 2, 4]) # bottom
+              geometry.merge pz, matrix if !@voxels[z]?[y]?[x+1]? or (@voxels[z][y][x+1].t in [1, 2, 4] and @voxels[z][y][x].t not in [1, 2, 4]) # right
+              geometry.merge nz, matrix if !@voxels[z]?[y]?[x-1]? or (@voxels[z][y][x-1].t in [1, 2, 4] and @voxels[z][y][x].t not in [1, 2, 4]) # left
               if geometry.vertices.length != 0
-                mat = new THREE.MeshPhongMaterial color: color, ambient: color
+                mat = @getMaterial color, @voxels[z][y][x].a, @voxels[z][y][x].t, @voxels[z][y][x].s
                 @scene.add new THREE.Mesh geometry, mat
       else # legacy renderer
         for z in [0...@z] by 1 when @voxels[z]?
