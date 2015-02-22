@@ -70,7 +70,6 @@ class Renderer
     switch @rendererVersion
       when 2 # new renderer
         matrix = new THREE.Matrix4() # dummy matrix
-        # ToDo: Try to use Buffer Geometry here
         px = new THREE.PlaneGeometry 50, 50 # back
         px.applyMatrix matrix.makeRotationY Math.PI / 2
         px.applyMatrix matrix.makeTranslation 25, 0, 0
@@ -88,22 +87,29 @@ class Renderer
         nz = new THREE.PlaneGeometry 50, 50 # left
         nz.applyMatrix matrix.makeRotationY Math.PI
         nz.applyMatrix matrix.makeTranslation 0, 0, -25
+        geometry = new THREE.Geometry()
+        materials = []
+        reverseMaterialIndex = []
         for z in [0...@z] by 1 when @voxels[z]?
           for y in [0...@y] by 1 when @voxels[z]?[y]?
             for x in [0...@x] by 1 when @voxels[z]?[y]?[x]?
-              geometry = new THREE.Geometry()
               color = new THREE.Color("rgb(#{@voxels[z][y][x].r},#{@voxels[z][y][x].g},#{@voxels[z][y][x].b})")
+              matIndex = null
+              if reverseMaterialIndex[color.getHex()]?[@voxels[z][y][x].a + 256 * @voxels[z][y][x].t + 2048 * @voxels[z][y][x].s]?
+                matIndex = reverseMaterialIndex[color.getHex()][@voxels[z][y][x].a + 256 * @voxels[z][y][x].t + 2048 * @voxels[z][y][x].s]
+              else
+                matIndex = materials.length
+                materials.push @getMaterial color, @voxels[z][y][x].a, @voxels[z][y][x].t, @voxels[z][y][x].s
+                reverseMaterialIndex[color.getHex()] = [] if !reverseMaterialIndex[color.getHex()]?
+                reverseMaterialIndex[color.getHex()][@voxels[z][y][x].a + 256 * @voxels[z][y][x].t + 2048 * @voxels[z][y][x].s] = matIndex
               matrix.makeTranslation z * 50 + 25, y * 50 + 25, x * 50 + 25 # position
-              # ToDo: tiled glass, mixed transparency (low transparence voxels next to high transparency voxels...)
-              geometry.merge px, matrix if !@voxels[z+1]?[y]?[x]? or (@voxels[z+1][y][x].t in [1, 2, 4] and @voxels[z][y][x].t not in [1, 2, 4]) # back
-              geometry.merge nx, matrix if !@voxels[z-1]?[y]?[x]? or (@voxels[z-1][y][x].t in [1, 2, 4] and @voxels[z][y][x].t not in [1, 2, 4]) # front
-              geometry.merge py, matrix if !@voxels[z]?[y+1]?[x]? or (@voxels[z][y+1][x].t in [1, 2, 4] and @voxels[z][y][x].t not in [1, 2, 4]) # top
-              geometry.merge ny, matrix if !@voxels[z]?[y-1]?[x]? or (@voxels[z][y-1][x].t in [1, 2, 4] and @voxels[z][y][x].t not in [1, 2, 4]) # bottom
-              geometry.merge pz, matrix if !@voxels[z]?[y]?[x+1]? or (@voxels[z][y][x+1].t in [1, 2, 4] and @voxels[z][y][x].t not in [1, 2, 4]) # right
-              geometry.merge nz, matrix if !@voxels[z]?[y]?[x-1]? or (@voxels[z][y][x-1].t in [1, 2, 4] and @voxels[z][y][x].t not in [1, 2, 4]) # left
-              if geometry.vertices.length != 0
-                mat = @getMaterial color, @voxels[z][y][x].a, @voxels[z][y][x].t, @voxels[z][y][x].s
-                @scene.add new THREE.Mesh geometry, mat
+              geometry.merge px, matrix, matIndex if !@voxels[z+1]?[y]?[x]? or (@voxels[z+1][y][x].t in [1, 2, 4] and @voxels[z][y][x].t not in [1, 2, 4]) # back
+              geometry.merge nx, matrix, matIndex if !@voxels[z-1]?[y]?[x]? or (@voxels[z-1][y][x].t in [1, 2, 4] and @voxels[z][y][x].t not in [1, 2, 4]) # front
+              geometry.merge py, matrix, matIndex if !@voxels[z]?[y+1]?[x]? or (@voxels[z][y+1][x].t in [1, 2, 4] and @voxels[z][y][x].t not in [1, 2, 4]) # top
+              geometry.merge ny, matrix, matIndex if !@voxels[z]?[y-1]?[x]? or (@voxels[z][y-1][x].t in [1, 2, 4] and @voxels[z][y][x].t not in [1, 2, 4]) # bottom
+              geometry.merge pz, matrix, matIndex if !@voxels[z]?[y]?[x+1]? or (@voxels[z][y][x+1].t in [1, 2, 4] and @voxels[z][y][x].t not in [1, 2, 4]) # right
+              geometry.merge nz, matrix, matIndex if !@voxels[z]?[y]?[x-1]? or (@voxels[z][y][x-1].t in [1, 2, 4] and @voxels[z][y][x].t not in [1, 2, 4]) # left
+        @scene.add new THREE.Mesh geometry, new THREE.MeshFaceMaterial materials
       else # legacy renderer
         for z in [0...@z] by 1 when @voxels[z]?
           for y in [0...@y] by 1 when @voxels[z]?[y]?

@@ -1,6 +1,11 @@
 :markdown
   #### Recent Changes:
 
+  * new vertex based Renderer (experimental)
+    * to try it out select the Vertex renderer in the right panel first and then open your model
+    * the new renderer is 5+ times faster as the old one, because it only adds vertex the the scene which are visible (the old renderer uses 6 vertexes per voxel for all voxels in the model, even the invisbile ones in the middle)
+    * improved rendering of transparent / glass material maps
+    * no Editor support for the new Renderer yet (need a new raycaster and some tech to dynamically update the vertexes first) => use the old one in editor for now
   * reimport Trove blueprints for [Dance Off Edition](http://forums.trovegame.com/showthread.php?11868-Dance-Off-Edition#post53682)
   * speed up .qb export a lot (2.5 times faster for compressed and 100+ for uncompressed)
   * reimport Trove blueprints for [Take Flight Update](http://forums.trovegame.com/showthread.php?10282-Take-Flight-Update#post49133)
