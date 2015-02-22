@@ -1,10 +1,10 @@
 'use strict'
 class Renderer
-  constructor: (io, @embedded = false, @domContainer = $('#WebGlContainer')) ->
+  constructor: (io, @embedded = false, @domContainer = $('#WebGlContainer'), @rendererVersion = 1, antialias = true) ->
     @width = @domContainer.width()
     @height = @domContainer.height() - (if @embedded then 0 else 5)
     @scene = new THREE.Scene()
-    @reload io, 2, true
+    @reload io, true
     # Lights
     @ambientLight = new THREE.AmbientLight 0x606060
     @scene.add @ambientLight
@@ -19,7 +19,7 @@ class Renderer
     @scene.add target
     @spotLight.target = target
     @scene.add @spotLight
-    @renderer = new THREE.WebGLRenderer antialias: true
+    @renderer = new THREE.WebGLRenderer antialias: antialias
     @renderer.setClearColor 0x888888
     @renderer.setSize @width, @height
     @domContainer.empty().append @renderer.domElement
@@ -59,7 +59,7 @@ class Renderer
       material.opacity = a / 255
     return material
 
-  reload: (io, rendererVersion = 2, init = false) ->
+  reload: (io, init = false) ->
     @voxels = io.voxels
     @x = io.x
     @y = io.y
@@ -67,9 +67,10 @@ class Renderer
     unless init
       @scene.remove o for o in @objects when o not in @planes
       @objects = @planes.slice 0
-    switch rendererVersion
+    switch @rendererVersion
       when 2 # new renderer
         matrix = new THREE.Matrix4() # dummy matrix
+        # ToDo: Try to use Buffer Geometry here
         px = new THREE.PlaneGeometry 50, 50 # back
         px.applyMatrix matrix.makeRotationY Math.PI / 2
         px.applyMatrix matrix.makeTranslation 25, 0, 0

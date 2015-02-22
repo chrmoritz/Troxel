@@ -339,9 +339,21 @@ html(manifest=dev?null:'troxel.appcache')
         .panel.panel-default
           .panel-heading
             button.btn.btn-default.btn-sm.pull-right(style='margin-top: -6px;'): span.glyphicon.glyphicon-minus
-            h3.panel-title Light options
+            h3.panel-title Render options
           .panel-body(style='padding: 5px 15px 0px;')
             .form-horizontal
+              .form-group(style='margin-bottom: 5px;')
+                label.col-sm-4.control-label(for='rendererVersion') Renderer:
+                .col-sm-8
+                  select#rendererVersion.form-control.input-sm
+                    option(value=1) BoxGeometry (default)
+                    option(value=2) Vertex (experimental)
+              .form-group(style='margin-bottom: 5px;')
+                label.col-sm-4.control-label(for='rendererVersion') Antialias:
+                .col-sm-8
+                  select#rendererAntialias.form-control.input-sm
+                    option(value=1) On (default)
+                    option(value=0) Off
               .form-group(style='margin-bottom: 10px;')
                 label.col-sm-8.control-label(for='ambLightColor') Ambient light:
                 .col-sm-4

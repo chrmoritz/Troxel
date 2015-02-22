@@ -328,3 +328,5 @@ $('.editTool').change ->
     when 1 then $('#fillSameColorDiv').show()
     else $('#fillSameColorDiv').hide()
 $('[data-toggle="tooltip"]').tooltip()
+$('#rendererAntialias, #rendererVersion').change ->
+  editor = new Editor io
