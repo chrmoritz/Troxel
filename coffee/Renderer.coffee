@@ -37,17 +37,6 @@ class Renderer
     window.addEventListener    'resize', (e) => @onWindowResize(e)
     @animate() if @embedded
 
-  getVoxel: (color, a, t, s) ->
-    material = new THREE.MeshPhongMaterial color: color, ambient: color
-    if t in [3, 4] # glowing solid, glowing glass
-      material.emissive = material.color.multiplyScalar 0.5
-    if s == 1 # metal
-      material.specular = material.color.multiplyScalar 0.5
-    if t in [1, 2, 4] # glass, tiled glass or glowing glass
-      material.transparent = true
-      material.opacity = a / 255
-    return new THREE.Mesh new THREE.BoxGeometry(50, 50, 50), material
-
   getMaterial: (color, a, t, s) ->
     material = new THREE.MeshPhongMaterial color: color, ambient: color
     if t in [3, 4] # glowing solid, glowing glass

@@ -129,21 +129,17 @@ class Editor extends Renderer
               if $('#addVoxColor').val() == '#ff00ff'
                 a = 250
                 t = s = 7
-              voxel = @getVoxel color, a, t, s
-              voxel.position.copy(intersect.point).add(intersect.face.normal)
-              voxel.position.divideScalar(50).floor().multiplyScalar(50).addScalar(25)
-              x = (voxel.position.z - 25) / 50
-              y = (voxel.position.y - 25) / 50
-              z = (voxel.position.x - 25) / 50
+              intersect.point.add(intersect.face.normal).divideScalar(50).floor()
+              x = intersect.point.z
+              y = intersect.point.y
+              z = intersect.point.x
               return unless 0 <= x < @x and 0 <= y < @y and 0 <= z < @z
               @voxels[z] = [] unless @voxels[z]?
               @voxels[z][y] = [] unless @voxels[z][y]?
               @voxels[z][y][x] = r: Math.floor(color.r * 255), g: Math.floor(color.g * 255), b: Math.floor(color.b * 255), a: a, t: t, s: s
-              @scene.add voxel
-              @objects.push voxel
             when 1 # fill single voxel
               return if intersect.object in @planes
-              intersect.point.divideScalar(50).floor()
+              intersect.point.add(intersect.face.normal).divideScalar(50).floor().sub(intersect.face.normal)
               x = intersect.point.z
               y = intersect.point.y
               z = intersect.point.x
@@ -155,11 +151,6 @@ class Editor extends Renderer
               if color.r == 1 and color.g == 0 and color.b == 1
                 a = 250
                 t = s = 7
-              intersect.object.material.color = intersect.object.material.ambient = color
-              intersect.object.material.emissive = if t in [3, 4] then intersect.object.material.color.multiplyScalar 0.5 else new THREE.Color 0x000000
-              intersect.object.material.specular = if s == 1 then intersect.object.material.color else new THREE.Color 0x111111
-              intersect.object.material.transparent = t in [1, 2, 4]
-              intersect.object.material.opacity = if t in [1, 2, 4] then a / 255 else 1
               @voxels[z][y][x].r = Math.floor(color.r * 255)
               @voxels[z][y][x].g = Math.floor(color.g * 255)
               @voxels[z][y][x].b = Math.floor(color.b * 255)
@@ -168,7 +159,7 @@ class Editor extends Renderer
               @voxels[z][y][x].s = s
         when 2 # right mouse button
           return if intersect.object in @planes
-          intersect.point.divideScalar(50).floor()
+          intersect.point.add(intersect.face.normal).divideScalar(50).floor().sub(intersect.face.normal)
           x = intersect.point.z
           y = intersect.point.y
           z = intersect.point.x
@@ -177,8 +168,6 @@ class Editor extends Renderer
               delete @voxels[z][y][x]
               delete @voxels[z][y] if @voxels[z][y].filter((e) -> return e != undefined).length == 0
               delete @voxels[z] if @voxels[z].filter((e) -> return e != undefined).length == 0
-              #@scene.remove intersect.object
-              @objects.splice @objects.indexOf(intersect.object), 1
             when 1 # fill area
               connected = (z, y, x) -> @voxels[z]?[y]?[x]? and !@voxels[z][y][x].filled and (!colorMatch or (v.r == @voxels[z][y][x].r and
                   v.g == @voxels[z][y][x].g and v.b == @voxels[z][y][x].b and v.a == @voxels[z][y][x].a and v.t == @voxels[z][y][x].t and v.s == @voxels[z][y][x].s))
@@ -220,14 +209,12 @@ class Editor extends Renderer
                 for y in [0...@y] by 1 when @voxels[z]?[y]?
                   for x in [0...@x] by 1 when @voxels[z]?[y]?[x]?
                     delete @voxels[z][y][x].filled if @voxels[z][y][x].filled
-              io = {voxels: @voxels, x: @x, y: @y, z: @z}
-              @reload io
-              return history.pushState io, 'Troxel', '#m=' + new Base64IO(io).export false
         when 1 # middle mouse button => color picker
           return if intersect.object in @planes
-          x = (intersect.object.position.z - 25) / 50
-          y = (intersect.object.position.y - 25) / 50
-          z = (intersect.object.position.x - 25) / 50
+          intersect.point.add(intersect.face.normal).divideScalar(50).floor().sub(intersect.face.normal)
+          x = intersect.point.z
+          y = intersect.point.y
+          z = intersect.point.x
           vox = @voxels[z][y][x]
           $('#addVoxColor').val('#' + new THREE.Color("rgb(#{vox.r},#{vox.g},#{vox.b})").getHexString())
           return $('#addVoxColor').change() if vox.r == vox.b == 255 and vox.g == 0
@@ -236,6 +223,7 @@ class Editor extends Renderer
           $('#addVoxSpecular').val(vox.s)
           return $('#addVoxColor').change()
       io = {voxels: @voxels, x: @x, y: @y, z: @z}
+      @reload io
       history.pushState io, 'Troxel', '#m=' + new Base64IO(io).export false
       @render()
 
