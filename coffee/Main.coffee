@@ -14,7 +14,8 @@ $('#updateLater').click ->
   $('#updateModal').modal 'hide'
 window.onpopstate = (e) ->
   if e?.state?
-    reload = io? and io.x == e.state.x and io.y == e.state.y and io.z == e.state.z
+    reload = io?
+    resize = io.x != e.state.x or io.y != e.state.y or io.z != e.state.z
     io = new IO e.state
     if !io.readonly? or io.readonly == 0
       $('#btnExport').show()
@@ -22,7 +23,7 @@ window.onpopstate = (e) ->
       $('#btnExport').hide()
     $('#btnExportPng').show()
     if reload
-      return editor.reload io
+      return editor.reload io.voxels, io.x, io.y, io.z, resize
     else
       return editor = new Editor io
   io = null
@@ -75,7 +76,10 @@ $('#open').click ->
     else
       $('#btnExport').hide()
     $('#btnExportPng').show()
-    editor = new Editor io
+    if editor?
+      editor.reload io.voxels, io.x, io.y, io.z, true
+    else
+      editor = new Editor io
     history.pushState {voxels: io.voxels, x: io.x, y: io.y, z: io.z}, 'Troxel', '#m=' + new Base64IO(io).export false
   console.log '##################################################'
   switch $('#filetabs li.active a').attr('href')
@@ -125,9 +129,13 @@ $('#open').click ->
         return unless model?
         io = new Base64IO model
         $('#openModal').modal 'hide'
+        $('#modeView').click() if $('#modeEdit').parent().hasClass('active')
         $('#btnExport').hide()
         $('#btnExportPng').show()
-        editor = new Editor io
+        if editor?
+          editor.reload io.voxels, io.x, io.y, io.z, true
+        else
+          editor = new Editor io
         history.pushState {voxels: io.voxels, x: io.x, y: io.y, z: io.z}, 'Troxel', '#b=' + $('#sbtrove').val()
     when '#tabnew'
       x = parseInt $('#snewX').val()
@@ -213,7 +221,10 @@ $('#ulSavedModels').parent().on 'show.bs.dropdown', (e) ->
     $('#btnExport').show() if !io.readonly? or io.readonly == 0
     $('#btnExportPng').show()
     history.pushState {voxels: io.voxels, x: io.x, y: io.y, z: io.z}, 'Toxel', '#m=' + $(@).data 'model'
-    editor = new Editor io
+    if editor?
+      editor.reload io.voxels, io.x, io.y, io.z, true
+    else
+      editor = new Editor io
     $('#ulSavedModels li:eq(1) a').text $(@).text()
 $('#saveModelAs').click ->
   return if $('#saveModelName').val().length == 0 or !io? or io.readonly
@@ -239,7 +250,7 @@ $('.rotateBtn').click ->
     when '-y' then io.rotateY(false)
     when  'z' then io.rotateZ(true)
     when '-z' then io.rotateZ(false)
-  editor = new Editor io # ToDo: implement changing dimensions in renderer.reload
+  editor.reload io.voxels, io.x, io.y, io.z, true
   history.pushState {voxels: io.voxels, x: io.x, y: io.y, z: io.z}, 'Troxel', '#m=' + new Base64IO(io).export false
 $('.moveBtn').click ->
   return unless io?
@@ -250,7 +261,7 @@ $('.moveBtn').click ->
     when '-y' then io.moveY(false, true)
     when  'z' then io.moveZ(true, true)
     when '-z' then io.moveZ(false, true)
-  editor.reload io
+  editor.reload io.voxels, io.x, io.y, io.z
   history.pushState {voxels: io.voxels, x: io.x, y: io.y, z: io.z}, 'Troxel', '#m=' + new Base64IO(io).export false
 $('.mirrorBtn').click ->
   return unless io?
@@ -258,7 +269,7 @@ $('.mirrorBtn').click ->
     when 'x' then io.mirrorX(true)
     when 'y' then io.mirrorY(true)
     when 'z' then io.mirrorZ(true)
-  editor.reload io
+  editor.reload io.voxels, io.x, io.y, io.z
   history.pushState {voxels: io.voxels, x: io.x, y: io.y, z: io.z}, 'Troxel', '#m=' + new Base64IO(io).export false
 $('.panel-heading').click ->
   span = $(@).find('button span')
@@ -319,7 +330,7 @@ $('#resizeBtn').click ->
   return if not io? or io.readonly
   $('#resizeModal').modal 'hide'
   io.resize(parseInt($('#resizeX').val()), parseInt($('#resizeY').val()), parseInt($('#resizeZ').val()))
-  editor = new Editor io # ToDo: implement changing dimensions in renderer.reload
+  editor.reload io.voxels, io.x, io.y, io.z, true
   history.pushState {voxels: io.voxels, x: io.x, y: io.y, z: io.z}, 'Troxel', '#m=' + new Base64IO(io).export false
 $($('.editTool')[0]).parent().button('toggle')
 $('#fillSameColor').prop('checked', true)
@@ -328,5 +339,5 @@ $('.editTool').change ->
     when 1 then $('#fillSameColorDiv').show()
     else $('#fillSameColorDiv').hide()
 $('[data-toggle="tooltip"]').tooltip()
-$('#rendererAntialias, #rendererVersion').change ->
+$('#rendererAntialias').change ->
   editor = new Editor io if io?

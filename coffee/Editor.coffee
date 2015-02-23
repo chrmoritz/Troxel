@@ -9,7 +9,21 @@ class Editor extends Renderer
     # Raycaster
     @vector = new THREE.Vector3()
     @raycaster = new THREE.Raycaster()
-    # Planes
+    @setupGrid()
+    # Stats
+    @stats = new Stats()
+    @stats.domElement.style.position = 'absolute'
+    @stats.domElement.style.top = '0px'
+    @domContainer.append @stats.domElement
+    @changeEditMode($('#modeEdit').parent().hasClass('active'))
+    # Event handlers
+    @domContainer.on        'mousedown', (e) => @onDocumentMouseDown(e)
+    @domContainer.on        'mousemove', (e) => @onDocumentMouseMove(e)
+    document.addEventListener   'keyup', (e) => @onDocumentKeyUp(e)
+    @animate()
+
+  setupGrid: ->
+    #Planes
     @planes = []
     geometry = new THREE.PlaneBufferGeometry 50 * @x, 50 * @y
     geometry.applyMatrix new THREE.Matrix4().makeRotationY -Math.PI / 2
@@ -59,16 +73,6 @@ class Editor extends Renderer
     material = new THREE.LineBasicMaterial color: 0x000000, opacity: 0.2, transparent: true
     @grid = new THREE.Line geometry, material, THREE.LinePieces
     @scene.add @grid
-    @stats = new Stats()
-    @stats.domElement.style.position = 'absolute'
-    @stats.domElement.style.top = '0px'
-    @domContainer.append @stats.domElement
-    @changeEditMode($('#modeEdit').parent().hasClass('active'))
-    # Event handlers
-    @domContainer.on        'mousedown', (e) => @onDocumentMouseDown(e)
-    @domContainer.on        'mousemove', (e) => @onDocumentMouseMove(e)
-    document.addEventListener   'keyup', (e) => @onDocumentKeyUp(e)
-    @animate()
 
   changeEditMode: (@editMode) ->
     if @editMode
@@ -80,6 +84,27 @@ class Editor extends Renderer
       @rollOverMesh.visible = false
       @controls.enabled = true
     @render()
+
+  reload: (@voxels, @x, @y, @z, resize = false, init = false) ->
+    if resize
+      @scene.remove p for p in @planes
+      @scene.remove @grid
+      @setupGrid()
+      @spotLightTarget.position.x = @z * 25
+      @spotLightTarget.position.y = @y * 25
+      @spotLightTarget.position.z = @x * 25
+      @spotLight.target = @spotLightTarget
+      @camera.position.x = -50 * @y - 20 * @x - 10 * @z
+      @camera.position.y = @y * 50
+      @camera.position.z = @x * 25
+      @controls.target = new THREE.Vector3 @z * 25, @y * 25, @x * 25
+      @changeEditMode($('#modeEdit').parent().hasClass('active'))
+    unless init
+      @scene.remove @mesh
+      @objects = @planes.slice 0
+    super @voxels, @x, @y, @z
+    @objects.push @mesh
+    @render() unless init
 
   onDocumentMouseMove: (e) ->
     return if !@editMode or $('#openModal').css('display') == 'block' or $('#exportModal').css('display') == 'block' or $('#saveModal').css('display') == 'block'
@@ -215,7 +240,7 @@ class Editor extends Renderer
           $('#addVoxSpecular').val(vox.s)
           return $('#addVoxColor').change()
       io = {voxels: @voxels, x: @x, y: @y, z: @z}
-      @reload io
+      @reload @voxels, @x, @y, @z
       history.pushState io, 'Troxel', '#m=' + new Base64IO(io).export false
       @render()
 

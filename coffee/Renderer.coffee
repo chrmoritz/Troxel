@@ -4,7 +4,7 @@ class Renderer
     @width = @domContainer.width()
     @height = @domContainer.height() - (if @embedded then 0 else 5)
     @scene = new THREE.Scene()
-    @reload io, true
+    @reload io.voxels, io.x, io.y, io.z, false, true
     # Lights
     @ambientLight = new THREE.AmbientLight 0x606060
     @scene.add @ambientLight
@@ -12,12 +12,12 @@ class Renderer
     @directionalLight.position.set(-0.5, -0.5, 1).normalize()
     @scene.add @directionalLight
     @spotLight = new THREE.SpotLight 0xffffff, 0.7, 10000
-    target = new THREE.Object3D()
-    target.position.x = @z * 25
-    target.position.y = @y * 25
-    target.position.z = @x * 25
-    @scene.add target
-    @spotLight.target = target
+    @spotLightTarget = new THREE.Object3D()
+    @spotLightTarget.position.x = @z * 25
+    @spotLightTarget.position.y = @y * 25
+    @spotLightTarget.position.z = @x * 25
+    @scene.add @spotLightTarget
+    @spotLight.target = @spotLightTarget
     @scene.add @spotLight
     @renderer = new THREE.WebGLRenderer antialias: antialias
     @renderer.setClearColor 0x888888
@@ -48,14 +48,7 @@ class Renderer
       material.opacity = a / 255
     return material
 
-  reload: (io, init = false) ->
-    @voxels = io.voxels
-    @x = io.x
-    @y = io.y
-    @z = io.z
-    unless init
-      @scene.remove o for o in @objects when o not in @planes
-      @objects = @planes.slice 0
+  reload: (@voxels, @x, @y, @z) ->
     matrix = new THREE.Matrix4() # dummy matrix
     px = new THREE.PlaneGeometry 50, 50 # back
     px.applyMatrix matrix.makeRotationY Math.PI / 2
@@ -96,10 +89,8 @@ class Renderer
           geometry.merge ny, matrix, matIndex if !@voxels[z]?[y-1]?[x]? or (@voxels[z][y-1][x].t in [1, 2, 4] and @voxels[z][y][x].t not in [1, 2, 4]) # bottom
           geometry.merge pz, matrix, matIndex if !@voxels[z]?[y]?[x+1]? or (@voxels[z][y][x+1].t in [1, 2, 4] and @voxels[z][y][x].t not in [1, 2, 4]) # right
           geometry.merge nz, matrix, matIndex if !@voxels[z]?[y]?[x-1]? or (@voxels[z][y][x-1].t in [1, 2, 4] and @voxels[z][y][x].t not in [1, 2, 4]) # left
-    mesh = new THREE.Mesh geometry, new THREE.MeshFaceMaterial materials
-    @scene.add mesh
-    @objects.push mesh unless @embedded
-    @render() unless init
+    @mesh = new THREE.Mesh geometry, new THREE.MeshFaceMaterial materials
+    @scene.add @mesh
 
   animate: ->
     requestAnimationFrame => @animate()
