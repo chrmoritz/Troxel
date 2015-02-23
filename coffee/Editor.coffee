@@ -4,9 +4,7 @@ class Editor extends Renderer
     @objects = []
     super(io, @embedded, @domContainer, $('#rendererAntialias').val()=="1")
     # roll-over helpers
-    rollOverGeo = new THREE.BoxGeometry 50, 50, 50
-    rollOverMaterial = new THREE.MeshBasicMaterial color: 0xff0000, opacity: 0.5, transparent: true
-    @rollOverMesh = new THREE.Mesh rollOverGeo, rollOverMaterial
+    @rollOverMesh = new THREE.Mesh new THREE.BoxGeometry(48, 48, 48), new THREE.MeshBasicMaterial wireframe: true, color: 0x000000
     @scene.add @rollOverMesh
     # Raycaster
     @vector = new THREE.Vector3()
@@ -179,6 +177,7 @@ class Editor extends Renderer
               t = parseInt($('#addVoxType').val())
               s = parseInt($('#addVoxSpecular').val())
               a = 255 if t in [0, 3] # Solid
+              return if baseColor == "#ff00ff" # no fill for attachment points
               toFill = [[z, y, x]]
               @voxels[z][y][x].filled = true
               while toFill.length > 0
@@ -188,17 +187,10 @@ class Editor extends Renderer
                 @voxels[z][y][x].r = Math.floor(color.r * 255)
                 @voxels[z][y][x].g = Math.floor(color.g * 255)
                 @voxels[z][y][x].b = Math.floor(color.b * 255)
+                @voxels[z][y][x].g = 1 if color.r == 1 and color.g == 0 and color.b == 1 # prevent random attachment points
                 @voxels[z][y][x].a = a
                 @voxels[z][y][x].t = t
                 @voxels[z][y][x].s = s
-                if color.r == 1 and color.g == 0 and color.b == 1
-                  @voxels[z][y][x].a = 250
-                  @voxels[z][y][x].t = 7
-                  @voxels[z][y][x].s = 7
-                else
-                  @voxels[z][y][x].a = a
-                  @voxels[z][y][x].t = t
-                  @voxels[z][y][x].s = s
                 (@voxels[z    ][y    ][x + 1].filled = true; toFill.push [z    , y    , x + 1]) if connected.call @, z    , y    , x + 1
                 (@voxels[z    ][y    ][x - 1].filled = true; toFill.push [z    , y    , x - 1]) if connected.call @, z    , y    , x - 1
                 (@voxels[z    ][y + 1][x    ].filled = true; toFill.push [z    , y + 1, x    ]) if connected.call @, z    , y + 1, x
