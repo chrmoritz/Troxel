@@ -2,7 +2,7 @@
 class Editor extends Renderer
   constructor: (io, @embedded = false, @domContainer = $('#WebGlContainer')) ->
     @objects = []
-    super(io, @embedded, @domContainer, parseInt($('#rendererVersion').val()), $('#rendererAntialias').val()=="1")
+    super(io, @embedded, @domContainer, $('#rendererAntialias').val()=="1")
     # roll-over helpers
     rollOverGeo = new THREE.BoxGeometry 50, 50, 50
     rollOverMaterial = new THREE.MeshBasicMaterial color: 0xff0000, opacity: 0.5, transparent: true

@@ -1,6 +1,6 @@
 'use strict'
 class Renderer
-  constructor: (io, @embedded = false, @domContainer = $('#WebGlContainer'), @rendererVersion = 1, antialias = true) ->
+  constructor: (io, @embedded = false, @domContainer = $('#WebGlContainer'), antialias = true) ->
     @width = @domContainer.width()
     @height = @domContainer.height() - (if @embedded then 0 else 5)
     @scene = new THREE.Scene()
@@ -67,62 +67,49 @@ class Renderer
     unless init
       @scene.remove o for o in @objects when o not in @planes
       @objects = @planes.slice 0
-    switch @rendererVersion
-      when 2 # new renderer
-        matrix = new THREE.Matrix4() # dummy matrix
-        px = new THREE.PlaneGeometry 50, 50 # back
-        px.applyMatrix matrix.makeRotationY Math.PI / 2
-        px.applyMatrix matrix.makeTranslation 25, 0, 0
-        nx = new THREE.PlaneGeometry 50, 50 # front
-        nx.applyMatrix matrix.makeRotationY -Math.PI / 2
-        nx.applyMatrix matrix.makeTranslation -25, 0, 0
-        py = new THREE.PlaneGeometry 50, 50 # top
-        py.applyMatrix matrix.makeRotationX -Math.PI / 2
-        py.applyMatrix matrix.makeTranslation 0, 25, 0
-        ny = new THREE.PlaneGeometry 50, 50 # bottom
-        ny.applyMatrix matrix.makeRotationX Math.PI / 2
-        ny.applyMatrix matrix.makeTranslation 0, -25, 0
-        pz = new THREE.PlaneGeometry 50, 50 # right
-        pz.applyMatrix matrix.makeTranslation 0, 0, 25
-        nz = new THREE.PlaneGeometry 50, 50 # left
-        nz.applyMatrix matrix.makeRotationY Math.PI
-        nz.applyMatrix matrix.makeTranslation 0, 0, -25
-        geometry = new THREE.Geometry()
-        materials = []
-        reverseMaterialIndex = []
-        for z in [0...@z] by 1 when @voxels[z]?
-          for y in [0...@y] by 1 when @voxels[z]?[y]?
-            for x in [0...@x] by 1 when @voxels[z]?[y]?[x]?
-              color = new THREE.Color("rgb(#{@voxels[z][y][x].r},#{@voxels[z][y][x].g},#{@voxels[z][y][x].b})")
-              matIndex = null
-              if reverseMaterialIndex[color.getHex()]?[@voxels[z][y][x].a + 256 * @voxels[z][y][x].t + 2048 * @voxels[z][y][x].s]?
-                matIndex = reverseMaterialIndex[color.getHex()][@voxels[z][y][x].a + 256 * @voxels[z][y][x].t + 2048 * @voxels[z][y][x].s]
-              else
-                matIndex = materials.length
-                materials.push @getMaterial color, @voxels[z][y][x].a, @voxels[z][y][x].t, @voxels[z][y][x].s
-                reverseMaterialIndex[color.getHex()] = [] if !reverseMaterialIndex[color.getHex()]?
-                reverseMaterialIndex[color.getHex()][@voxels[z][y][x].a + 256 * @voxels[z][y][x].t + 2048 * @voxels[z][y][x].s] = matIndex
-              matrix.makeTranslation z * 50 + 25, y * 50 + 25, x * 50 + 25 # position
-              geometry.merge px, matrix, matIndex if !@voxels[z+1]?[y]?[x]? or (@voxels[z+1][y][x].t in [1, 2, 4] and @voxels[z][y][x].t not in [1, 2, 4]) # back
-              geometry.merge nx, matrix, matIndex if !@voxels[z-1]?[y]?[x]? or (@voxels[z-1][y][x].t in [1, 2, 4] and @voxels[z][y][x].t not in [1, 2, 4]) # front
-              geometry.merge py, matrix, matIndex if !@voxels[z]?[y+1]?[x]? or (@voxels[z][y+1][x].t in [1, 2, 4] and @voxels[z][y][x].t not in [1, 2, 4]) # top
-              geometry.merge ny, matrix, matIndex if !@voxels[z]?[y-1]?[x]? or (@voxels[z][y-1][x].t in [1, 2, 4] and @voxels[z][y][x].t not in [1, 2, 4]) # bottom
-              geometry.merge pz, matrix, matIndex if !@voxels[z]?[y]?[x+1]? or (@voxels[z][y][x+1].t in [1, 2, 4] and @voxels[z][y][x].t not in [1, 2, 4]) # right
-              geometry.merge nz, matrix, matIndex if !@voxels[z]?[y]?[x-1]? or (@voxels[z][y][x-1].t in [1, 2, 4] and @voxels[z][y][x].t not in [1, 2, 4]) # left
-        mesh = new THREE.Mesh geometry, new THREE.MeshFaceMaterial materials
-        @scene.add mesh
-        @objects.push mesh unless @embedded
-      else # legacy renderer
-        for z in [0...@z] by 1 when @voxels[z]?
-          for y in [0...@y] by 1 when @voxels[z]?[y]?
-            for x in [0...@x] by 1 when @voxels[z]?[y]?[x]?
-              color = new THREE.Color("rgb(#{@voxels[z][y][x].r},#{@voxels[z][y][x].g},#{@voxels[z][y][x].b})")
-              voxel = @getVoxel color, @voxels[z][y][x].a, @voxels[z][y][x].t, @voxels[z][y][x].s
-              voxel.position.x = z * 50 + 25
-              voxel.position.y = y * 50 + 25
-              voxel.position.z = x * 50 + 25
-              @scene.add voxel
-              @objects.push voxel unless @embedded
+    matrix = new THREE.Matrix4() # dummy matrix
+    px = new THREE.PlaneGeometry 50, 50 # back
+    px.applyMatrix matrix.makeRotationY Math.PI / 2
+    px.applyMatrix matrix.makeTranslation 25, 0, 0
+    nx = new THREE.PlaneGeometry 50, 50 # front
+    nx.applyMatrix matrix.makeRotationY -Math.PI / 2
+    nx.applyMatrix matrix.makeTranslation -25, 0, 0
+    py = new THREE.PlaneGeometry 50, 50 # top
+    py.applyMatrix matrix.makeRotationX -Math.PI / 2
+    py.applyMatrix matrix.makeTranslation 0, 25, 0
+    ny = new THREE.PlaneGeometry 50, 50 # bottom
+    ny.applyMatrix matrix.makeRotationX Math.PI / 2
+    ny.applyMatrix matrix.makeTranslation 0, -25, 0
+    pz = new THREE.PlaneGeometry 50, 50 # right
+    pz.applyMatrix matrix.makeTranslation 0, 0, 25
+    nz = new THREE.PlaneGeometry 50, 50 # left
+    nz.applyMatrix matrix.makeRotationY Math.PI
+    nz.applyMatrix matrix.makeTranslation 0, 0, -25
+    geometry = new THREE.Geometry()
+    materials = []
+    reverseMaterialIndex = []
+    for z in [0...@z] by 1 when @voxels[z]?
+      for y in [0...@y] by 1 when @voxels[z]?[y]?
+        for x in [0...@x] by 1 when @voxels[z]?[y]?[x]?
+          color = new THREE.Color("rgb(#{@voxels[z][y][x].r},#{@voxels[z][y][x].g},#{@voxels[z][y][x].b})")
+          matIndex = null
+          if reverseMaterialIndex[color.getHex()]?[@voxels[z][y][x].a + 256 * @voxels[z][y][x].t + 2048 * @voxels[z][y][x].s]?
+            matIndex = reverseMaterialIndex[color.getHex()][@voxels[z][y][x].a + 256 * @voxels[z][y][x].t + 2048 * @voxels[z][y][x].s]
+          else
+            matIndex = materials.length
+            materials.push @getMaterial color, @voxels[z][y][x].a, @voxels[z][y][x].t, @voxels[z][y][x].s
+            reverseMaterialIndex[color.getHex()] = [] if !reverseMaterialIndex[color.getHex()]?
+            reverseMaterialIndex[color.getHex()][@voxels[z][y][x].a + 256 * @voxels[z][y][x].t + 2048 * @voxels[z][y][x].s] = matIndex
+          matrix.makeTranslation z * 50 + 25, y * 50 + 25, x * 50 + 25 # position
+          geometry.merge px, matrix, matIndex if !@voxels[z+1]?[y]?[x]? or (@voxels[z+1][y][x].t in [1, 2, 4] and @voxels[z][y][x].t not in [1, 2, 4]) # back
+          geometry.merge nx, matrix, matIndex if !@voxels[z-1]?[y]?[x]? or (@voxels[z-1][y][x].t in [1, 2, 4] and @voxels[z][y][x].t not in [1, 2, 4]) # front
+          geometry.merge py, matrix, matIndex if !@voxels[z]?[y+1]?[x]? or (@voxels[z][y+1][x].t in [1, 2, 4] and @voxels[z][y][x].t not in [1, 2, 4]) # top
+          geometry.merge ny, matrix, matIndex if !@voxels[z]?[y-1]?[x]? or (@voxels[z][y-1][x].t in [1, 2, 4] and @voxels[z][y][x].t not in [1, 2, 4]) # bottom
+          geometry.merge pz, matrix, matIndex if !@voxels[z]?[y]?[x+1]? or (@voxels[z][y][x+1].t in [1, 2, 4] and @voxels[z][y][x].t not in [1, 2, 4]) # right
+          geometry.merge nz, matrix, matIndex if !@voxels[z]?[y]?[x-1]? or (@voxels[z][y][x-1].t in [1, 2, 4] and @voxels[z][y][x].t not in [1, 2, 4]) # left
+    mesh = new THREE.Mesh geometry, new THREE.MeshFaceMaterial materials
+    @scene.add mesh
+    @objects.push mesh unless @embedded
     @render() unless init
 
   animate: ->
