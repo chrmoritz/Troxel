@@ -143,9 +143,10 @@ class Editor extends Renderer
               @objects.push voxel
             when 1 # fill single voxel
               return if intersect.object in @planes
-              x = (intersect.object.position.z - 25) / 50
-              y = (intersect.object.position.y - 25) / 50
-              z = (intersect.object.position.x - 25) / 50
+              intersect.point.divideScalar(50).floor()
+              x = intersect.point.z
+              y = intersect.point.y
+              z = intersect.point.x
               color = getColor new THREE.Color($('#addVoxColor').val()), parseFloat $('#editVoxNoiseBright').val(), parseFloat $('#editVoxNoiseHSL').val()
               a = parseInt($('#addVoxAlpha').val())
               t = parseInt($('#addVoxType').val())
@@ -167,15 +168,16 @@ class Editor extends Renderer
               @voxels[z][y][x].s = s
         when 2 # right mouse button
           return if intersect.object in @planes
-          x = (intersect.object.position.z - 25) / 50
-          y = (intersect.object.position.y - 25) / 50
-          z = (intersect.object.position.x - 25) / 50
+          intersect.point.divideScalar(50).floor()
+          x = intersect.point.z
+          y = intersect.point.y
+          z = intersect.point.x
           switch $('.active .editTool').data('edittool')
             when 0 # delete cube
               delete @voxels[z][y][x]
               delete @voxels[z][y] if @voxels[z][y].filter((e) -> return e != undefined).length == 0
               delete @voxels[z] if @voxels[z].filter((e) -> return e != undefined).length == 0
-              @scene.remove intersect.object
+              #@scene.remove intersect.object
               @objects.splice @objects.indexOf(intersect.object), 1
             when 1 # fill area
               connected = (z, y, x) -> @voxels[z]?[y]?[x]? and !@voxels[z][y][x].filled and (!colorMatch or (v.r == @voxels[z][y][x].r and
