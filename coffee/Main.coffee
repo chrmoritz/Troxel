@@ -329,4 +329,4 @@ $('.editTool').change ->
     else $('#fillSameColorDiv').hide()
 $('[data-toggle="tooltip"]').tooltip()
 $('#rendererAntialias, #rendererVersion').change ->
-  editor = new Editor io
+  editor = new Editor io if io?

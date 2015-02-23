@@ -109,7 +109,9 @@ class Renderer
               geometry.merge ny, matrix, matIndex if !@voxels[z]?[y-1]?[x]? or (@voxels[z][y-1][x].t in [1, 2, 4] and @voxels[z][y][x].t not in [1, 2, 4]) # bottom
               geometry.merge pz, matrix, matIndex if !@voxels[z]?[y]?[x+1]? or (@voxels[z][y][x+1].t in [1, 2, 4] and @voxels[z][y][x].t not in [1, 2, 4]) # right
               geometry.merge nz, matrix, matIndex if !@voxels[z]?[y]?[x-1]? or (@voxels[z][y][x-1].t in [1, 2, 4] and @voxels[z][y][x].t not in [1, 2, 4]) # left
-        @scene.add new THREE.Mesh geometry, new THREE.MeshFaceMaterial materials
+        mesh = new THREE.Mesh geometry, new THREE.MeshFaceMaterial materials
+        @scene.add mesh
+        @objects.push mesh unless @embedded
       else # legacy renderer
         for z in [0...@z] by 1 when @voxels[z]?
           for y in [0...@y] by 1 when @voxels[z]?[y]?
