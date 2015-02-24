@@ -11,7 +11,7 @@ class Renderer
     @directionalLight = new THREE.DirectionalLight 0xffffff, 0.3
     @directionalLight.position.set(-0.5, -0.5, 1).normalize()
     @scene.add @directionalLight
-    @spotLight = new THREE.SpotLight 0xffffff, 0.7, 10000
+    @spotLight = new THREE.SpotLight 0xffffff, 0.7, 100000
     @spotLightTarget = new THREE.Object3D()
     @spotLightTarget.position.x = @z * 25
     @spotLightTarget.position.y = @y * 25
@@ -24,7 +24,7 @@ class Renderer
     @renderer.setSize @width, @height
     @domContainer.empty().append @renderer.domElement
     # Controls and Camera
-    @camera = new THREE.PerspectiveCamera 45, @width / @height, 1, 10000
+    @camera = new THREE.PerspectiveCamera 45, @width / @height, 1, 100000
     @camera.position.x = -50 * @y - 20 * @x - 10 * @z
     @camera.position.y = @y * 50
     @camera.position.z = @x * 25
