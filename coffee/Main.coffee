@@ -37,7 +37,7 @@ window.onpopstate = (e) ->
       editor = new Editor io
       break
     if param == 'b' # load Trove model from blueprint id
-      $.ajax dataType: 'json', url: 'static/Trove.json', isLocal: true, success: (data) ->
+      $.getJSON 'static/Trove.json', (data) ->
         model = data[value]
         return unless model?
         io = new Base64IO model
@@ -124,7 +124,7 @@ $('#open').click ->
       io = new JsonIO $('#sjson').val()
       cb()
     when '#tabtrove'
-      $.ajax dataType: 'json', url: 'static/Trove.json', isLocal: true, success: (data) ->
+      $.getJSON 'static/Trove.json', (data) ->
         model = data[$('#sbtrove').val()]
         return unless model?
         io = new Base64IO model
