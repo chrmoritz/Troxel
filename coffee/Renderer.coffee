@@ -25,9 +25,15 @@ class Renderer
     @domContainer.empty().append @renderer.domElement
     # Controls and Camera
     @camera = new THREE.PerspectiveCamera 45, @width / @height, 1, 100000
-    @camera.position.x = -50 * @y - 20 * @x - 10 * @z
-    @camera.position.y = @y * 50
-    @camera.position.z = @x * 25
+    if @embedded # we are most likely autorotating => zoom that is always fit the camera
+      a = Math.max @x, @y, @z
+      @camera.position.x = -80 * a
+      @camera.position.y =  50 * a
+      @camera.position.z =  25 * a
+    else
+      @camera.position.x = -50 * @y - 20 * @x - 10 * @z
+      @camera.position.y =  50 * @y
+      @camera.position.z =  25 * @x
     @controls = new THREE.OrbitControls @camera, @domContainer[0]
     @controls.target = new THREE.Vector3 @z * 25, @y * 25, @x * 25
     @controls.noKeys = true
