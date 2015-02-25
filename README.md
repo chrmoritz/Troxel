@@ -89,7 +89,7 @@ Renders any Trove blueprint into the given DOM element. It has these parameters:
 * `blueprintId` is the id of the blueprint (the filename without the `.blueprint` file extension)
 * `domElement` is either a DOM element or a JQuery Object representing this DOM element
 * `options` is an optional Object of [render options](#options)
-* `callback` is an optional callback function which is called with a null argument when the blueprint is loaded or with an Error argument as soon as an error occurs
+* `callback(error, options)` is an optional callback function which the `error` argument set to `null` if the blueprint is successfully loaded or with `error` set to an Error object if an error has occurred (WebGl not support or blueprint not found ). `options` is an Object with setters containing nearly all [render options](#options)
 
 ```JavaScript
 Troxel.renderBlueprint('deco_candy_torch_mallow[Laoge]', $('#container'), {
@@ -100,6 +100,10 @@ Troxel.renderBlueprint('deco_candy_torch_mallow[Laoge]', $('#container'), {
     directionalLightColor: 0xeeeeee,
     directionalLightIntensity: 0.9,
     directionalLightVector: {x: 0.58, y: 0.58, z: 0.58}
+}, function(error, resultOptions){
+  if (error === null){
+    resultOptions.noZoom = true;
+  }
 });
 ```
 
@@ -109,7 +113,7 @@ Renders any voxel model represented in Troxel's Base64 format into the given DOM
 * `base64` is a Base64 formated String containing the voxel data of your model (check out Troxels `Link (share)` export options and use the base64 string starting after `#m=`)
 * `domElement` is either a DOM element or a JQuery Object representing this DOM element
 * `options` is an optional Object of [render options](#options)
-Returns `true` if it was able to render the voxel model and otherwise (WebGL not supported) `false`.
+Returns an Object with the `error` property set to `true` if WebGL is not supported or set to `false` if it was able to successfully load the model. In the latter case a options property is defined containing nearly all [render options](#options)
 
 #### Troxel.webgl()
 
@@ -135,8 +139,8 @@ If you can't use Java Script to call the Java Script API (for example in wiki te
 Options                    | Description                                                                           | Default
 ---------------------------|---------------------------------------------------------------------------------------|-----------
 `autoRotate`               | set it to `true` to automatically rotate around the voxel model                       | `true`
-`autoRotateSpeed`          | the rotation speed in full rotation per minute at 60 fps (set to negative values to change the auto rotate direction)                                                                       | `2.0` (30 sec / rotation @60fps)
-`rendererAntialias`        | disables the antialiasing of the renderer if set to                                   | `true`
+`autoRotateSpeed`          | the rotation speed in full rotation per minute at 60 fps (set to negative values to change the auto rotate direction)                                                                                               | `-4.0` (15 sec / rotation @60fps)
+`rendererAntialias`        | disables the antialiasing of the renderer if set to (only available at initialisation)| `true`
 `rendererClearColor`       | the color of the background behind the voxel model                                    | `0x888888`
 `ambientLightColor`        | the color of the ambient light                                                        | `0x606060`
 `directionalLightColor`    | the color of the directional light                                                    | `0xffffff`
@@ -147,6 +151,6 @@ Options                    | Description                                        
 `noRotate`                 | disables the rotate controls if set to `true`                                         | `false`
 `noPan`                    | disables the pan controls if set to `true`                                            | `false`
 `noZoom`                   | disables the zoom controls if set to `true`                                           | `false`
-`showInfoLabel`            | set to `false`, if you want to hide the 'Open this model in Troxel' link (please link in this case somewhere else in your layout to Troxel)                                                                           | `true`
+`showInfoLabel`            | set to `false`, if you want to hide the 'Open this model in Troxel' link (I would appreciate it if you would link somewhere else to Troxel in this case, this option is only available at initialisation)                                                             | `true`
 
-*Note: every color muss be passed as a Javascript hexadecimal Number and not as a hex string like in css*
+*Note: for performance reasons you should prefere passing colors as a Javascript hexadecimal Numbers instead of hex strings like in css*

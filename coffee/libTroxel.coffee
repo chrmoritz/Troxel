@@ -11,20 +11,36 @@ window.Troxel =
       cb new Error "WebGl is not supported" if typeof cb == 'function'
     $.ajax dataType: 'jsonp', url: 'https://chrmoritz.github.io/Troxel/static/Trove.jsonp', jsonpCallback: 'callback', cache: true, success: (data) ->
       model = data[blueprintId]
-      result = false
+      result = {error: true}
       result = Troxel.renderBase64(model, domElement, options, blueprintId) if model?
-      if result
-        cb null if typeof cb == 'function'
+      if not result.error
+        cb null, result.options if typeof cb == 'function'
       else
         console.warn "blueprintId #{blueprintId} not found"
         cb new Error "blueprintId #{blueprintId} not found" if typeof cb == 'function'
   renderBase64: (base64, domElement, options = {}, blueprintId) ->
     unless Troxel.webgl()
       console.warn "WebGL is not supported by your browser"
-      return false
+      return {error: true}
     domElement = $(domElement).empty().css('position', 'relative')
     io = new Base64IO base64
     renderer = new Renderer io, true, domElement, options.rendererAntialias || true
+    `var resultOptions = {
+      set rendererClearColor (s) {renderer.renderer.setClearColor(s);},
+      set ambientLightColor (s) {renderer.ambientLight.color = new THREE.Color(s);},
+      set directionalLightColor (s) { renderer.directionalLight.color = new THREE.Color(s);},
+      set directionalLightIntensity (s) { renderer.directionalLight.intensity = s;},
+      set directionalLightVector (s) {
+        if (s.x != null && s.y != null && s.z != null){renderer.directionalLight.position.set(s.x, s.y, s.z).normalize();}
+      },
+      set spotLightColor (s) { renderer.spotLight.color = new THREE.Color(s);},
+      set spotLightIntensity (s) { renderer.spotLight.intensity = s;},
+      set autoRotate (s) { renderer.controls.autoRotate = s;},
+      set autoRotateSpeed (s) { if (renderer.controls.autoRotate){ renderer.controls.autoRotateSpeed = s; } },
+      set noZoom (s) { renderer.controls.noZoom = s;},
+      set noPan (s) { renderer.controls.noPan = s;},
+      set noRotate (s) { renderer.controls.noRotate = s;}
+    }`
     # Options
     renderer.renderer.setClearColor options.rendererClearColor if options.rendererClearColor?
     renderer.ambientLight.color = new THREE.Color options.ambientLightColor if options.ambientLightColor?
@@ -36,7 +52,7 @@ window.Troxel =
     renderer.spotLight.intensity = options.spotLightIntensity if options.spotLightIntensity?
     if !options.autoRotate? || options.autoRotate
       renderer.controls.autoRotate = true
-      renderer.controls.autoRotateSpeed = options.autoRotateSpeed if options.autoRotateSpeed?
+      renderer.controls.autoRotateSpeed = options.autoRotateSpeed or -4.0
     renderer.controls.noZoom = true if options.noZoom? and options.noZoom
     renderer.controls.noPan = true if options.noPan? and options.noPan
     renderer.controls.noRotate = true if options.noRotate? and options.noRotate
@@ -44,7 +60,7 @@ window.Troxel =
       link = if blueprintId? then '#b=' + blueprintId else '#m=' + base64
       info = $("<div><a href='http://chrmoritz.github.io/Troxel/#{link}' target='_blank' class='troxelLink'>Open this model in Troxel</a></div>")
       domElement.append info.css position: 'absolute', bottom: '0px', width: '100%', textAlign: 'center'
-    return true
+    return {error: false, options: resultOptions}
 
 $ ->
   $('div[data-troxel-blueprint]').each -> Troxel.renderBlueprint $(@).data('troxel-blueprint'), @, $(@).data('troxel-options')

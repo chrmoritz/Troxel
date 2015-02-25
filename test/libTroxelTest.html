@@ -7,24 +7,27 @@
     <script src="https://chrmoritz.github.io/Troxel/static/js/jquery.min.js" type="text/javascript"></script>
     <script src="https://chrmoritz.github.io/Troxel/static/libTroxel.min.js" type="text/javascript"></script>
     <script type="text/javascript">
+      var globalVariable;
       Troxel.renderBlueprint('deco_candy_torch_mallow[Laoge]', $('#container'), {
         autoRotate: true, // default to true (auto rotate enabled)
-        autoRotateSpeed: -4.0, // default to 2.0 (30 seconds per round when fps is 60)
+        autoRotateSpeed: -4.0, // default to -4.0 (15 seconds per round when fps is 60 = Trove default)
         rendererClearColor: 0x9c9c9c, // default to 0x888888
         ambientLightColor: 0x707070, // default to 0x606060
         directionalLightColor: 0xeeeeee, // default to 0xffffff
         directionalLightIntensity: 0.9, // default to 0.3
-        directionalLightVector: {x: 0.58, y: 0.58, z: 0.58}, // default to (-0.5, -0.5, 1) (don't need to be a normal vector)
+        directionalLightVector: {x: -1, y: 0, z: 0}, // default to (-0.5, -0.5, 1) (don't need to be a normal vector)
         spotLightColor: 0xffaaaa, // default to 0xffffff
         spotLightIntensity: 1.0, // default to 0.7
         noRotate: false, // default to false
         noPan: false, // default to false
         noZoom: false, // default to false
         showInfoLabel: true // you can hide the 'Open this model in Troxel' link if you want to move it somewhere else in your layout
-      }, function(error){
+      }, function(error, options){
         if (error !== null){
-          throw error;
+          return;
         }
+        globalVariable = options; // store options Object somewhere out of the callback scope to use it later (for example to inplement a custom option GUI)
+        options.directionalLightVector = {x: 0.58, y: 0.58, z: 0.58}; // not sensefull to change is directly after initialisation here
         // Do some stuff here
         console.log("Model loaded!");
       });
