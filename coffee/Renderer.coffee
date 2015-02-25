@@ -25,17 +25,21 @@ class Renderer
     @domContainer.empty().append @renderer.domElement
     # Controls and Camera
     @camera = new THREE.PerspectiveCamera 45, @width / @height, 1, 100000
-    if @embedded # we are most likely autorotating => zoom that is always fit the camera
-      a = Math.max @x, @y, @z
+    miny = 0
+    if @embedded
+      miny = @y
+      for z in [0...@z] by 1 when @voxels[z]? # ignore empty y (height) space on deco models
+        (miny = Math.min miny, y; break) for y in [0...@y] by 1 when @voxels[z]?[y]?
+      a = Math.max @x, @y - miny, @z # we are most likely autorotating => zoom that is always fit the camera
       @camera.position.x = -80 * a
-      @camera.position.y =  50 * a
+      @camera.position.y =  50 * (a + miny)
       @camera.position.z =  25 * a
     else
       @camera.position.x = -50 * @y - 20 * @x - 10 * @z
       @camera.position.y =  50 * @y
       @camera.position.z =  25 * @x
     @controls = new THREE.OrbitControls @camera, @domContainer[0]
-    @controls.target = new THREE.Vector3 @z * 25, @y * 25, @x * 25
+    @controls.target = new THREE.Vector3 @z * 25, (@y + miny) * 25, @x * 25
     @controls.noKeys = true
     @controls.addEventListener 'change', => @render()
     # Event handlers
