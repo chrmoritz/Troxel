@@ -113,7 +113,7 @@ Renders any voxel model represented in Troxel's Base64 format into the given DOM
 * `base64` is a Base64 formated String containing the voxel data of your model (check out Troxels `Link (share)` export options and use the base64 string starting after `#m=`)
 * `domElement` is either a DOM element or a JQuery Object representing this DOM element
 * `options` is an optional Object of [render options](#options)
-Returns an Object with the `error` property set to `true` if WebGL is not supported or set to `false` if it was able to successfully load the model. In the latter case a options property is defined containing a Object nearly all [render options](#options) as setters and getters.
+Returns an Object with the `error` property set to `null` if it was able to successfully load the model or set to a Error object if WebGl isn't supported or the base64 string was invalid. In the first case a options property is defined containing a Object with nearly all [render options](#options) as setters and getters.
 
 #### Troxel.webgl()
 

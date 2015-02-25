@@ -8,22 +8,26 @@ window.Troxel =
   renderBlueprint: (blueprintId, domElement, options, cb) ->
     unless Troxel.webgl()
       console.warn "WebGL is not supported by your browser"
-      cb new Error "WebGl is not supported" if typeof cb == 'function'
+      return cb new Error "WebGl is not supported" if typeof cb == 'function'
     $.ajax dataType: 'jsonp', url: 'https://chrmoritz.github.io/Troxel/static/Trove.jsonp', jsonpCallback: 'callback', cache: true, success: (data) ->
       model = data[blueprintId]
-      result = {error: true}
-      result = Troxel.renderBase64(model, domElement, options, blueprintId) if model?
-      if not result.error
-        cb null, result.options if typeof cb == 'function'
+      result = {error: new Error "blueprintId #{blueprintId} not found"}
+      if model?
+        result = Troxel.renderBase64(model, domElement, options, blueprintId)
       else
         console.warn "blueprintId #{blueprintId} not found"
-        cb new Error "blueprintId #{blueprintId} not found" if typeof cb == 'function'
+      cb result.error, result.options if typeof cb == 'function'
   renderBase64: (base64, domElement, options = {}, blueprintId) ->
     unless Troxel.webgl()
       console.warn "WebGL is not supported by your browser"
-      return {error: true}
+      return {error: new Error "WebGL is not supported by your browser"}
     domElement = $(domElement).empty().css('position', 'relative')
-    io = new Base64IO base64
+    io = null
+    try
+      io = new Base64IO base64
+    catch
+      console.warn "passed String is not a valid base64 encoded voxel model"
+      return {error: new Error "passed String is not a valid base64 encoded voxel model"}
     renderer = new Renderer io, true, domElement, options.rendererAntialias || true
     # Options
     renderer.renderer.setClearColor options.rendererClearColor if options.rendererClearColor?
@@ -86,7 +90,7 @@ window.Troxel =
         set: (s) -> _resultOptions.noRotate = s; renderer.controls.noRotate = s; renderer.render()
         get: -> _resultOptions.noRotate
     }
-    return {error: false, options: resultOptions}
+    return {error: null, options: resultOptions}
 
 $ ->
   $('div[data-troxel-blueprint]').each -> Troxel.renderBlueprint $(@).data('troxel-blueprint'), @, $(@).data('troxel-options')
