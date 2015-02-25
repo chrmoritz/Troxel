@@ -1,6 +1,6 @@
 'use strict'
 class Renderer
-  constructor: (io, @embedded = false, @domContainer = $('#WebGlContainer'), antialias = true) ->
+  constructor: (io, @embedded = false, @domContainer = $('#WebGlContainer'), @renderMode = 0, @renderWireframes = 0, antialias = true) ->
     @width = @domContainer.width()
     @height = @domContainer.height() - (if @embedded then 0 else 5)
     @scene = new THREE.Scene()
@@ -48,14 +48,20 @@ class Renderer
     @animate() if @embedded
 
   getMaterial: (color, a, t, s) ->
+    switch @renderMode
+      when 0, 1 then break
+      when 2 then color = {250:0xff00ff, 16:0x101010, 48:0x303030, 80:0x505050, 12:0x707070, 144:0x909090, 176:0xb0b0b0, 208:0xd0d0d0, 240:0xf0f0f0, 255:0xffffff}[a]
+      when 3 then color = [0xffffff, 0x808080, 0x404040, 0xff0000, 0xffff00, null, null, 0xff00ff][t]
+      when 4 then color = [0x800000, 0x008000, 0x000080, 0x808000, null, null, null, 0xff00ff][s]
     material = new THREE.MeshPhongMaterial color: color, ambient: color
-    if t in [3, 4] # glowing solid, glowing glass
-      material.emissive = material.color.multiplyScalar 0.5
-    if s == 1 # metal
-      material.specular = material.color.multiplyScalar 0.5
-    if t in [1, 2, 4] # glass, tiled glass or glowing glass
-      material.transparent = true
-      material.opacity = a / 255
+    if @renderMode == 0
+      if t in [3, 4] # glowing solid, glowing glass
+        material.emissive = material.color.multiplyScalar 0.5
+      if s == 1 # metal
+        material.specular = material.color.multiplyScalar 0.5
+      if t in [1, 2, 4] # glass, tiled glass or glowing glass
+        material.transparent = true
+        material.opacity = a / 255
     return material
 
   reload: (@voxels, @x, @y, @z) ->
@@ -83,15 +89,16 @@ class Renderer
     for z in [0...@z] by 1 when @voxels[z]?
       for y in [0...@y] by 1 when @voxels[z]?[y]?
         for x in [0...@x] by 1 when @voxels[z]?[y]?[x]?
+          # ToDo: reuse color
           color = new THREE.Color("rgb(#{@voxels[z][y][x].r},#{@voxels[z][y][x].g},#{@voxels[z][y][x].b})")
           matIndex = null
           if reverseMaterialIndex[color.getHex()]?[@voxels[z][y][x].a + 256 * @voxels[z][y][x].t + 2048 * @voxels[z][y][x].s]?
             matIndex = reverseMaterialIndex[color.getHex()][@voxels[z][y][x].a + 256 * @voxels[z][y][x].t + 2048 * @voxels[z][y][x].s]
           else
             matIndex = materials.length
-            materials.push @getMaterial color, @voxels[z][y][x].a, @voxels[z][y][x].t, @voxels[z][y][x].s
             reverseMaterialIndex[color.getHex()] = [] if !reverseMaterialIndex[color.getHex()]?
             reverseMaterialIndex[color.getHex()][@voxels[z][y][x].a + 256 * @voxels[z][y][x].t + 2048 * @voxels[z][y][x].s] = matIndex
+            materials.push @getMaterial color, @voxels[z][y][x].a, @voxels[z][y][x].t, @voxels[z][y][x].s
           matrix.makeTranslation z * 50 + 25, y * 50 + 25, x * 50 + 25 # position
           geometry.merge px, matrix, matIndex if !@voxels[z+1]?[y]?[x]? or (@voxels[z+1][y][x].t in [1, 2, 4] and @voxels[z][y][x].t not in [1, 2, 4]) # back
           geometry.merge nx, matrix, matIndex if !@voxels[z-1]?[y]?[x]? or (@voxels[z-1][y][x].t in [1, 2, 4] and @voxels[z][y][x].t not in [1, 2, 4]) # front

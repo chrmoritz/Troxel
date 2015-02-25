@@ -322,7 +322,7 @@ html(manifest=dev?null:'troxel.appcache')
                 label.col-sm-4.control-label(for='addVoxType') Type:
                 .col-sm-8
                   select#addVoxType.form-control.input-sm
-                    option(value=0) solid
+                    option(value=0, selected) solid
                     option(value=1) glass
                     option(value=2) tiled glass
                     option(value=3) glowing solid
@@ -331,7 +331,7 @@ html(manifest=dev?null:'troxel.appcache')
                 label.col-sm-4.control-label(for='addVoxSpecular') Specular:
                 .col-sm-8
                   select#addVoxSpecular.form-control.input-sm
-                    option(value=0) rough
+                    option(value=0, selected) rough
                     option(value=1) metal
                     option(value=2) water
                     option(value=3) iridescent
@@ -343,14 +343,32 @@ html(manifest=dev?null:'troxel.appcache')
           .panel-body(style='padding: 5px 15px 0px;')
             .form-horizontal
               .form-group(style='margin-bottom: 5px;')
-                label.col-sm-4.control-label(for='rendererVersion') Antialias:
-                .col-sm-8
+                label.col-sm-5.control-label(for='renderMode') Rend.mode:
+                .col-sm-7(style='padding-right: 5px;')
+                  select#renderMode.form-control.input-sm
+                    option(value=0, selected) pretty (default)
+                    option(value=1) Color only
+                    option(value=2) Alpha map
+                    option(value=3) Type map
+                    option(value=4) Specular map
+              .form-group(style='margin-bottom: 5px;')
+                label.col-sm-5.control-label(for='renderWireframes') Wireframes:
+                .col-sm-7(style='padding-right: 5px;')
+                  select#renderWireframes.form-control.input-sm
+                    option(value=0, selected) Off (default)
+                    option(value=1) Color
+                    option(value=2) Alpha
+                    option(value=3) Type
+                    option(value=4) Specular
+              .form-group(style='margin-bottom: 5px;')
+                label.col-sm-5.control-label(for='rendererAntialias') Antialias:
+                .col-sm-7(style='padding-right: 5px;')
                   select#rendererAntialias.form-control.input-sm
-                    option(value=1) On (default)
+                    option(value=1, selected) On (default)
                     option(value=0) Off
               .form-group(style='margin-bottom: 10px;')
-                label.col-sm-8.control-label(for='ambLightColor') Ambient light:
-                .col-sm-4
+                label.col-sm-7.control-label(for='ambLightColor', style='padding-right: 5px;') Ambient light:
+                .col-sm-5
                   input#ambLightColor.form-control.input-sm(type='color', value='#606060', style='padding: 5px;')
             .h5: b: u Directional light:
             .form-horizontal

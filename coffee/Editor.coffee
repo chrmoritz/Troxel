@@ -2,7 +2,7 @@
 class Editor extends Renderer
   constructor: (io, @embedded = false, @domContainer = $('#WebGlContainer')) ->
     @objects = []
-    super(io, @embedded, @domContainer, $('#rendererAntialias').val()=="1")
+    super(io, @embedded, @domContainer, parseInt($('#renderMode').val()), parseInt($('#renderWireframes').val()), $('#rendererAntialias').val()=="1")
     # roll-over helpers
     @rollOverMesh = new THREE.Mesh new THREE.BoxGeometry(48, 48, 48), new THREE.MeshBasicMaterial wireframe: true, color: 0x000000
     @scene.add @rollOverMesh
@@ -101,6 +101,7 @@ class Editor extends Renderer
       @changeEditMode($('#modeEdit').parent().hasClass('active'))
     unless init
       @scene.remove @mesh
+      @scene.remove @wireframe if wireframe?
       @objects = @planes.slice 0
     super @voxels, @x, @y, @z
     @objects.push @mesh

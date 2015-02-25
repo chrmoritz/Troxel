@@ -279,30 +279,30 @@ $('.panel-heading').click ->
     span.removeClass('glyphicon-plus').addClass('glyphicon-minus')
   $(@).next().toggle()
 $('#ambLightColor').val('#606060').change ->
-  return unless io?
+  return unless editor?
   editor.ambientLight.color = new THREE.Color($(@).val())
   editor.render()
 $('#dirLightColor').val('#ffffff').change ->
-  return unless io?
+  return unless editor?
   editor.directionalLight.color = new THREE.Color($(@).val())
   editor.render()
 $('#dirLightIntensity').val(0.3).change ->
-  return unless io?
+  return unless editor?
   editor.directionalLight.intensity = $(@).val()
   editor.render()
 $('#spotLightColor').val('#ffffff').change ->
-  return unless io?
+  return unless editor?
   editor.spotLight.color = new THREE.Color($(@).val())
   editor.render()
 $('#spotLightIntensity').val(0.7).change ->
-  return unless io?
+  return unless editor?
   editor.spotLight.intensity = $(@).val()
   editor.render()
 $('#dirLightX').val('-0.5')
 $('#dirLightY').val('-0.5')
 $('#dirLightZ').val('1')
 $('#dirLightVector').click ->
-  return unless io?
+  return unless editor?
   editor.directionalLight.position.set(parseFloat($('#dirLightX').val()), parseFloat($('#dirLightY').val()), parseFloat($('#dirLightZ').val())).normalize()
   editor.render()
 $('#addVoxAP').click ->
@@ -322,12 +322,12 @@ $('#addVoxAlpha').val(112)
 $('#editVoxNoiseBright').val(0)
 $('#editVoxNoiseHSL').val(0)
 $('#openResizeModal').click ->
-  return unless io?
+  return unless editor?
   $('#resizeX').val(io.x)
   $('#resizeY').val(io.y)
   $('#resizeZ').val(io.z)
 $('#resizeBtn').click ->
-  return if not io? or io.readonly
+  return if not editor? or io.readonly
   $('#resizeModal').modal 'hide'
   io.resize(parseInt($('#resizeX').val()), parseInt($('#resizeY').val()), parseInt($('#resizeZ').val()))
   editor.reload io.voxels, io.x, io.y, io.z, true
@@ -340,4 +340,12 @@ $('.editTool').change ->
     else $('#fillSameColorDiv').hide()
 $('[data-toggle="tooltip"]').tooltip()
 $('#rendererAntialias').change ->
-  editor = new Editor io if io?
+  editor = new Editor io if editor?
+$('#renderMode').change ->
+  if editor?
+    editor.renderMode = parseInt $(@).val()
+    editor.reload io.voxels, io.x, io.y, io.z
+$('#renderWireframes').change ->
+  if editor?
+    editor.renderWireframes = parseInt $(@).val()
+    editor.reload io.voxels, io.x, io.y, io.z
