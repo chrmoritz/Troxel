@@ -25,22 +25,6 @@ window.Troxel =
     domElement = $(domElement).empty().css('position', 'relative')
     io = new Base64IO base64
     renderer = new Renderer io, true, domElement, options.rendererAntialias || true
-    `var resultOptions = {
-      set rendererClearColor (s) {renderer.renderer.setClearColor(s);},
-      set ambientLightColor (s) {renderer.ambientLight.color = new THREE.Color(s);},
-      set directionalLightColor (s) { renderer.directionalLight.color = new THREE.Color(s);},
-      set directionalLightIntensity (s) { renderer.directionalLight.intensity = s;},
-      set directionalLightVector (s) {
-        if (s.x != null && s.y != null && s.z != null){renderer.directionalLight.position.set(s.x, s.y, s.z).normalize();}
-      },
-      set spotLightColor (s) { renderer.spotLight.color = new THREE.Color(s);},
-      set spotLightIntensity (s) { renderer.spotLight.intensity = s;},
-      set autoRotate (s) { renderer.controls.autoRotate = s;},
-      set autoRotateSpeed (s) { if (renderer.controls.autoRotate){ renderer.controls.autoRotateSpeed = s; } },
-      set noZoom (s) { renderer.controls.noZoom = s;},
-      set noPan (s) { renderer.controls.noPan = s;},
-      set noRotate (s) { renderer.controls.noRotate = s;}
-    }`
     # Options
     renderer.renderer.setClearColor options.rendererClearColor if options.rendererClearColor?
     renderer.ambientLight.color = new THREE.Color options.ambientLightColor if options.ambientLightColor?
@@ -60,6 +44,48 @@ window.Troxel =
       link = if blueprintId? then '#b=' + blueprintId else '#m=' + base64
       info = $("<div><a href='http://chrmoritz.github.io/Troxel/#{link}' target='_blank' class='troxelLink'>Open this model in Troxel</a></div>")
       domElement.append info.css position: 'absolute', bottom: '0px', width: '100%', textAlign: 'center'
+    resultOptions = {}
+    _resultOptions = {rendererClearColor: 0x888888, ambientLightColor: 0x606060, directionalLightColor: 0xffffff, directionalLightIntensity: 0.3
+                      ,directionalLightVector: {x: -0.5, y: -0.5, z: 1}, spotLightColor: 0xffffff, spotLightIntensity: 0.7
+                      ,autoRotate: true, autoRotateSpeed: -4.0, noZoom: false, noPan: false, noRotate: false}
+    Object.defineProperties resultOptions, {
+      "rendererClearColor":
+        set: (s) -> _resultOptions.rendererClearColor = s; renderer.renderer.setClearColor s; renderer.render()
+        get: -> _resultOptions.rendererClearColor
+      "ambientLightColor":
+        set: (s) -> _resultOptions.ambientLightColor = s; renderer.ambientLight.color = new THREE.Color s; renderer.render()
+        get: -> _resultOptions.ambientLightColor
+      "directionalLightColor":
+        set: (s) -> _resultOptions.directionalLightColor = s; renderer.directionalLight.color = new THREE.Color s; renderer.render()
+        get: -> _resultOptions.directionalLightColor
+      "directionalLightIntensity":
+        set: (s) -> _resultOptions.directionalLightIntensity = s; renderer.directionalLight.intensity = s; renderer.render()
+        get: -> _resultOptions.directionalLightIntensity
+      "directionalLightVector":
+        set: (s) -> (_resultOptions.directionalLightVector = s; renderer.directionalLight.position.set(s.x, s.y, s.z).normalize(); renderer.render()) if s.x? and s.y? and s.z?
+        get: -> _resultOptions.directionalLightVector
+      "spotLightColor":
+        set: (s) -> _resultOptions.spotLightColor = s; renderer.spotLight.color = new THREE.Color s; renderer.render()
+        get: -> _resultOptions.spotLightColor
+      "spotLightIntensity":
+        set: (s) -> _resultOptions.spotLightIntensity = s; renderer.spotLight.intensity = s; renderer.render()
+        get: -> _resultOptions.spotLightIntensity
+      "autoRotate":
+        set: (s) -> _resultOptions.autoRotate = s; renderer.controls.autoRotate = s; renderer.render()
+        get: -> _resultOptions.autoRotate
+      "autoRotateSpeed":
+        set: (s) -> (_resultOptions.autoRotateSpeed = s; renderer.controls.autoRotateSpeed = s; renderer.render()) if renderer.controls.autoRotate
+        get: -> _resultOptions.autoRotateSpeed
+      "noZoom":
+        set: (s) -> _resultOptions.noZoom = s; renderer.controls.noZoom = s; renderer.render()
+        get: -> _resultOptions.noZoom
+      "noPan":
+        set: (s) -> _resultOptions.noPan = s; renderer.controls.noPan = s; renderer.render()
+        get: -> _resultOptions.noPan
+      "noRotate":
+        set: (s) -> _resultOptions.noRotate = s; renderer.controls.noRotate = s; renderer.render()
+        get: -> _resultOptions.noRotate
+    }
     return {error: false, options: resultOptions}
 
 $ ->

@@ -46,7 +46,7 @@
         "level": "error"
     },
     "no_backticks": {
-        "level": "ignore"
+        "level": "error"
     },
     "no_debugger": {
         "level": "error"

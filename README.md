@@ -89,7 +89,7 @@ Renders any Trove blueprint into the given DOM element. It has these parameters:
 * `blueprintId` is the id of the blueprint (the filename without the `.blueprint` file extension)
 * `domElement` is either a DOM element or a JQuery Object representing this DOM element
 * `options` is an optional Object of [render options](#options)
-* `callback(error, options)` is an optional callback function which the `error` argument set to `null` if the blueprint is successfully loaded or with `error` set to an Error object if an error has occurred (WebGl not support or blueprint not found ). `options` is an Object with setters containing nearly all [render options](#options)
+* `callback(error, options)` is an optional callback function which the `error` argument set to `null` if the blueprint is successfully loaded or with `error` set to an Error object if an error has occurred (WebGl not support or blueprint not found ). `options` is an Object with setters and getters containing nearly all [render options](#options)
 
 ```JavaScript
 Troxel.renderBlueprint('deco_candy_torch_mallow[Laoge]', $('#container'), {
@@ -113,7 +113,7 @@ Renders any voxel model represented in Troxel's Base64 format into the given DOM
 * `base64` is a Base64 formated String containing the voxel data of your model (check out Troxels `Link (share)` export options and use the base64 string starting after `#m=`)
 * `domElement` is either a DOM element or a JQuery Object representing this DOM element
 * `options` is an optional Object of [render options](#options)
-Returns an Object with the `error` property set to `true` if WebGL is not supported or set to `false` if it was able to successfully load the model. In the latter case a options property is defined containing nearly all [render options](#options)
+Returns an Object with the `error` property set to `true` if WebGL is not supported or set to `false` if it was able to successfully load the model. In the latter case a options property is defined containing a Object nearly all [render options](#options) as setters and getters.
 
 #### Troxel.webgl()
 
