@@ -5,24 +5,6 @@ class Renderer
     @height = @domContainer.height() - (if @embedded then 0 else 5)
     @scene = new THREE.Scene()
     @reload io.voxels, io.x, io.y, io.z, false, true
-    # Lights
-    @ambientLight = new THREE.AmbientLight 0x606060
-    @scene.add @ambientLight
-    @directionalLight = new THREE.DirectionalLight 0xffffff, 0.3
-    @directionalLight.position.set(-0.5, -0.5, 1).normalize()
-    @scene.add @directionalLight
-    @spotLight = new THREE.SpotLight 0xffffff, 0.7, 100000
-    @spotLightTarget = new THREE.Object3D()
-    @spotLightTarget.position.x = @z * 25
-    @spotLightTarget.position.y = @y * 25
-    @spotLightTarget.position.z = @x * 25
-    @scene.add @spotLightTarget
-    @spotLight.target = @spotLightTarget
-    @scene.add @spotLight
-    @renderer = new THREE.WebGLRenderer antialias: antialias
-    @renderer.setClearColor 0x888888
-    @renderer.setSize @width, @height
-    @domContainer.empty().append @renderer.domElement
     # Controls and Camera
     @camera = new THREE.PerspectiveCamera 45, @width / @height, 1, 100000
     miny = 0
@@ -42,6 +24,25 @@ class Renderer
     @controls.target = new THREE.Vector3 @z * 25, (@y + miny) * 25, @x * 25
     @controls.noKeys = true
     @controls.addEventListener 'change', => @render()
+    # Lights
+    @ambientLight = new THREE.AmbientLight 0x606060
+    @scene.add @ambientLight
+    @directionalLight = new THREE.DirectionalLight 0xffffff, 0.3
+    @directionalLight.position.set(-0.5, -0.5, 1).normalize()
+    @scene.add @directionalLight
+    @spotLight = new THREE.SpotLight 0xffffff, 0.7, 100000
+    @spotLightTarget = new THREE.Object3D()
+    @spotLightTarget.position.x = @z * 25
+    @spotLightTarget.position.y = (@y + miny) * 25
+    @spotLightTarget.position.z = @x * 25
+    @scene.add @spotLightTarget
+    @spotLight.target = @spotLightTarget
+    @scene.add @spotLight
+    # renderer
+    @renderer = new THREE.WebGLRenderer antialias: antialias
+    @renderer.setClearColor 0x888888
+    @renderer.setSize @width, @height
+    @domContainer.empty().append @renderer.domElement
     # Event handlers
     document.addEventListener 'keydown', (e) => @onDocumentKeyDown(e)
     window.addEventListener    'resize', (e) => @onWindowResize(e)
@@ -66,14 +67,24 @@ class Renderer
 
   reload: (@voxels, @x, @y, @z, resize = false, init = false) ->
     if resize
+      miny = 0
+      if @embedded
+        miny = @y
+        for z in [0...@z] by 1 when @voxels[z]? # ignore empty y (height) space on deco models
+          (miny = Math.min miny, y; break) for y in [0...@y] by 1 when @voxels[z]?[y]?
+        a = Math.max @x, @y - miny, @z # we are most likely autorotating => zoom that is always fit the camera
+        @camera.position.x = -80 * a
+        @camera.position.y =  50 * (a + miny)
+        @camera.position.z =  25 * a
+      else
+        @camera.position.x = -50 * @y - 20 * @x - 10 * @z
+        @camera.position.y =  50 * @y
+        @camera.position.z =  25 * @x
+      @controls.target = new THREE.Vector3 @z * 25, (@y + miny) * 25, @x * 25
       @spotLightTarget.position.x = @z * 25
-      @spotLightTarget.position.y = @y * 25
+      @spotLightTarget.position.y = (@y + miny) * 25
       @spotLightTarget.position.z = @x * 25
       @spotLight.target = @spotLightTarget
-      @camera.position.x = -50 * @y - 20 * @x - 10 * @z
-      @camera.position.y = @y * 50
-      @camera.position.z = @x * 25
-      @controls.target = new THREE.Vector3 @z * 25, @y * 25, @x * 25
     unless init
       @scene.remove @mesh
       @scene.remove @wireframe if @wireframe?
@@ -170,6 +181,7 @@ class Renderer
       @wireframe = new THREE.Line wireGeo, linemat, THREE.LinePieces
       @scene.add @wireframe
     @scene.add @mesh
+    @render() unless init
 
   animate: ->
     requestAnimationFrame => @animate()

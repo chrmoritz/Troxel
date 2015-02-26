@@ -1,6 +1,12 @@
 <!DOCTYPE html>
 <html>
   <body>
+    <select id="blueprint">
+      <option value="deco_candy_torch_mallow[Laoge]" selected>deco_candy_torch_mallow[Laoge]</option>
+      <option value="deco_dragon_orb[Quote]">deco_dragon_orb[Quote]</option>
+      <option value="equipment_face_mask_starking[Mitchell]">equipment_face_mask_starking[Mitchell]</option>
+      <option value="equipment_weapon_bow_191[MrTuffnStuff]">equipment_weapon_bow_191[MrTuffnStuff]</option>
+    </select>
     <div id="container" style="width: 300px; height: 300px;">
       <!-- insert fallback content (like a static image of the rendered model) here -->
     </div>
@@ -56,6 +62,10 @@
       });
       $('#autoRotate').click(function(){
         TroxelOptions.autoRotate = !TroxelOptions.autoRotate;
+      });
+      $('#blueprint').change(function(){
+        // there is also a TroxelOptions.base64 accepting a string with a base64 encoded voxel model
+        TroxelOptions.blueprint = $(this).val();
       });
     </script>
   </body>

@@ -1,5 +1,6 @@
 'use strict'
 window.Troxel =
+  blueprints: null
   webgl: -> try
     canvas = document.createElement 'canvas'
     !!(window.WebGLRenderingContext && (canvas.getContext 'webgl' || canvas.getContext 'experimental-webgl'))
@@ -10,6 +11,7 @@ window.Troxel =
       console.warn "WebGL is not supported by your browser"
       return cb new Error "WebGl is not supported" if typeof cb == 'function'
     $.ajax dataType: 'jsonp', url: 'https://chrmoritz.github.io/Troxel/static/Trove.jsonp', jsonpCallback: 'callback', cache: true, success: (data) ->
+      Troxel.blueprints = data
       model = data[blueprintId]
       result = {error: new Error "blueprintId #{blueprintId} not found"}
       if model?
@@ -50,14 +52,21 @@ window.Troxel =
       domElement.append info.css position: 'absolute', bottom: '0px', width: '100%', textAlign: 'center'
     resultOptions = {}
     _resultOptions = {rendererClearColor: 0x888888, ambientLightColor: 0x606060, directionalLightColor: 0xffffff, directionalLightIntensity: 0.3
-                      ,directionalLightVector: {x: -0.5, y: -0.5, z: 1}, spotLightColor: 0xffffff, spotLightIntensity: 0.7
+                      ,directionalLightVector: {x: -0.5, y: -0.5, z: 1}, spotLightColor: 0xffffff, spotLightIntensity: 0.7, base64: base64
                       ,autoRotate: true, autoRotateSpeed: -4.0, noZoom: false, noPan: false, noRotate: false, renderMode: 0, renderWireframes: 0}
+    _resultOptions.blueprint = blueprintId or null
     Object.defineProperties resultOptions, {
+      "base64":
+        set: (s) -> _resultOptions.base64 = s; io = new Base64IO s; renderer.reload io.voxels, io.x, io.y, io.z, true
+        get: -> _resultOptions.base64
+      "blueprint":
+        set: (s) -> _resultOptions.blueprint = s; resultOptions.base64 = Troxel.blueprints[s]
+        get: -> _resultOptions.blueprint
       "renderMode":
-        set: (s) -> _resultOptions.renderMode = s; renderer.renderMode = s; renderer.reload io.voxels, io.x, io.y, io.z; renderer.render()
+        set: (s) -> _resultOptions.renderMode = s; renderer.renderMode = s; renderer.reload io.voxels, io.x, io.y, io.z
         get: -> _resultOptions.renderMode
       "renderWireframes":
-        set: (s) -> _resultOptions.renderWireframes = s; renderer.renderWireframes = s; renderer.reload io.voxels, io.x, io.y, io.z; renderer.render()
+        set: (s) -> _resultOptions.renderWireframes = s; renderer.renderWireframes = s; renderer.reload io.voxels, io.x, io.y, io.z
         get: -> _resultOptions.renderWireframes
       "rendererClearColor":
         set: (s) -> _resultOptions.rendererClearColor = s; renderer.renderer.setClearColor s; renderer.render()
@@ -72,7 +81,7 @@ window.Troxel =
         set: (s) -> _resultOptions.directionalLightIntensity = s; renderer.directionalLight.intensity = s; renderer.render()
         get: -> _resultOptions.directionalLightIntensity
       "directionalLightVector":
-        set: (s) -> (_resultOptions.directionalLightVector = s; renderer.directionalLight.position.set(s.x, s.y, s.z).normalize(); renderer.render()) if s.x? and s.y? and s.z?
+        set: (s) -> (_resultOptions.directionalLightVector = s; renderer.directionalLight.position.set(s.x, s.y, s.z).normalize(); renderer.render()) if s.x? && s.y? && s.z?
         get: -> _resultOptions.directionalLightVector
       "spotLightColor":
         set: (s) -> _resultOptions.spotLightColor = s; renderer.spotLight.color = new THREE.Color s; renderer.render()

@@ -95,7 +95,6 @@ class Editor extends Renderer
       @objects = @planes.slice 0
     super @voxels, @x, @y, @z, resize, init
     @objects.push @mesh
-    @render() unless init
 
   onDocumentMouseMove: (e) ->
     return if !@editMode or $('#openModal').css('display') == 'block' or $('#exportModal').css('display') == 'block' or $('#saveModal').css('display') == 'block'

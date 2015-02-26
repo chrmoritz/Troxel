@@ -89,7 +89,7 @@ Renders any Trove blueprint into the given DOM element. It has these parameters:
 * `blueprintId` is the id of the blueprint (the filename without the `.blueprint` file extension)
 * `domElement` is either a DOM element or a JQuery Object representing this DOM element
 * `options` is an optional Object of [render options](#options)
-* `callback(error, options)` is an optional callback function which the `error` argument set to `null` if the blueprint is successfully loaded or with `error` set to an Error object if an error has occurred (WebGl not support or blueprint not found ). `options` is an Object with setters and getters containing nearly all [render options](#options)
+* `callback(error, options)` is an optional callback function which the `error` argument set to `null` if the blueprint is successfully loaded or with `error` set to an Error object if an error has occurred (WebGL not support or blueprint not found ). `options` is an Object with setters and getters containing nearly all [render options](#options)
 
 ```JavaScript
 Troxel.renderBlueprint('deco_candy_torch_mallow[Laoge]', $('#container'), {
@@ -110,10 +110,10 @@ Troxel.renderBlueprint('deco_candy_torch_mallow[Laoge]', $('#container'), {
 #### Troxel.renderBase64(base64, domElement, [options])
 
 Renders any voxel model represented in Troxel's Base64 format into the given DOM element. It has these parameters:
-* `base64` is a Base64 formated String containing the voxel data of your model (check out Troxels `Link (share)` export options and use the base64 string starting after `#m=`)
+* `base64` is a Base64 encoded String containing the voxel data of your model (check out Troxels `Link (share)` export options and use the base64 string starting after `#m=`)
 * `domElement` is either a DOM element or a JQuery Object representing this DOM element
 * `options` is an optional Object of [render options](#options)
-Returns an Object with the `error` property set to `null` if it was able to successfully load the model or set to a Error object if WebGl isn't supported or the base64 string was invalid. In the first case a options property is defined containing a Object with nearly all [render options](#options) as setters and getters.
+Returns an Object with the `error` property set to `null` if it was able to successfully load the model or set to a Error object if WebGL isn't supported or the base64 string was invalid. In the first case a `options` property is defined containing a Object with nearly all [render options](#options) as setters and getters.
 
 #### Troxel.webgl()
 
@@ -156,3 +156,10 @@ Options                    | Description                                        
 `showInfoLabel`            | set to `false`, if you want to hide the 'Open this model in Troxel' link (I would appreciate it if you would link somewhere else to Troxel in this case, this option is only available at initialisation)             | `true`
 
 *Note: for performance reasons you should prefere passing colors as a Javascript hexadecimal Numbers instead of hex strings like in css*
+
+In addition to this there are 2 more options available in the `options` Object returned from `Troxel.renderBase64` or passed in the callback by `Troxel.renderBlueprint` to change the rendered model while reusing the canvas and WebGLContext.
+
+Options     | Description
+------------|------------------------------------------------------------------------------------------------------------------
+`blueprint` | set it to the id of a valid blueprint (the filename without the `.blueprint` file extension) to render it in the current canvas / WebGLContext (this will only work from a `options` Object passed in the callback of `Troxel.renderBlueprint`)
+`base64`    | set it to a valid Base64 encoded String containing the voxel data of your model to render it in the current canvas / WebGLContext (you can also use it to read the `base64` represantation of a voxel model opend with `Troxel.renderBlueprint`)
