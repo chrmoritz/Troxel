@@ -1,9 +1,16 @@
 :markdown
   #### Recent Changes:
 
-  * libTroxel: major API improvements (changing Options after initialisation) and better camera position (autorotation should now fit from every angel, empty y voxel space is now ignored)
+  * added new frequently requested render options:
+    * render mode options: render the model either in pretty (handle all material maps) or show only the color, alpha, type or specular map
+    * wireframes: render the model either without wireframes, with darkgrey wireframes or with wireframes representing the color, alpha, type or specular maü
+  * libTroxel: major API improvements (changing Options after initialisation, even the new render options (see above))
+    * better camera position (autorotation should now fit from every angel, empty y voxel space is now ignored)
+    * support for changing the rendered voxel model in the same canvas / WebGLContext
+    * improved [libTroxel example page](https://chrmoritz.github.io/Troxel/static/libTroxelTest.html) showing off all the new features
+    * API completion of libTroxel (no more breaking changes)
   * reomport Trove blueprints for [Everything Edition](http://forums.trovegame.com/showthread.php?12486-Everything-Edition#post58045)
-    * now import [rings](http://chrmoritz.github.io/Troxel/#b=shadow_magic_03) too (why does nobody missed them?)
+    * now import [rings](https://chrmoritz.github.io/Troxel/#b=shadow_magic_03) too (why does nobody missed them?)
   * new vertex based Renderer
     * the new renderer is 5+ times faster on normal sized models and even better on big models (you can view very big models without lag now) than the old renderer
     * this is done by only adding vertexes to the scene which are visible (the old renderer uses 6 vertexes per voxel for all voxels in the model, even the invisbile ones in the middle)

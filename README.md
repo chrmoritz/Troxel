@@ -1,7 +1,7 @@
 Troxel [![Travis Build Status (Linux)](https://img.shields.io/travis/chrmoritz/Troxel/master.svg?label=Travis build)](https://travis-ci.org/chrmoritz/Troxel) [![AppVeyor Build status (Windows)](https://ci.appveyor.com/api/projects/status/glwcnbd0k2qh6f29/branch/master?svg=true)](https://ci.appveyor.com/project/chrmoritz/troxel/branch/master) [![devDependency Status](https://david-dm.org/chrmoritz/Troxel/dev-status.svg)](https://david-dm.org/chrmoritz/Troxel#info=devDependencies)
 ======
 
-Troxel is a WebGL-based HTML5-WebApp for viewing and editing voxel models with some additional support for [Trove](http://www.trionworlds.com/trove/) specific features.  Visit [chrmoritz.github.io/Troxel/](http://chrmoritz.github.io/Troxel/) to try it out! You can embed Troxel in your own website too with [libTroxel](#libtroxel).
+Troxel is a WebGL-based HTML5-WebApp for viewing and editing voxel models with some additional support for [Trove](http://www.trionworlds.com/trove/) specific features.  Visit [chrmoritz.github.io/Troxel/](https://chrmoritz.github.io/Troxel/) to try it out! You can embed Troxel in your own website too with [libTroxel](#libtroxel).
 
 ## Features ##
 * Supported file formats for both import and export
@@ -26,7 +26,7 @@ cd troxel
 npm install
 ```
 ##### Dependencies:
-* [Node.js](http://nodejs.org/) 0.10
+* [Node.js](https://nodejs.org/) 0.12 or [io.js](https://iojs.org/)
 * for hosting static page locally (optionally): [ruby](https://www.ruby-lang.org/) with jekyll gem (`gem install jekyll`)
 
 #### Running dev server
@@ -68,7 +68,7 @@ LibTroxel is a JavaScript library which allows you to embedd voxel models render
 
 ## How to use
 
-LibTroxel is licensed under the same license as Troxel, the [GNU LGPL v3.0](LICENSE.txt) . You can find an [example usage of libTroxel](chrmoritz.github.io/Troxel/static/libTroxelTest.html) and it's [source code](test/libTroxelTest.html) [here](chrmoritz.github.io/Troxel/static/libTroxelTest.html).
+LibTroxel is licensed under the same license as Troxel, the [GNU LGPL v3.0](LICENSE.txt) . You can find an [example usage of libTroxel](https://chrmoritz.github.io/Troxel/static/libTroxelTest.html) and it's [source code](test/libTroxelTest.html) [here](https://chrmoritz.github.io/Troxel/static/libTroxelTest.html).
 
 #### Dependencies
 
