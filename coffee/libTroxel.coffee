@@ -54,10 +54,10 @@ window.Troxel =
                       ,autoRotate: true, autoRotateSpeed: -4.0, noZoom: false, noPan: false, noRotate: false, renderMode: 0, renderWireframes: 0}
     Object.defineProperties resultOptions, {
       "renderMode":
-        set: (s) -> _resultOptions.renderMode = s; renderer.renderMode = s; renderer.reload io.voxels, io.x, io.y, io.z
+        set: (s) -> _resultOptions.renderMode = s; renderer.renderMode = s; renderer.reload io.voxels, io.x, io.y, io.z; renderer.render()
         get: -> _resultOptions.renderMode
       "renderWireframes":
-        set: (s) -> _resultOptions.renderWireframes = s; renderer.renderWireframes = s; renderer.reload io.voxels, io.x, io.y, io.z
+        set: (s) -> _resultOptions.renderWireframes = s; renderer.renderWireframes = s; renderer.reload io.voxels, io.x, io.y, io.z; renderer.render()
         get: -> _resultOptions.renderWireframes
       "rendererClearColor":
         set: (s) -> _resultOptions.rendererClearColor = s; renderer.renderer.setClearColor s; renderer.render()

@@ -64,7 +64,19 @@ class Renderer
         material.opacity = a / 255
     return material
 
-  reload: (@voxels, @x, @y, @z) ->
+  reload: (@voxels, @x, @y, @z, resize = false, init = false) ->
+    if resize
+      @spotLightTarget.position.x = @z * 25
+      @spotLightTarget.position.y = @y * 25
+      @spotLightTarget.position.z = @x * 25
+      @spotLight.target = @spotLightTarget
+      @camera.position.x = -50 * @y - 20 * @x - 10 * @z
+      @camera.position.y = @y * 50
+      @camera.position.z = @x * 25
+      @controls.target = new THREE.Vector3 @z * 25, @y * 25, @x * 25
+    unless init
+      @scene.remove @mesh
+      @scene.remove @wireframe if @wireframe?
     matrix = new THREE.Matrix4() # dummy matrix
     color = new THREE.Color()    # dummy color
     px = new THREE.PlaneGeometry 50, 50 # back

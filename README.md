@@ -68,7 +68,7 @@ LibTroxel is a JavaScript library which allows you to embedd voxel models render
 
 ## How to use
 
-LibTroxel is licensed under the same license as Troxel, the [GNU LGPL v3.0](LICENSE.txt) . You can find an [example usage of libTroxel here](test/libTroxelTest.html).
+LibTroxel is licensed under the same license as Troxel, the [GNU LGPL v3.0](LICENSE.txt) . You can find an [example usage of libTroxel](chrmoritz.github.io/Troxel/static/libTroxelTest.html) and it's [source code](test/libTroxelTest.html) [here](chrmoritz.github.io/Troxel/static/libTroxelTest.html).
 
 #### Dependencies
 
@@ -139,7 +139,9 @@ If you can't use Java Script to call the Java Script API (for example in wiki te
 Options                    | Description                                                                           | Default
 ---------------------------|---------------------------------------------------------------------------------------|-----------
 `autoRotate`               | set it to `true` to automatically rotate around the voxel model                       | `true`
-`autoRotateSpeed`          | the rotation speed in full rotation per minute at 60 fps (set to negative values to change the auto rotate direction)                                                                                               | `-4.0` (15 sec / rotation @60fps)
+`autoRotateSpeed`          | the rotation speed in full rotation per minute at 60 fps (set to positive values to change the auto rotate direction, defaults to 15 sec / rotation)                                                              | `-4.0`
+`renderMode`               | set the render mode (affect color in which each voxel is rendered) as an integer with one of these values: <table><thead><tr><th>value</th><th>description</th></tr></thead><tbody><tr><td>`0`</td><td>**pretty** (default): renderer uses all material maps</td></tr><tr><td>`1`</td><td>renders only the **color** of voxels (no material maps)</td></tr><tr><td>`2`</td><td>renders voxels in the color used in the **alpha** map</td></tr><tr><td>`3`</td><td>renders voxels in the color used in the **type** map</td></tr><tr><td>`4`</td><td>renders voxels in the color used in the **specular** map</td></tr></tbody></table>                                                                                      | `0`
+`renderWireframes`         | set the way wireframes are rendererd as an integer with one of these values: <table><thead><tr><th>value</th><th>description</th></tr></thead><tbody><tr><td>`0`</td><td>**Off** (default): no wireframes are rendered</td></tr><tr><td>`1`</td><td>renders all wireframes in a **darkgrey** color</td></tr><tr><td>`2`</td><td>renders wireframes as defined in the **color** map</td></tr><tr><td>`3`</td><td>renders wireframes as defined in the **alpha** map</td></tr><tr><td>`4`</td><td>renders wireframes as defined in the **type** map</td></tr><tr><td>`4`</td><td>renders wireframes as defined in the **specular** map</td></tr></tbody></table> | `0`
 `rendererAntialias`        | disables the antialiasing of the renderer if set to (only available at initialisation)| `true`
 `rendererClearColor`       | the color of the background behind the voxel model                                    | `0x888888`
 `ambientLightColor`        | the color of the ambient light                                                        | `0x606060`
@@ -151,6 +153,6 @@ Options                    | Description                                        
 `noRotate`                 | disables the rotate controls if set to `true`                                         | `false`
 `noPan`                    | disables the pan controls if set to `true`                                            | `false`
 `noZoom`                   | disables the zoom controls if set to `true`                                           | `false`
-`showInfoLabel`            | set to `false`, if you want to hide the 'Open this model in Troxel' link (I would appreciate it if you would link somewhere else to Troxel in this case, this option is only available at initialisation)                                                             | `true`
+`showInfoLabel`            | set to `false`, if you want to hide the 'Open this model in Troxel' link (I would appreciate it if you would link somewhere else to Troxel in this case, this option is only available at initialisation)             | `true`
 
 *Note: for performance reasons you should prefere passing colors as a Javascript hexadecimal Numbers instead of hex strings like in css*

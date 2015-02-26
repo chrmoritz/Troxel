@@ -4,6 +4,22 @@
     <div id="container" style="width: 300px; height: 300px;">
       <!-- insert fallback content (like a static image of the rendered model) here -->
     </div>
+    <select id="renderMode">
+      <option value="0" selected>Pretty</option>
+      <option value="1">Color only</option>
+      <option value="2">Alpha map</option>
+      <option value="3">Type map</option>
+      <option value="4">Specular map</option>
+    </select>
+    <select id="renderWireframes">
+      <option value="0" selected>no wireframes</option>
+      <option value="1">darkgrey</option>
+      <option value="2">Color map</option>
+      <option value="3">Alpha map</option>
+      <option value="4">Type map</option>
+      <option value="5">Specular map</option>
+    </select>
+    <button id="autoRotate">pause/resume</button>
     <script src="https://chrmoritz.github.io/Troxel/static/js/jquery.min.js" type="text/javascript"></script>
     <script src="https://chrmoritz.github.io/Troxel/static/libTroxel.min.js" type="text/javascript"></script>
     <script type="text/javascript">
@@ -12,6 +28,7 @@
         autoRotate: true, // default to true (auto rotate enabled)
         autoRotateSpeed: -4.0, // default to -4.0 (15 seconds per round when fps is 60 = Trove default)
         rendererClearColor: 0x9c9c9c, // default to 0x888888
+        rendererAntialias: true, // default to true
         ambientLightColor: 0x707070, // default to 0x606060
         directionalLightColor: 0xeeeeee, // default to 0xffffff
         directionalLightIntensity: 0.9, // default to 0.3
@@ -24,16 +41,22 @@
         showInfoLabel: true // you can hide the 'Open this model in Troxel' link if you want to move it somewhere else in your layout
       }, function(error, options){
         if (error !== null){
-          return;
+          throw error;
         }
         TroxelOptions = options; // store options Object somewhere out of the callback scope to use it later (for example to inplement a custom option GUI)
         // Do some stuff here
         console.log("Model loaded!");
-        setInterval(customAutoRotateStop, 5000);
       });
-      var customAutoRotateStop = function(){
-        TroxelOptions.autoRotate = false;
-      };
+      // Custom option gui example:
+      $('#renderMode').change(function(){
+        TroxelOptions.renderMode = parseInt($(this).val());
+      });
+      $('#renderWireframes').change(function(){
+        TroxelOptions.renderWireframes = parseInt($(this).val());
+      });
+      $('#autoRotate').click(function(){
+        TroxelOptions.autoRotate = !TroxelOptions.autoRotate;
+      });
     </script>
   </body>
 </html>

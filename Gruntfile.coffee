@@ -92,7 +92,8 @@ module.exports = (grunt) ->
       json: {src: 'tools/Trove.json', dest: 'dist/static/Trove.json'},
       appcache: {src: 'tools/troxel.appcache', dest: 'dist/troxel.appcache'},
       stats: {src: 'bower_components/stats/index.js', dest: 'dist/static/js/stats.min.js'},
-      typeahead: {src: 'bower_components/typehead.js/dist/typeahead.bundle.min.js', dest: 'dist/static/js/typeahead.min.js'}
+      typeahead: {src: 'bower_components/typehead.js/dist/typeahead.bundle.min.js', dest: 'dist/static/js/typeahead.min.js'},
+      example: {src: 'test/libTroxelTest.html', dest: 'dist/static/libTroxelTest.html'}
     },
     pages: {
       serve: {
@@ -108,7 +109,7 @@ module.exports = (grunt) ->
     watch: {
       coffee: {
         files: 'coffee/*',
-        tasks: ['coffee', 'uglify:main']
+        tasks: ['coffee', 'uglify:main', 'uglify:lib']
       },
       jade: {
         files: 'views/*',

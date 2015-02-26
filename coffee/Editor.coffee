@@ -90,20 +90,10 @@ class Editor extends Renderer
       @scene.remove p for p in @planes
       @scene.remove @grid
       @setupGrid()
-      @spotLightTarget.position.x = @z * 25
-      @spotLightTarget.position.y = @y * 25
-      @spotLightTarget.position.z = @x * 25
-      @spotLight.target = @spotLightTarget
-      @camera.position.x = -50 * @y - 20 * @x - 10 * @z
-      @camera.position.y = @y * 50
-      @camera.position.z = @x * 25
-      @controls.target = new THREE.Vector3 @z * 25, @y * 25, @x * 25
       @changeEditMode($('#modeEdit').parent().hasClass('active'))
     unless init
-      @scene.remove @mesh
-      @scene.remove @wireframe if @wireframe?
       @objects = @planes.slice 0
-    super @voxels, @x, @y, @z
+    super @voxels, @x, @y, @z, resize, init
     @objects.push @mesh
     @render() unless init
 
