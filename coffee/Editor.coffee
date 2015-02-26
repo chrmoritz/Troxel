@@ -101,7 +101,7 @@ class Editor extends Renderer
       @changeEditMode($('#modeEdit').parent().hasClass('active'))
     unless init
       @scene.remove @mesh
-      @scene.remove @wireframe if wireframe?
+      @scene.remove @wireframe if @wireframe?
       @objects = @planes.slice 0
     super @voxels, @x, @y, @z
     @objects.push @mesh
@@ -195,7 +195,7 @@ class Editor extends Renderer
             when 1 # fill area
               connected = (z, y, x) -> @voxels[z]?[y]?[x]? and !@voxels[z][y][x].filled and (!colorMatch or (v.r == @voxels[z][y][x].r and
                   v.g == @voxels[z][y][x].g and v.b == @voxels[z][y][x].b and v.a == @voxels[z][y][x].a and v.t == @voxels[z][y][x].t and v.s == @voxels[z][y][x].s))
-              baseColor = $('#addVoxColor').val()
+              baseColor = new THREE.Color $('#addVoxColor').val()
               noiseBright = parseFloat $('#editVoxNoiseBright').val()
               noiseRgb = parseFloat $('#editVoxNoiseHSL').val()
               colorMatch = $('#fillSameColor').prop('checked')
@@ -203,13 +203,14 @@ class Editor extends Renderer
               t = parseInt($('#addVoxType').val())
               s = parseInt($('#addVoxSpecular').val())
               a = 255 if t in [0, 3] # Solid
-              return if baseColor == "#ff00ff" # no fill for attachment points
+              return if baseColor.getHex() == 0xff00ff # no fill for attachment points
               toFill = [[z, y, x]]
               @voxels[z][y][x].filled = true
+              color = new THREE.Color() # dummy color
               while toFill.length > 0
                 [z, y, x] = toFill.pop()
                 v = {r: @voxels[z][y][x].r, g: @voxels[z][y][x].g, b: @voxels[z][y][x].b, a: @voxels[z][y][x].a, t: @voxels[z][y][x].t, s: @voxels[z][y][x].s}
-                color = getColor new THREE.Color(baseColor), noiseBright, noiseRgb
+                color = getColor color.copy(baseColor), noiseBright, noiseRgb
                 @voxels[z][y][x].r = Math.floor(color.r * 255)
                 @voxels[z][y][x].g = Math.floor(color.g * 255)
                 @voxels[z][y][x].b = Math.floor(color.b * 255)
@@ -234,7 +235,7 @@ class Editor extends Renderer
           y = intersect.point.y
           z = intersect.point.x
           vox = @voxels[z][y][x]
-          $('#addVoxColor').val('#' + new THREE.Color("rgb(#{vox.r},#{vox.g},#{vox.b})").getHexString())
+          $('#addVoxColor').val('#' + new THREE.Color(vox.r / 255, vox.g / 255, vox.b / 255).getHexString())
           return $('#addVoxColor').change() if vox.r == vox.b == 255 and vox.g == 0
           $('#addVoxAlpha').val(vox.a)
           $('#addVoxType').val(vox.t)

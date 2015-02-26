@@ -51,8 +51,14 @@ window.Troxel =
     resultOptions = {}
     _resultOptions = {rendererClearColor: 0x888888, ambientLightColor: 0x606060, directionalLightColor: 0xffffff, directionalLightIntensity: 0.3
                       ,directionalLightVector: {x: -0.5, y: -0.5, z: 1}, spotLightColor: 0xffffff, spotLightIntensity: 0.7
-                      ,autoRotate: true, autoRotateSpeed: -4.0, noZoom: false, noPan: false, noRotate: false}
+                      ,autoRotate: true, autoRotateSpeed: -4.0, noZoom: false, noPan: false, noRotate: false, renderMode: 0, renderWireframes: 0}
     Object.defineProperties resultOptions, {
+      "renderMode":
+        set: (s) -> _resultOptions.renderMode = s; renderer.renderMode = s; renderer.reload io.voxels, io.x, io.y, io.z
+        get: -> _resultOptions.renderMode
+      "renderWireframes":
+        set: (s) -> _resultOptions.renderWireframes = s; renderer.renderWireframes = s; renderer.reload io.voxels, io.x, io.y, io.z
+        get: -> _resultOptions.renderWireframes
       "rendererClearColor":
         set: (s) -> _resultOptions.rendererClearColor = s; renderer.renderer.setClearColor s; renderer.render()
         get: -> _resultOptions.rendererClearColor
