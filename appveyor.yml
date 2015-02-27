@@ -3,14 +3,10 @@ version: "{build}"
 environment:
   matrix:
   - nodejs_version: "0.12" # node.js
-  - nodejs_version: "1.3"  # io.js
-
-matrix:
-  allow_failures:
-    - nodejs_version: "1.0"
+  - nodejs_version: "1"  # io.js
 
 install:
-  - ps: Update-NodeJsInstallation (Get-NodeJsLatestBuild $env:nodejs_version)
+  - ps: Install-Product node $env:nodejs_version
   - node --version
   - npm --version
   - npm install
