@@ -230,9 +230,8 @@ class Editor extends Renderer
           $('#addVoxType').val(vox.t)
           $('#addVoxSpecular').val(vox.s)
           return $('#addVoxColor').change()
-      io = {voxels: @voxels, x: @x, y: @y, z: @z}
       @reload @voxels, @x, @y, @z
-      history.pushState io, 'Troxel', '#m=' + new Base64IO(io).export false
+      new IO({voxels: @voxels, x: @x, y: @y, z: @z}).pushState()
       @render()
 
   onDocumentKeyDown: (e) ->

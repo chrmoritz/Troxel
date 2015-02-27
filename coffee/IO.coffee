@@ -31,6 +31,12 @@ class IO
             return false unless typeof x.s == 'number' and 0 <= x.s <= 3
     return true
 
+  pushState: (base64 = new Base64IO(io).export false) ->
+    try
+      history.pushState {voxels: @voxels, x: @x, y: @y, z: @z}, 'Troxel', '#m=' + base64
+    catch # reached the quota lime of state object (640k on firefox)
+      history.pushState null, 'Troxel', '#m=' + base64
+
   rotateX: (d) ->
     voxels = @voxels.slice 0
     @voxels = []

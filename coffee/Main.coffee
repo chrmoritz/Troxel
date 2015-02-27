@@ -34,7 +34,10 @@ window.onpopstate = (e) ->
       $('#btnExport').hide() if io.readonly == 1
       $('#btnExport').show() if io.readonly == 0
       $('#btnExportPng').show()
-      editor = new Editor io
+      if editor?
+        editor.reload io.voxels, io.x, io.y, io.z, true
+      else
+        editor = new Editor io
       break
     if param == 'b' # load Trove model from blueprint id
       $.getJSON 'static/Trove.json', (data) ->
@@ -80,7 +83,7 @@ $('#open').click ->
       editor.reload io.voxels, io.x, io.y, io.z, true
     else
       editor = new Editor io
-    history.pushState {voxels: io.voxels, x: io.x, y: io.y, z: io.z}, 'Troxel', '#m=' + new Base64IO(io).export false
+    io.pushState()
   console.log '##################################################'
   switch $('#filetabs li.active a').attr('href')
     when '#tabdrag'
@@ -136,7 +139,10 @@ $('#open').click ->
           editor.reload io.voxels, io.x, io.y, io.z, true
         else
           editor = new Editor io
-        history.pushState {voxels: io.voxels, x: io.x, y: io.y, z: io.z}, 'Troxel', '#b=' + $('#sbtrove').val()
+        try
+          history.pushState {voxels: io.voxels, x: io.x, y: io.y, z: io.z}, 'Troxel', '#b=' + $('#sbtrove').val()
+        catch # reached the quota lime of state object (640k on firefox)
+          history.pushState null, 'Troxel', '#b=' + $('#sbtrove').val()
     when '#tabnew'
       x = parseInt $('#snewX').val()
       y = parseInt $('#snewY').val()
@@ -220,7 +226,7 @@ $('#ulSavedModels').parent().on 'show.bs.dropdown', (e) ->
     io = new Base64IO $(@).data 'model'
     $('#btnExport').show() if !io.readonly? or io.readonly == 0
     $('#btnExportPng').show()
-    history.pushState {voxels: io.voxels, x: io.x, y: io.y, z: io.z}, 'Toxel', '#m=' + $(@).data 'model'
+    io.pushState $(@).data 'model'
     if editor?
       editor.reload io.voxels, io.x, io.y, io.z, true
     else
@@ -251,7 +257,7 @@ $('.rotateBtn').click ->
     when  'z' then io.rotateZ(true)
     when '-z' then io.rotateZ(false)
   editor.reload io.voxels, io.x, io.y, io.z, true
-  history.pushState {voxels: io.voxels, x: io.x, y: io.y, z: io.z}, 'Troxel', '#m=' + new Base64IO(io).export false
+  io.pushState()
 $('.moveBtn').click ->
   return unless io?
   switch $(@).data('move')
@@ -262,7 +268,7 @@ $('.moveBtn').click ->
     when  'z' then io.moveZ(true, true)
     when '-z' then io.moveZ(false, true)
   editor.reload io.voxels, io.x, io.y, io.z
-  history.pushState {voxels: io.voxels, x: io.x, y: io.y, z: io.z}, 'Troxel', '#m=' + new Base64IO(io).export false
+  io.pushState()
 $('.mirrorBtn').click ->
   return unless io?
   switch $(@).data('mirror')
@@ -270,7 +276,7 @@ $('.mirrorBtn').click ->
     when 'y' then io.mirrorY(true)
     when 'z' then io.mirrorZ(true)
   editor.reload io.voxels, io.x, io.y, io.z
-  history.pushState {voxels: io.voxels, x: io.x, y: io.y, z: io.z}, 'Troxel', '#m=' + new Base64IO(io).export false
+  io.pushState()
 $('.panel-heading').click ->
   span = $(@).find('button span')
   if span.hasClass('glyphicon-minus')
@@ -331,7 +337,7 @@ $('#resizeBtn').click ->
   $('#resizeModal').modal 'hide'
   io.resize(parseInt($('#resizeX').val()), parseInt($('#resizeY').val()), parseInt($('#resizeZ').val()))
   editor.reload io.voxels, io.x, io.y, io.z, true
-  history.pushState {voxels: io.voxels, x: io.x, y: io.y, z: io.z}, 'Troxel', '#m=' + new Base64IO(io).export false
+  io.pushState()
 $($('.editTool')[0]).parent().button('toggle')
 $('#fillSameColor').prop('checked', true)
 $('.editTool').change ->
