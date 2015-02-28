@@ -5,7 +5,7 @@ editor = null
 if window.applicationCache.status != window.applicationCache.UNCACHED
   window.applicationCache.addEventListener 'updateready', ->
     if window.applicationCache.status == window.applicationCache.UPDATEREADY
-      $.ajax({url: 'static/Recent_Changes.html', cache: false}).done (html) -> $('#recentChangesDiv').prepend(html)
+      $.ajax({url: 'static/Recent_Changes.html', cache: false}).done (html) -> $('#recentChangesDiv').html(html)
       $('#updateModal').modal 'show'
       clearInterval updatechecker
   updatechecker = setInterval (-> window.applicationCache.update()), 300000

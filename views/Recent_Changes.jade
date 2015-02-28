@@ -1,6 +1,7 @@
 :markdown
   #### Recent Changes:
 
+  * Qubicle: fix orientation issues with right handed z coords and migrated Renderer to use right handed coords instead of left handed
   * Editor: added support for big models (lair / dungeon sized models)
   * added new frequently requested render options:
     * render mode options: render the model either in pretty (handle all material maps) or show only the color, alpha, type or specular map
@@ -10,16 +11,11 @@
     * support for changing the rendered voxel model in the same canvas / WebGLContext
     * improved [libTroxel example page](https://chrmoritz.github.io/Troxel/static/libTroxelTest.html) showing off all the new features
     * API completion of libTroxel (no more breaking changes)
-  * reomport Trove blueprints for [Everything Edition](http://forums.trovegame.com/showthread.php?12486-Everything-Edition#post58045)
-    * now import [rings](https://chrmoritz.github.io/Troxel/#b=shadow_magic_03) too (why does nobody missed them?)
+  * reomport Trove blueprints for [Everything Edition](http://forums.trovegame.com/showthread.php?12486-Everything-Edition#post58045) + import rings
   * new vertex based Renderer
     * the new renderer is 5+ times faster on normal sized models and even better on big models (you can view very big models without lag now) than the old renderer
     * this is done by only adding vertexes to the scene which are visible (the old renderer uses 6 vertexes per voxel for all voxels in the model, even the invisbile ones in the middle)
     * improved rendering of transparent / glass material maps
     * implement renderer.reload for dimension changes which should improve memory footprint (less garbage to collect) and performance while rotating, resizing or switching between models
   * reimport Trove blueprints for [Dance Off Edition](http://forums.trovegame.com/showthread.php?11868-Dance-Off-Edition#post53682)
-  * speed up .qb export a lot (2.5 times faster for compressed and 100+ for uncompressed)
-  * reimport Trove blueprints for [Take Flight Update](http://forums.trovegame.com/showthread.php?10282-Take-Flight-Update#post49133)
-  * cache Trove.json again *(Did you know: Troxel is a ~1MB self contained HTML5 webapp, which you can use even offline?)*
-  * optimized fill tool (now 8 times faster for area fills and uses hsl instead of rgb noise)
-  * rewrite build system using [Grunt](http://gruntjs.com/) (now much more advanced, fully automateda and with full windows support)
+  * speed up .qb export a lot (2.5 times faster for compressed and 100+ for uncompressed) and fill tools (8 times faster for area fills)

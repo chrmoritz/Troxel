@@ -266,7 +266,8 @@ html(manifest=dev?null:'troxel.appcache')
           .modal-header
             button.close(data-dismiss='modal'): span &times;
             h4.modal-title A new version of Troxel is available!
-          #recentChangesDiv.modal-body
+          .modal-body
+            #recentChangesDiv
             i Do you want to reload this page now to update and continue your work in the new version? (you can manually reload the page later to update too)
           .modal-footer.form-inline
             button#updateLater.btn.btn-default Close and remind me in:
