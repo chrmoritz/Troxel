@@ -147,7 +147,6 @@ class Editor extends Renderer
               x = intersect.point.z
               y = intersect.point.y
               z = intersect.point.x
-              console.log x, y, z
               return unless 0 <= x < @x and 0 <= y < @y and 0 <= z < @z
               @voxels[z] = [] unless @voxels[z]?
               @voxels[z][y] = [] unless @voxels[z][y]?

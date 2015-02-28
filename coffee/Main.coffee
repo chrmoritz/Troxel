@@ -49,7 +49,9 @@ window.onpopstate = (e) ->
         editor = new Editor io
       break
   unless io?
+    # ToDo: improve this
     $('#WebGlContainer').empty()
+    editor = null
 window.onpopstate()
 $('input[type="file"]').change ->
   if $(@).prop('files').length > 1
