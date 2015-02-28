@@ -187,6 +187,7 @@ class MagicaIO extends IO
     ]
     helpPalette = {}
     for z in [0...@z] by 1
+      iz = @z - z - 1
       for y in [0...@y] by 1
         for x in [0...@x] by 1 when @voxels[z]?[y]?[x]?
           rgba = ((@voxels[z][y][x].r << 24) | (@voxels[z][y][x].g << 16) | (@voxels[z][y][x].b << 8) | 255) >>> 0
@@ -196,7 +197,7 @@ class MagicaIO extends IO
             paletteChunk.push @voxels[z][y][x].r, @voxels[z][y][x].g, @voxels[z][y][x].b, 255
             i = paletteChunk.length / 4 - 3
             helpPalette[rgba] = i
-          voxelChunk.push @x - x - 1, @z - z - 1, y, i # order is x, z, y (normalized with .qb)
+          voxelChunk.push @x - x - 1, iz, y, i # order is x, z, y (normalized with .qb)
     paletteChunk.push 255, 255, 255, 255 while paletteChunk.length < 1036 # fill up palette with dummy data
     [s1, s2, s3, s4] = new Uint8Array new Uint32Array([1076 + voxelChunk.length]).buffer
     data.push s1, s2, s3, s4 # main chunk: child chunk size
