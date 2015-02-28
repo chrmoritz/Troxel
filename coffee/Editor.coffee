@@ -231,7 +231,12 @@ class Editor extends Renderer
           $('#addVoxSpecular').val(vox.s)
           return $('#addVoxColor').change()
       @reload @voxels, @x, @y, @z
-      new IO({voxels: @voxels, x: @x, y: @y, z: @z}).pushState()
+      ioo = {voxels: @voxels, x: @x, y: @y, z: @z}
+      base64 = new Base64IO(ioo).export false
+      try
+        history.pushState ioo, 'Troxel', '#m=' + base64
+      catch # reached the quota lime of state object (640k on firefox)
+        history.pushState null, 'Troxel', '#m=' + base64
       @render()
 
   onDocumentKeyDown: (e) ->

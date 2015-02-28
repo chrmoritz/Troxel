@@ -83,7 +83,12 @@ $('#open').click ->
       editor.reload io.voxels, io.x, io.y, io.z, true
     else
       editor = new Editor io
-    io.pushState()
+    ioo = {voxels: io.voxels, x: io.x, y: io.y, z: io.z}
+    base64 = new Base64IO(ioo).export false
+    try
+      history.pushState ioo, 'Troxel', '#m=' + base64
+    catch # reached the quota lime of state object (640k on firefox)
+      history.pushState null, 'Troxel', '#m=' + base64
   console.log '##################################################'
   switch $('#filetabs li.active a').attr('href')
     when '#tabdrag'
@@ -226,7 +231,10 @@ $('#ulSavedModels').parent().on 'show.bs.dropdown', (e) ->
     io = new Base64IO $(@).data 'model'
     $('#btnExport').show() if !io.readonly? or io.readonly == 0
     $('#btnExportPng').show()
-    io.pushState $(@).data 'model'
+    try
+      history.pushState {voxels: @voxels, x: @x, y: @y, z: @z}, 'Troxel', '#m=' + $(@).data 'model'
+    catch # reached the quota lime of state object (640k on firefox)
+      history.pushState null, 'Troxel', '#m=' + $(@).data 'model'
     if editor?
       editor.reload io.voxels, io.x, io.y, io.z, true
     else
@@ -257,7 +265,12 @@ $('.rotateBtn').click ->
     when  'z' then io.rotateZ(true)
     when '-z' then io.rotateZ(false)
   editor.reload io.voxels, io.x, io.y, io.z, true
-  io.pushState()
+  ioo = {voxels: io.voxels, x: io.x, y: io.y, z: io.z}
+  base64 = new Base64IO(ioo).export false
+  try
+    history.pushState ioo, 'Troxel', '#m=' + base64
+  catch # reached the quota lime of state object (640k on firefox)
+    history.pushState null, 'Troxel', '#m=' + base64
 $('.moveBtn').click ->
   return unless io?
   switch $(@).data('move')
@@ -268,7 +281,12 @@ $('.moveBtn').click ->
     when  'z' then io.moveZ(true, true)
     when '-z' then io.moveZ(false, true)
   editor.reload io.voxels, io.x, io.y, io.z
-  io.pushState()
+  ioo = {voxels: io.voxels, x: io.x, y: io.y, z: io.z}
+  base64 = new Base64IO(ioo).export false
+  try
+    history.pushState ioo, 'Troxel', '#m=' + base64
+  catch # reached the quota lime of state object (640k on firefox)
+    history.pushState null, 'Troxel', '#m=' + base64
 $('.mirrorBtn').click ->
   return unless io?
   switch $(@).data('mirror')
@@ -276,7 +294,12 @@ $('.mirrorBtn').click ->
     when 'y' then io.mirrorY(true)
     when 'z' then io.mirrorZ(true)
   editor.reload io.voxels, io.x, io.y, io.z
-  io.pushState()
+  ioo = {voxels: io.voxels, x: io.x, y: io.y, z: io.z}
+  base64 = new Base64IO(ioo).export false
+  try
+    history.pushState ioo, 'Troxel', '#m=' + base64
+  catch # reached the quota lime of state object (640k on firefox)
+    history.pushState null, 'Troxel', '#m=' + base64
 $('.panel-heading').click ->
   span = $(@).find('button span')
   if span.hasClass('glyphicon-minus')
@@ -337,7 +360,12 @@ $('#resizeBtn').click ->
   $('#resizeModal').modal 'hide'
   io.resize(parseInt($('#resizeX').val()), parseInt($('#resizeY').val()), parseInt($('#resizeZ').val()))
   editor.reload io.voxels, io.x, io.y, io.z, true
-  io.pushState()
+  ioo = {voxels: io.voxels, x: io.x, y: io.y, z: io.z}
+  base64 = new Base64IO(ioo).export false
+  try
+    history.pushState ioo, 'Troxel', '#m=' + base64
+  catch # reached the quota lime of state object (640k on firefox)
+    history.pushState null, 'Troxel', '#m=' + base64
 $($('.editTool')[0]).parent().button('toggle')
 $('#fillSameColor').prop('checked', true)
 $('.editTool').change ->
