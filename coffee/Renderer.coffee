@@ -13,13 +13,13 @@ class Renderer
       for z in [0...@z] by 1 when @voxels[z]? # ignore empty y (height) space on deco models
         (miny = Math.min miny, y; break) for y in [0...@y] by 1 when @voxels[z]?[y]?
       a = Math.max @x, @y - miny, @z # we are most likely autorotating => zoom that is always fit the camera
-      @camera.position.x = -80 * a
-      @camera.position.y =  50 * (a + miny)
-      @camera.position.z =  25 * a
+      @camera.position.x = 155 * a
+      @camera.position.y = 50 * (a + miny)
+      @camera.position.z = 25 * a
     else
-      @camera.position.x = -50 * @y - 20 * @x - 10 * @z
-      @camera.position.y =  50 * @y
-      @camera.position.z =  25 * @x
+      @camera.position.x = 65 * @y + 35 * @x + 55 * @z
+      @camera.position.y = 50 * @y
+      @camera.position.z = 25 * @x
     @controls = new THREE.OrbitControls @camera, @domContainer[0]
     @controls.target = new THREE.Vector3 @z * 25, (@y + miny) * 25, @x * 25
     @controls.noKeys = true
@@ -73,13 +73,13 @@ class Renderer
         for z in [0...@z] by 1 when @voxels[z]? # ignore empty y (height) space on deco models
           (miny = Math.min miny, y; break) for y in [0...@y] by 1 when @voxels[z]?[y]?
         a = Math.max @x, @y - miny, @z # we are most likely autorotating => zoom that is always fit the camera
-        @camera.position.x = -80 * a
-        @camera.position.y =  50 * (a + miny)
-        @camera.position.z =  25 * a
+        @camera.position.x = 155 * a
+        @camera.position.y = 50 * (a + miny)
+        @camera.position.z = 25 * a
       else
-        @camera.position.x = -50 * @y - 20 * @x - 10 * @z
-        @camera.position.y =  50 * @y
-        @camera.position.z =  25 * @x
+        @camera.position.x = 65 * @y + 35 * @x + 55 * @z
+        @camera.position.y = 50 * @y
+        @camera.position.z = 25 * @x
       @controls.target = new THREE.Vector3 @z * 25, (@y + miny) * 25, @x * 25
       @spotLightTarget.position.x = @z * 25
       @spotLightTarget.position.y = (@y + miny) * 25

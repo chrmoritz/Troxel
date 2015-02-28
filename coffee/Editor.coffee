@@ -25,17 +25,16 @@ class Editor extends Renderer
   setupGrid: ->
     #Planes
     @planes = []
-    geometry = new THREE.PlaneBufferGeometry 50 * @x, 50 * @y
-    geometry.applyMatrix new THREE.Matrix4().makeRotationY -Math.PI / 2
+    geometry = new THREE.PlaneBufferGeometry 50 * @x, 50 * @y # back plane
+    geometry.applyMatrix new THREE.Matrix4().makeRotationY Math.PI / 2
     plane = new THREE.Mesh geometry
-    plane.position.x = 50 * @z
     plane.position.y = 25 * @y
     plane.position.z = 25 * @x
     plane.visible = false
     @scene.add plane
     @objects.push plane
     @planes.push plane
-    geometry = new THREE.PlaneBufferGeometry 50 * @z, 50 * @x
+    geometry = new THREE.PlaneBufferGeometry 50 * @z, 50 * @x # bottom plane
     geometry.applyMatrix new THREE.Matrix4().makeRotationX -Math.PI / 2
     plane = new THREE.Mesh geometry
     plane.position.x = 25 * @z
@@ -44,11 +43,13 @@ class Editor extends Renderer
     @scene.add plane
     @objects.push plane
     @planes.push plane
-    geometry = new THREE.PlaneBufferGeometry 50 * @y, 50 * @z
+    geometry = new THREE.PlaneBufferGeometry 50 * @y, 50 * @z # left plane
     geometry.applyMatrix new THREE.Matrix4().makeRotationZ -Math.PI / 2
+    geometry.applyMatrix new THREE.Matrix4().makeRotationX Math.PI
     plane = new THREE.Mesh geometry
     plane.position.x = 25 * @z
     plane.position.y = 25 * @y
+    plane.position.z = 50 * @x
     plane.visible = false
     @scene.add plane
     @objects.push plane
@@ -58,18 +59,18 @@ class Editor extends Renderer
     for x in [0..@x] by 1
       geometry.vertices.push new THREE.Vector3       0,       0,  50 * x # bottom grid
       geometry.vertices.push new THREE.Vector3 50 * @z,       0,  50 * x
-      geometry.vertices.push new THREE.Vector3 50 * @z,       0,  50 * x # back grid
-      geometry.vertices.push new THREE.Vector3 50 * @z, 50 * @y,  50 * x
+      geometry.vertices.push new THREE.Vector3       0,       0,  50 * x # back grid
+      geometry.vertices.push new THREE.Vector3       0, 50 * @y,  50 * x
     for y in [0..@y] by 1
-      geometry.vertices.push new THREE.Vector3       0,  50 * y,       0 # left grid
-      geometry.vertices.push new THREE.Vector3 50 * @z,  50 * y,       0
-      geometry.vertices.push new THREE.Vector3 50 * @z,  50 * y,       0 # back grid
+      geometry.vertices.push new THREE.Vector3       0,  50 * y, 50 * @x # left grid
       geometry.vertices.push new THREE.Vector3 50 * @z,  50 * y, 50 * @x
+      geometry.vertices.push new THREE.Vector3       0,  50 * y,       0 # back grid
+      geometry.vertices.push new THREE.Vector3       0,  50 * y, 50 * @x
     for z in [0..@z] by 1
       geometry.vertices.push new THREE.Vector3  50 * z,       0,       0 # bottom grid
       geometry.vertices.push new THREE.Vector3  50 * z,       0, 50 * @x
-      geometry.vertices.push new THREE.Vector3  50 * z,       0,       0 # left grid
-      geometry.vertices.push new THREE.Vector3  50 * z, 50 * @y,       0
+      geometry.vertices.push new THREE.Vector3  50 * z,       0, 50 * @x # left grid
+      geometry.vertices.push new THREE.Vector3  50 * z, 50 * @y, 50 * @x
     material = new THREE.LineBasicMaterial color: 0x000000, opacity: 0.2, transparent: true
     @grid = new THREE.Line geometry, material, THREE.LinePieces
     @scene.add @grid
@@ -146,6 +147,7 @@ class Editor extends Renderer
               x = intersect.point.z
               y = intersect.point.y
               z = intersect.point.x
+              console.log x, y, z
               return unless 0 <= x < @x and 0 <= y < @y and 0 <= z < @z
               @voxels[z] = [] unless @voxels[z]?
               @voxels[z][y] = [] unless @voxels[z][y]?

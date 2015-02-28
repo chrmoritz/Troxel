@@ -16,6 +16,8 @@ class ZoxelIO extends IO
       for f in [1..frames] by 1
         console.log data["frame#{f}"]
         for [x, y, z, c] in data["frame#{f}"]
+          z = @z - z - 1
+          x = @x - x - 1
           @voxels[z] = [] unless @voxels[z]?
           @voxels[z][y] = [] unless @voxels[z][y]?
           @voxels[z][y][x] = {r: (c & 0xff000000) >>> 24, g: (c & 0x00ff0000) >>> 16, b: (c & 0x0000ff00) >>> 8, a: 255, t: 0, s: 0}
@@ -29,7 +31,7 @@ class ZoxelIO extends IO
 
   export: ->
     frame = []
-    frame.push [ix, iy, iz, ((x.r << 24) | (x.g << 16) | (x.b << 8) | 255) >>> 0] for x, ix in y when x? for y, iy in z when y? for z, iz in @voxels when z?
+    frame.push [@x - ix - 1, iy, @z - iz - 1, ((x.r << 24) | (x.g << 16) | (x.b << 8) | 255) >>> 0] for x, ix in y when x? for y, iy in z when y? for z, iz in @voxels when z?
     json = {creator: "Troxel", width: @x, height: @y, depth: @z, version: 1, frames: 1, frame1: frame}
     console.log "Zoxel export:"
     console.log json

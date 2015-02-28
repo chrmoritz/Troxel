@@ -13,7 +13,9 @@ class QubicleIO extends IO
         fra = new FileReader()
         fra.onloadend = =>
           @readFile fra.result, 1
-          callback() if @loadingState++ == 2
+          if @loadingState++ == 2
+            @mirrorZ() if @zOriantation == 0
+            callback()
         console.log "reading alpha file with name: #{files.a.name}"
         fra.readAsArrayBuffer files.a
       else
@@ -22,7 +24,9 @@ class QubicleIO extends IO
         frt = new FileReader()
         frt.onloadend = =>
           @readFile frt.result, 2
-          callback() if @loadingState++ == 2
+          if @loadingState++ == 2
+            @mirrorZ() if @zOriantation == 0
+            callback()
         console.log "reading type file with name: #{files.t.name}"
         frt.readAsArrayBuffer files.t
       else
@@ -31,12 +35,16 @@ class QubicleIO extends IO
         frs = new FileReader()
         frs.onloadend = =>
           @readFile frs.result, 3
-          callback() if @loadingState++ == 2
+          if @loadingState++ == 2
+            @mirrorZ() if @zOriantation == 0
+            callback()
         console.log "reading specular file with name: #{files.s.name}"
         frs.readAsArrayBuffer files.s
       else
         @loadingState++
-      callback() if @loadingState == 3
+      if @loadingState == 3
+        @mirrorZ() if @zOriantation == 0
+        callback()
     console.log "reading file with name: #{files.m.name}"
     fr.readAsArrayBuffer files.m
 
@@ -46,7 +54,8 @@ class QubicleIO extends IO
     console.log "version: #{version} (expected 257 = 1.1.0.0 = current version)"
     console.warn "Expected version 257 but found version: #{version} (May result in errors)" unless version == 257
     console.log "color format: #{colorFormat} (0 for RGBA (recommended) or 1 for BGRA)"
-    console.log "z-axis oriantation: #{zOriantation} (0 for left (recommended), 1 for right handed)"
+    console.log "z-axis oriantation: #{zOriantation} (0 for left, 1 for right handed (recommended))"
+    @zOriantation = zOriantation if type == 0
     console.log "compression: #{compression} (0 for uncompressed, 1 for compressed with run length encoding (RLE))"
     console.log "visability mask: #{visabilityMask} (should be 0 for encoded in A value, no partially visability)"
     console.warn "partially visability not supported and will be ignored / handled as full visibility" unless visabilityMask == 0
@@ -100,7 +109,7 @@ class QubicleIO extends IO
           for iy in [0...y] by 1
             for ix in [0...x] by 1
               ia = 4 * (iz*y*x + iy*x + ix)
-              @addValues type, ix + dx, iy + dy, z, iz, dz, zOriantation, data[ia], data[ia+1], data[ia+2], colorFormat if data[ia+3] > 0
+              @addValues type, ix + dx, iy + dy, iz + dz, data[ia], data[ia+1], data[ia+2], colorFormat if data[ia+3] > 0
         matrixBegin += 25 + nameLen + 4*x*y*z
       else
         data = new Uint8Array ab.slice matrixBegin + 25 + nameLen
@@ -117,7 +126,7 @@ class QubicleIO extends IO
                   ix = index % x
                   iy = index // x
                   index++
-                  @addValues type, ix + dx, iy + dy, z, iz, dz, zOriantation, data[ia+4], data[ia+5], data[ia+6], colorFormat
+                  @addValues type, ix + dx, iy + dy, iz + dz, data[ia+4], data[ia+5], data[ia+6], colorFormat
               else
                 index += count
               ia += 8
@@ -125,14 +134,13 @@ class QubicleIO extends IO
               ix = index % x
               iy = index // x
               index++
-              @addValues type, ix + dx, iy + dy, z, iz, dz, zOriantation, data[ia-4], data[ia-3], data[ia-2], colorFormat if data[ia-1] > 0
+              @addValues type, ix + dx, iy + dy, iz + dz, data[ia-4], data[ia-3], data[ia-2], colorFormat if data[ia-1] > 0
         matrixBegin += 25 + nameLen + ia
     console.log "voxels:"
     console.log @voxels
     console.warn console.log "There shouldn't be any bytes left" unless matrixBegin == ab.byteLength
 
-  addValues: (type, x, y, z, iz, dz, zOriantation, r, g, b, colorFormat) ->
-    z = (if zOriantation == 0 then iz else z - iz - 1) + dz
+  addValues: (type, x, y, z, r, g, b, colorFormat) ->
     [r, b] = [b, r] if colorFormat == 1
     switch type
       when 0 then @addColorValues x, y, z, r, g, b
@@ -181,12 +189,12 @@ class QubicleIO extends IO
     data = [
       1, 1, 0, 0 # version: 1.1.0.0 (current)
       0, 0, 0, 0 # color format: rgba
-      0, 0, 0, 0 # z-axis oriantation: left handed
+      1, 0, 0, 0 # z-axis oriantation: right handed
       +comp, 0, 0, 0 # compression: no (1, 0, 0, 0 for compressed)
       0, 0, 0, 0 # visability mask: no partially visibility
       1, 0, 0, 0 # matrix count: 1
       5          # name length: 5
-      77, 157, 144, 145, 154 # name: Model
+      77, 111, 100, 101, 108 # name: Model
       @x, 0, 0, 0 # width
       @y, 0, 0, 0 # height
       @z, 0, 0, 0 # depth

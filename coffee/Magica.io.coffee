@@ -150,10 +150,11 @@ class MagicaIO extends IO
       console.warn "invalid length of voxel chunk" unless voxelBegin + 4 + 4 * voxelCount == voxelEnd
       rawvoxels = new Uint8Array ab.slice voxelBegin + 4, voxelBegin + 4 + 4 * voxelCount
       for i in [0...4 * voxelCount] by 4
-        @voxels[rawvoxels[i + 1]] = [] unless @voxels[rawvoxels[i + 1]]?
-        @voxels[rawvoxels[i + 1]][rawvoxels[i + 2]] = [] unless @voxels[rawvoxels[i + 1]][rawvoxels[i + 2]]?
+        z = @z - rawvoxels[i + 1] - 1
+        @voxels[z] = [] unless @voxels[z]?
+        @voxels[z][rawvoxels[i + 2]] = [] unless @voxels[z][rawvoxels[i + 2]]?
         vox = palette[rawvoxels[i + 3] - 1] # order is x, z, y (normalized with .qb)
-        @voxels[rawvoxels[i + 1]][rawvoxels[i + 2]][rawvoxels[i]] = {r: vox.r, g: vox.g, b: vox.b, a: vox.a, s: vox.s, t: vox.t}
+        @voxels[z][rawvoxels[i + 2]][@x - rawvoxels[i] - 1] = {r: vox.r, g: vox.g, b: vox.b, a: vox.a, s: vox.s, t: vox.t}
       console.log "voxels:"
       console.log @voxels
       callback()
@@ -195,7 +196,7 @@ class MagicaIO extends IO
             paletteChunk.push @voxels[z][y][x].r, @voxels[z][y][x].g, @voxels[z][y][x].b, 255
             i = paletteChunk.length / 4 - 3
             helpPalette[rgba] = i
-          voxelChunk.push x, z, y, i # order is x, z, y (normalized with .qb)
+          voxelChunk.push @x - x - 1, @z - z - 1, y, i # order is x, z, y (normalized with .qb)
     paletteChunk.push 255, 255, 255, 255 while paletteChunk.length < 1036 # fill up palette with dummy data
     [s1, s2, s3, s4] = new Uint8Array new Uint32Array([1076 + voxelChunk.length]).buffer
     data.push s1, s2, s3, s4 # main chunk: child chunk size
