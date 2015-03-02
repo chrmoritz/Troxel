@@ -319,7 +319,7 @@ $('#dirLightColor').val('#ffffff').change ->
   editor.render()
 $('#dirLightIntensity').val(0.3).change ->
   return unless editor?
-  editor.directionalLight.intensity = $(@).val()
+  editor.directionalLight.intensity = parseFloat $(@).val()
   editor.render()
 $('#spotLightColor').val('#ffffff').change ->
   return unless editor?
@@ -327,7 +327,7 @@ $('#spotLightColor').val('#ffffff').change ->
   editor.render()
 $('#spotLightIntensity').val(0.7).change ->
   return unless editor?
-  editor.spotLight.intensity = $(@).val()
+  editor.spotLight.intensity = parseFloat $(@).val()
   editor.render()
 $('#dirLightX').val('-0.5')
 $('#dirLightY').val('-0.5')

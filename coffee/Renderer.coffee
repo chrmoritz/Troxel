@@ -63,6 +63,8 @@ class Renderer
       if t in [1, 2, 4] # glass, tiled glass or glowing glass
         material.transparent = true
         material.opacity = a / 255
+    else
+      material.shininess = 0
     return material
 
   reload: (@voxels, @x, @y, @z, resize = false, init = false) ->
