@@ -1,10 +1,16 @@
 # http://www.minddesk.com/wiki/index.php?title=Qubicle_Constructor_1:Data_Exchange_With_Qubicle_Binary
 'use strict'
 class QubicleIO extends IO
-  constructor: (files, callback) ->
+  constructor: (files, callback, mergeTarget) ->
     return if super(files)
-    @voxels = []
-    @x = @y = @z = -1
+    if mergeTarget?
+      @voxels = mergeTarget.voxels
+      @x = mergeTarget.x
+      @y = mergeTarget.y
+      @z = mergeTarget.z
+    else
+      @voxels = []
+      @x = @y = @z = -1
     @loadingState = 0
     fr = new FileReader()
     fr.onloadend = =>

@@ -103,6 +103,9 @@ html(manifest=dev?null:'troxel.appcache')
                     label.col-sm-3.control-label(for='fqbs') Specular map (*_s.qb):
                     .col-sm-9: input#fqbs(type='file', accept='.qb', style='margin-top: 5px;', multiple)
                   span.help-block Alpha, Type and Specular map are optional (only the main mesh is required)
+                  .checkbox: label
+                    input#QbImportMerge(type='checkbox')
+                    | merge model into existing model
               #tabzox.tab-pane.fade
                 .form-horizontal
                   .form-group
