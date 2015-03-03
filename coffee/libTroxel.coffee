@@ -43,6 +43,7 @@ window.Troxel =
     if !options.autoRotate? || options.autoRotate
       renderer.controls.autoRotate = true
       renderer.controls.autoRotateSpeed = options.autoRotateSpeed or -4.0
+    renderer.controls.mode = false if options.controls? and !options.controls
     renderer.controls.noZoom = true if options.noZoom? and options.noZoom
     renderer.controls.noPan = true if options.noPan? and options.noPan
     renderer.controls.noRotate = true if options.noRotate? and options.noRotate
@@ -52,7 +53,7 @@ window.Troxel =
       domElement.append info.css position: 'absolute', bottom: '0px', width: '100%', textAlign: 'center'
     resultOptions = {}
     _resultOptions = {rendererClearColor: 0x888888, ambientLightColor: 0x606060, directionalLightColor: 0xffffff, directionalLightIntensity: 0.3
-                      ,directionalLightVector: {x: -0.5, y: -0.5, z: 1}, spotLightColor: 0xffffff, spotLightIntensity: 0.7, base64: base64
+                      ,directionalLightVector: {x: -0.5, y: -0.5, z: 1}, spotLightColor: 0xffffff, spotLightIntensity: 0.7, base64: base64, controls: true
                       ,autoRotate: true, autoRotateSpeed: -4.0, noZoom: false, noPan: false, noRotate: false, renderMode: 0, renderWireframes: 0}
     _resultOptions.blueprint = blueprintId or null
     Object.defineProperties resultOptions, {
@@ -95,6 +96,9 @@ window.Troxel =
       "autoRotateSpeed":
         set: (s) -> (_resultOptions.autoRotateSpeed = s; renderer.controls.autoRotateSpeed = s; renderer.render()) if renderer.controls.autoRotate
         get: -> _resultOptions.autoRotateSpeed
+      "controls":
+        set: (s) -> _resultOptions.controls = s; renderer.controls.mode = s; renderer.render()
+        get: -> _resultOptions.controls
       "noZoom":
         set: (s) -> _resultOptions.noZoom = s; renderer.controls.noZoom = s; renderer.render()
         get: -> _resultOptions.noZoom

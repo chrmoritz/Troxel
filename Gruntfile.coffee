@@ -63,11 +63,11 @@ module.exports = (grunt) ->
                   'Licensed under GNU LGPL v3.0 (https://github.com/chrmoritz/Troxel/blob/master/LICENSE.txt)\n */\n'
         },
         files: {'dist/static/libTroxel.min.js': ['js/IO.js', 'js/Troxel.io.js', 'js/Renderer.js', 'js/libTroxel.js',
-                          'bower_components/threejs/build/three.min.js', 'bower_components/OrbitControls/index.js']}
+                          'bower_components/threejs/build/three.min.js', 'tools/Controls.js']}
       },
       controls: {
         options: {banner: '// threejs.org/license\n'},
-        files: {'dist/static/js/OrbitControls.min.js': 'bower_components/OrbitControls/index.js'}
+        files: {'dist/static/js/Controls.min.js': 'tools/Controls.js'}
       }
     },
     jade: {

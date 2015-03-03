@@ -25,7 +25,7 @@
       <option value="4">Type map</option>
       <option value="5">Specular map</option>
     </select>
-    <button id="autoRotate">pause/resume</button>
+    <button id="autoRotate">pause for fly mode / resume</button>
     <script src="https://chrmoritz.github.io/Troxel/static/js/jquery.min.js" type="text/javascript"></script>
     <script src="https://chrmoritz.github.io/Troxel/static/libTroxel.min.js" type="text/javascript"></script>
     <script type="text/javascript">
@@ -41,6 +41,7 @@
         directionalLightVector: {x: -1, y: 0, z: 0}, // default to (-0.5, -0.5, 1) (don't need to be a normal vector)
         spotLightColor: 0xffaaaa, // default to 0xffffff
         spotLightIntensity: 1.0, // default to 0.7
+        controls: true, // default to true
         noRotate: false, // default to false
         noPan: false, // default to false
         noZoom: false, // default to false
@@ -62,6 +63,7 @@
       });
       $('#autoRotate').click(function(){
         TroxelOptions.autoRotate = !TroxelOptions.autoRotate;
+        TroxelOptions.controls = TroxelOptions.autoRotate; // Fly mode
       });
       $('#blueprint').change(function(){
         // there is also a TroxelOptions.base64 accepting a string with a base64 encoded voxel model

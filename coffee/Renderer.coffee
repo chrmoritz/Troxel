@@ -1,6 +1,6 @@
 'use strict'
 class Renderer
-  constructor: (io, @embedded = false, @domContainer = $('#WebGlContainer'), @renderMode = 0, @renderWireframes = 0, antialias = true) ->
+  constructor: (io, @embedded = false, @domContainer = $('#WebGlContainer'), @renderMode = 0, @renderWireframes = 0, antialias = true, renderControls = true) ->
     @width = @domContainer.width()
     @height = @domContainer.height() - (if @embedded then 0 else 5)
     @scene = new THREE.Scene()
@@ -20,9 +20,9 @@ class Renderer
       @camera.position.x = 65 * @y + 35 * @x + 55 * @z
       @camera.position.y = 50 * @y
       @camera.position.z = 25 * @x
-    @controls = new THREE.OrbitControls @camera, @domContainer[0]
+    @controls = new THREE.MixedControls @camera, @domContainer[0]
     @controls.target = new THREE.Vector3 @z * 25, (@y + miny) * 25, @x * 25
-    @controls.noKeys = true
+    @controls.mode = renderControls
     @controls.addEventListener 'change', => @render()
     # Lights
     @ambientLight = new THREE.AmbientLight 0x606060
@@ -44,7 +44,6 @@ class Renderer
     @renderer.setSize @width, @height
     @domContainer.empty().append @renderer.domElement
     # Event handlers
-    document.addEventListener 'keydown', (e) => @onDocumentKeyDown(e)
     window.addEventListener    'resize', (e) => @onWindowResize(e)
     @animate() if @embedded
 
@@ -194,20 +193,6 @@ class Renderer
     @spotLight.position.copy @camera.position
     @renderer.render @scene, @camera
     window.open @renderer.domElement.toDataURL('image/png'), 'Exported png' if exportPng
-
-  onDocumentKeyDown: (e) ->
-    switch e.keyCode
-      when 87 then @controls.rotateUp   -0.05 # W
-      when 65 then @controls.rotateLeft -0.05 # A
-      when 83 then @controls.rotateUp    0.05 # S
-      when 68 then @controls.rotateLeft  0.05 # D
-      when 81 then @controls.dollyIn()        # Q
-      when 69 then @controls.dollyOut()       # E
-      when 37 then @controls.pan  7.0,  0     # left
-      when 38 then @controls.pan  0  ,  7.0   # up
-      when 39 then @controls.pan -7.0,  0     # right
-      when 40 then @controls.pan  0  , -7.0   # bottom
-      else true
 
   onWindowResize: ->
     @width = @domContainer.width()

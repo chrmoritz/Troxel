@@ -150,6 +150,7 @@ Options                    | Description                                        
 `directionalLightVector`   | the vector direction of the directional light as an Object (don't need to be a normal vector)                                                                                                        | `{x: -0.5, y: -0.5, z: 1}`
 `spotLightColor`           | the color of the spot light                                                           | `0xffffff`
 `spotLightIntensity`       | the intensity of the spot light as a Float                                            | `0.7`
+`controls`                 | set to `true` for Orbital controls or to `false` for Fly controls                     | `true`
 `noRotate`                 | disables the rotate controls if set to `true`                                         | `false`
 `noPan`                    | disables the pan controls if set to `true`                                            | `false`
 `noZoom`                   | disables the zoom controls if set to `true`                                           | `false`

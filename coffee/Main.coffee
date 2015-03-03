@@ -386,3 +386,5 @@ $('#renderWireframes').change ->
   if editor?
     editor.renderWireframes = parseInt $(@).val()
     editor.reload io.voxels, io.x, io.y, io.z
+$('#renderControls').change ->
+  editor.controls.mode = $(@).val() == "0" if editor?
