@@ -107,7 +107,10 @@ class Base64IO extends IO
           else
             data.push index // 256, index % 256
         else
-          data.push 0 # empty
+          if short
+            data.push 0 # empty
+          else
+            data.push 0, 0
         i += r
     console.log "export base64:"
     console.log data
