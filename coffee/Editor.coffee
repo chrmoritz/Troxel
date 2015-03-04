@@ -20,6 +20,7 @@ class Editor extends Renderer
     # Event handlers
     @domContainer.on        'mousedown', (e) => @onDocumentMouseDown(e)
     @domContainer.on        'mousemove', (e) => @onDocumentMouseMove(e)
+    document.addEventListener 'keydown', (e) => @onDocumentKeyDown(e)
     document.addEventListener   'keyup', (e) => @onDocumentKeyUp(e)
     @animate()
 
@@ -242,7 +243,6 @@ class Editor extends Renderer
       @render()
 
   onDocumentKeyDown: (e) ->
-    return unless super(e)?
     return if $('.active #modeView').length == 1
     switch e.keyCode
       when 18 # Alt
