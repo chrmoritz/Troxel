@@ -118,12 +118,14 @@ class Renderer
       for y in [0...@y] by 1 when @voxels[z]?[y]?
         for x in [0...@x] by 1 when @voxels[z]?[y]?[x]?
           color.setRGB @voxels[z][y][x].r / 255, @voxels[z][y][x].g / 255, @voxels[z][y][x].b / 255
-          if reverseMaterialIndex[color.getHex()]?[@voxels[z][y][x].a + 256 * @voxels[z][y][x].t + 2048 * @voxels[z][y][x].s]?
-            matIndex = reverseMaterialIndex[color.getHex()][@voxels[z][y][x].a + 256 * @voxels[z][y][x].t + 2048 * @voxels[z][y][x].s]
+          hex = color.getHex()
+          mat = @voxels[z][y][x].a + 256 * @voxels[z][y][x].t + 2048 * @voxels[z][y][x].s
+          if reverseMaterialIndex[hex]?[mat]?
+            matIndex = reverseMaterialIndex[hex][mat]
           else
             matIndex = materials.length
-            reverseMaterialIndex[color.getHex()] = [] if !reverseMaterialIndex[color.getHex()]?
-            reverseMaterialIndex[color.getHex()][@voxels[z][y][x].a + 256 * @voxels[z][y][x].t + 2048 * @voxels[z][y][x].s] = matIndex
+            reverseMaterialIndex[hex] = [] if !reverseMaterialIndex[hex]?
+            reverseMaterialIndex[hex][mat] = matIndex
             materials.push @getMaterial color, @voxels[z][y][x].a, @voxels[z][y][x].t, @voxels[z][y][x].s
           matrix.makeTranslation z * 50 + 25, y * 50 + 25, x * 50 + 25 # position
           geometry.merge px, matrix, matIndex if !@voxels[z+1]?[y]?[x]? or (@voxels[z+1][y][x].t in [1, 2, 4] and @voxels[z][y][x].t not in [1, 2, 4]) # back
