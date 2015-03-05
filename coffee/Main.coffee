@@ -115,7 +115,9 @@ $('#open').click ->
     when '#tabqb'
       f = $('#fqb').prop('files')[0]
       if f and f.name.split('.').pop() == 'qb'
-        mergeTarget = {voxels: io.voxels, x: io.x, y: io.y, z: io.z} if io? and $('#QbImportMerge').prop('checked')
+        if io? and $('#QbImportMerge').prop('checked')
+          offsets = {x: parseInt($('#QbMergeOffX').val()), y: parseInt($('#QbMergeOffY').val()), z: parseInt($('#QbMergeOffZ').val())}
+          mergeTarget = {voxels: io.voxels, x: io.x, y: io.y, z: io.z, offsets: offsets}
         io = new QubicleIO {m: f, a: f = $('#fqba').prop('files')[0], t: f = $('#fqbt').prop('files')[0], s: f = $('#fqbs').prop('files')[0]}, cb, mergeTarget
       else
         alert 'Please choose at least a valid main mesh Qubicle (.qb) file above!'
@@ -389,3 +391,4 @@ $('#renderWireframes').change ->
     editor.reload io.voxels, io.x, io.y, io.z
 $('#renderControls').change ->
   editor.controls.mode = $(@).val() == "0" if editor?
+$('#QbImportMerge').prop('checked', false).change -> $('.QbMergeOff').prop('disabled', !$(@).prop('checked'))

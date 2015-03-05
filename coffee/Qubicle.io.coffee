@@ -8,17 +8,18 @@ class QubicleIO extends IO
       @x = mergeTarget.x
       @y = mergeTarget.y
       @z = mergeTarget.z
+      offsets = mergeTarget.offsets
     else
       @voxels = []
       @x = @y = @z = -1
     @loadingState = 0
     fr = new FileReader()
     fr.onloadend = =>
-      @readFile fr.result, 0
+      @readFile fr.result, 0, offsets
       if files.a?
         fra = new FileReader()
         fra.onloadend = =>
-          @readFile fra.result, 1
+          @readFile fra.result, 1, offsets
           if @loadingState++ == 2
             @mirrorZ() if @zOriantation == 0
             callback()
@@ -29,7 +30,7 @@ class QubicleIO extends IO
       if files.t?
         frt = new FileReader()
         frt.onloadend = =>
-          @readFile frt.result, 2
+          @readFile frt.result, 2, offsets
           if @loadingState++ == 2
             @mirrorZ() if @zOriantation == 0
             callback()
@@ -40,7 +41,7 @@ class QubicleIO extends IO
       if files.s?
         frs = new FileReader()
         frs.onloadend = =>
-          @readFile frs.result, 3
+          @readFile frs.result, 3, offsets
           if @loadingState++ == 2
             @mirrorZ() if @zOriantation == 0
             callback()
@@ -54,7 +55,7 @@ class QubicleIO extends IO
     console.log "reading file with name: #{files.m.name}"
     fr.readAsArrayBuffer files.m
 
-  readFile: (ab, type) ->
+  readFile: (ab, type, offsets) ->
     console.log "file.byteLength: #{ab.byteLength}"
     [version, colorFormat, zOriantation, compression, visabilityMask, matrixCount] = new Uint32Array ab.slice 0, 24
     console.log "version: #{version} (expected 257 = 1.1.0.0 = current version)"
@@ -104,6 +105,10 @@ class QubicleIO extends IO
         dx -= dx_offset
         dy -= dy_offset
         dz -= dz_offset
+      if offsets?
+        dx += offsets.x
+        dy += offsets.y
+        dz += offsets.z
       console.log "position result: dx : #{dx} dy: #{dy} dz: #{dz}"
       if type == 0
         @x = Math.max @x, x + dx
