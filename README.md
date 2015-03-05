@@ -148,8 +148,8 @@ Options                    | Description                                        
 `directionalLightColor`    | the color of the directional light                                                    | `0xffffff`
 `directionalLightIntensity`| the intensity of the direction light as a Float                                       | `0.3`
 `directionalLightVector`   | the vector direction of the directional light as an Object (don't need to be a normal vector)                                                                                                        | `{x: -0.5, y: -0.5, z: 1}`
-`spotLightColor`           | the color of the spot light                                                           | `0xffffff`
-`spotLightIntensity`       | the intensity of the spot light as a Float                                            | `0.7`
+`pointLightColor`          | the color of the point light following the camera                                     | `0xffffff`
+`pointLightIntensity`      | the intensity of the point light following the camera as a Float                      | `0.7`
 `controls`                 | set to `true` for Orbital controls or to `false` for Fly controls                     | `true`
 `noRotate`                 | disables the rotate controls if set to `true`                                         | `false`
 `noPan`                    | disables the pan controls if set to `true`                                            | `false`

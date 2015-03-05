@@ -325,13 +325,13 @@ $('#dirLightIntensity').val(0.3).change ->
   return unless editor?
   editor.directionalLight.intensity = parseFloat $(@).val()
   editor.render()
-$('#spotLightColor').val('#ffffff').change ->
+$('#pointLightColor').val('#ffffff').change ->
   return unless editor?
-  editor.spotLight.color = new THREE.Color($(@).val())
+  editor.pointLight.color = new THREE.Color($(@).val())
   editor.render()
-$('#spotLightIntensity').val(0.7).change ->
+$('#pointLightIntensity').val(0.7).change ->
   return unless editor?
-  editor.spotLight.intensity = parseFloat $(@).val()
+  editor.pointLight.intensity = parseFloat $(@).val()
   editor.render()
 $('#dirLightX').val('-0.5')
 $('#dirLightY').val('-0.5')

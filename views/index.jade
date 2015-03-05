@@ -411,16 +411,16 @@ html(manifest=dev?null:'troxel.appcache')
               input#dirLightZ.form-control(type='text', value='1', style='padding: 5px;')
               span.input-group-btn
                 button#dirLightVector.btn.btn-default(style='padding: 5px;') go
-            .h5: b: u Spot light:
+            .h5: b: u Point light (camera):
             .form-horizontal
               .form-group(style='margin-bottom: 0px;')
-                label.col-sm-4.control-label(for='spotLightColor') Color:
+                label.col-sm-4.control-label(for='pointLightColor') Color:
                 .col-sm-8
-                  input#spotLightColor.form-control.input-sm(type='color', value='#ffffff', style='padding: 5px;')
+                  input#pointLightColor.form-control.input-sm(type='color', value='#ffffff', style='padding: 5px;')
               .form-group(style='margin-bottom: 10px;')
-                label.col-sm-4.control-label(for='spotLightIntensity') Intensity:
+                label.col-sm-4.control-label(for='pointLightIntensity') Intensity:
                 .col-sm-8
-                  input#spotLightIntensity(type='range', min=0, max=3, step=0.01, value=0.7, style='margin-top: 5px;')
+                  input#pointLightIntensity(type='range', min=0, max=3, step=0.01, value=0.7, style='margin-top: 5px;')
         .panel.panel-default
           .panel-heading
             button.btn.btn-default.btn-sm.pull-right(style='margin-top: -6px;'): span.glyphicon.glyphicon-minus

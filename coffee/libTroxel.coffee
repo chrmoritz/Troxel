@@ -38,8 +38,8 @@ window.Troxel =
     renderer.directionalLight.intensity = options.directionalLightIntensity if options.directionalLightIntensity?
     if options.directionalLightVector? && options.directionalLightVector.x? && options.directionalLightVector.y? && options.directionalLightVector.z?
       renderer.directionalLight.position.set(options.directionalLightVector.x, options.directionalLightVector.y, options.directionalLightVector.z).normalize()
-    renderer.spotLight.color = new THREE.Color options.spotLightColor if options.spotLightColor?
-    renderer.spotLight.intensity = options.spotLightIntensity if options.spotLightIntensity?
+    renderer.pointLight.color = new THREE.Color options.pointLightColor if options.pointLightColor?
+    renderer.pointLight.intensity = options.pointLightIntensity if options.pointLightIntensity?
     if !options.autoRotate? || options.autoRotate
       renderer.controls.autoRotate = true
       renderer.controls.autoRotateSpeed = options.autoRotateSpeed or -4.0
@@ -53,7 +53,7 @@ window.Troxel =
       domElement.append info.css position: 'absolute', bottom: '0px', width: '100%', textAlign: 'center'
     resultOptions = {}
     _resultOptions = {rendererClearColor: 0x888888, ambientLightColor: 0x606060, directionalLightColor: 0xffffff, directionalLightIntensity: 0.3
-                      ,directionalLightVector: {x: -0.5, y: -0.5, z: 1}, spotLightColor: 0xffffff, spotLightIntensity: 0.7, base64: base64, controls: true
+                      ,directionalLightVector: {x: -0.5, y: -0.5, z: 1}, pointLightColor: 0xffffff, pointLightIntensity: 0.7, base64: base64, controls: true
                       ,autoRotate: true, autoRotateSpeed: -4.0, noZoom: false, noPan: false, noRotate: false, renderMode: 0, renderWireframes: 0}
     _resultOptions.blueprint = blueprintId or null
     Object.defineProperties resultOptions, {
@@ -84,12 +84,12 @@ window.Troxel =
       "directionalLightVector":
         set: (s) -> (_resultOptions.directionalLightVector = s; renderer.directionalLight.position.set(s.x, s.y, s.z).normalize(); renderer.render()) if s.x? && s.y? && s.z?
         get: -> _resultOptions.directionalLightVector
-      "spotLightColor":
-        set: (s) -> _resultOptions.spotLightColor = s; renderer.spotLight.color = new THREE.Color s; renderer.render()
-        get: -> _resultOptions.spotLightColor
-      "spotLightIntensity":
-        set: (s) -> _resultOptions.spotLightIntensity = s; renderer.spotLight.intensity = s; renderer.render()
-        get: -> _resultOptions.spotLightIntensity
+      "pointLightColor":
+        set: (s) -> _resultOptions.pointLightColor = s; renderer.pointLight.color = new THREE.Color s; renderer.render()
+        get: -> _resultOptions.pointLightColor
+      "pointLightIntensity":
+        set: (s) -> _resultOptions.pointLightIntensity = s; renderer.pointLight.intensity = s; renderer.render()
+        get: -> _resultOptions.pointLightIntensity
       "autoRotate":
         set: (s) -> _resultOptions.autoRotate = s; renderer.controls.autoRotate = s; renderer.render()
         get: -> _resultOptions.autoRotate

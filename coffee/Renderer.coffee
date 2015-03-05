@@ -30,14 +30,9 @@ class Renderer
     @directionalLight = new THREE.DirectionalLight 0xffffff, 0.3
     @directionalLight.position.set(-0.5, -0.5, 1).normalize()
     @scene.add @directionalLight
-    @spotLight = new THREE.SpotLight 0xffffff, 0.7, 100000
-    @spotLightTarget = new THREE.Object3D()
-    @spotLightTarget.position.x = @z * 25
-    @spotLightTarget.position.y = (@y + miny) * 25
-    @spotLightTarget.position.z = @x * 25
-    @scene.add @spotLightTarget
-    @spotLight.target = @spotLightTarget
-    @scene.add @spotLight
+    @pointLight = new THREE.PointLight 0xffffff, 0.7, 100000
+    @camera.add @pointLight
+    @scene.add @camera
     # renderer
     @renderer = new THREE.WebGLRenderer antialias: antialias
     @renderer.setClearColor 0x888888
@@ -82,10 +77,6 @@ class Renderer
         @camera.position.y = 50 * @y
         @camera.position.z = 25 * @x
       @controls.target = new THREE.Vector3 @z * 25, (@y + miny) * 25, @x * 25
-      @spotLightTarget.position.x = @z * 25
-      @spotLightTarget.position.y = (@y + miny) * 25
-      @spotLightTarget.position.z = @x * 25
-      @spotLight.target = @spotLightTarget
     unless init
       @scene.remove @mesh
       @scene.remove @wireframe if @wireframe?
@@ -192,7 +183,6 @@ class Renderer
     @stats.update() unless @embedded
 
   render: (exportPng) ->
-    @spotLight.position.copy @camera.position
     @renderer.render @scene, @camera
     window.open @renderer.domElement.toDataURL('image/png'), 'Exported png' if exportPng
 
