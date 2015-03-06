@@ -55,7 +55,7 @@ module.exports = (grunt) ->
         screwIE8: true
       },
       main: {
-        files: {'dist/static/troxel.min.js': ['js/IO.js', 'js/Qubicle.io.js', 'js/Magica.io.js', 'js/Zoxel.io.js', 'js/Troxel.io.js', 'js/Renderer.js', 'js/Editor.js', 'js/Main.js']}
+        files: {'dist/static/troxel.min.js': ['js/IO.js', 'js/Qubicle.io.js', 'js/Magica.io.js', 'js/Zoxel.io.js', 'js/Troxel.io.js', 'js/Renderer.js', 'js/Editor.js', 'js/Controls.js','js/Main.js']}
       },
       lib: {
         options: {
@@ -63,11 +63,7 @@ module.exports = (grunt) ->
                   'Licensed under GNU LGPL v3.0 (https://github.com/chrmoritz/Troxel/blob/master/LICENSE.txt)\n */\n'
         },
         files: {'dist/static/libTroxel.min.js': ['js/IO.js', 'js/Troxel.io.js', 'js/Renderer.js', 'js/libTroxel.js',
-                          'bower_components/threejs/build/three.min.js', 'tools/Controls.js']}
-      },
-      controls: {
-        options: {banner: '// threejs.org/license\n'},
-        files: {'dist/static/js/Controls.min.js': 'tools/Controls.js'}
+                          'bower_components/threejs/build/three.min.js', 'js/Controls.js']}
       }
     },
     jade: {
@@ -145,6 +141,6 @@ module.exports = (grunt) ->
   grunt.registerTask 'default', ['test', 'build']
   grunt.registerTask 'test', ['continue:on', 'lint', 'continue:off', 'mochaTest', 'continue:fail-on-warning']
   grunt.registerTask 'build', ['clean', 'bower', 'coffee', 'uglify', 'jade', 'concat', 'copy']
-  grunt.registerTask 'lint', -> grunt.task.run(if process.platform == 'win32' then 'coffeelint:win' else 'coffeelint:unix')
+  grunt.registerTask 'lint', -> grunt.task.run if process.platform == 'win32' then 'coffeelint:win' else 'coffeelint:unix'
   grunt.registerTask 'mocha', 'mochaTest'
   grunt.registerTask 'serve', ['build', 'concurrent:serve']

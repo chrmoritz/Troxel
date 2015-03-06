@@ -20,7 +20,7 @@ class Renderer
       @camera.position.x = 65 * @y + 35 * @x + 55 * @z
       @camera.position.y = 50 * @y
       @camera.position.z = 25 * @x
-    @controls = new THREE.MixedControls @camera, @domContainer[0]
+    @controls = new THREE.TroxelControls @camera, @domContainer[0] # ToDo: set min/maxDistance to something usefull
     @controls.target = new THREE.Vector3 @z * 25, (@y + miny) * 25, @x * 25
     @controls.mode = renderControls
     @controls.addEventListener 'change', => @render()
