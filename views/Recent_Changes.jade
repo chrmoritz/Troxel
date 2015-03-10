@@ -1,6 +1,7 @@
 :markdown
   #### Recent Changes:
 
+  * reimport Trove blueprints for [Neon Nightsky Edition](forums.trovegame.com/showthread.php?13370-Neon-Nightsky-Edition#post68598)
   * support for lairs / dungeons: merge models, fly controls, color palette compressed base64 format (1/2 - 1/3 the link length for big models)
   * reimport Trove blueprints for [Spring Edition](http://forums.trovegame.com/showthread.php?12977-Spring-Edition#post64097)
   * Qubicle: fix orientation issues with right handed z coords and migrated Renderer to use right handed coords instead of left handed
@@ -8,11 +9,5 @@
   * added new frequently requested render options:
     * render mode options: render the model either in pretty (handle all material maps) or show only the color, alpha, type or specular map
     * wireframes: render the model either without wireframes, with darkgrey wireframes or with wireframes representing the color, alpha, type or specular maü
-  * libTroxel: major API improvements (changing Options after initialisation, even the new render options (see above))
-    * better camera position (autorotation should now fit from every angel, empty y voxel space is now ignored)
-    * support for changing the rendered voxel model in the same canvas / WebGLContext
-    * improved [libTroxel example page](https://chrmoritz.github.io/Troxel/static/libTroxelTest.html) showing off all the new features
-  * reimport Trove blueprints for [Everything Edition](http://forums.trovegame.com/showthread.php?12486-Everything-Edition#post58045) + import rings
-  * new vertex based Renderer
-    * the new renderer is 5+ times faster on normal sized models and even better on big models (you can view very big models without lag now) than the old renderer
-    * improved rendering of transparent / glass material maps
+  * libTroxel: major API improvements (changing options and voxel model after initialisation, better camera position, improved [example](https://chrmoritz.github.io/Troxel/static/libTroxelTest.html))
+  * new vertex based Renderer (a very lot faster than old renderer, can renderer big models without lag, improved glass rendering)
