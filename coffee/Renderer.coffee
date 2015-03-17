@@ -58,7 +58,7 @@ class Renderer
         material.transparent = true
         material.opacity = a / 255
     else
-      material.shininess = 0
+      material.shininess = 0.1
     return material
 
   reload: (@voxels, @x, @y, @z, resize = false, init = false) ->
