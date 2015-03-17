@@ -46,7 +46,7 @@ exec 'del /q qbexport\\* & del /q %appdata%\\Trove\\DevTool.log', {timeout: 6000
                 failedBlueprints.push(f)
                 processedOne()
                 return process.stderr.write "#{toProcess} blueprints remaining: skipped #{f} because of invalid qubicle matrix height\n"
-              models[exp] = new Base64IO(io).export(true)
+              models[exp] = new Base64IO(io).export(true, 2)
               process.stdout.write "#{toProcess} blueprints remaining: #{f}\n"
               processedOne()
             setImmediate processSny
