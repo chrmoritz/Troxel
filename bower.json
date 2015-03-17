@@ -15,29 +15,31 @@
     "test"
   ],
   "dependencies": {
-    "catiline": "calvinmetcalf/catiline#~2.9",
-    "stats": "https://raw.githubusercontent.com/mrdoob/three.js/r70/examples/js/libs/stats.min.js",
-    "typehead.js": "~0.10",
+    "angular": ">1.4.0-beta.0 <1.4.0-beta.99",
     "bootstrap": "~3.3",
-    "threejs": "r70",
-    "jquery": "~2.1.3"
+    "catiline": "~2.9",
+    "jquery": "~2.1",
+    "stats.js": "r12",
+    "threejs": "r71",
+    "typehead.js": "~0.10"
   },
   "exportsOverride": {
+    "angular": {},
     "bootstrap": {
       "js": "dist/js/bootstrap.min.js",
       "css": "dist/css/*.min.css",
       "fonts": "dist/fonts/*"
     },
+    "catiline": {},
     "jquery": {
       "js": "dist/jquery.min.js"
     },
-    "catiline": {
-      "js": "dist/catiline.min.js"
+    "stats.js": {
+      "js": "build/stats.min.js"
     },
     "threejs": {
       "js": "build/three.min.js"
     },
-    "typehead.js": {},
-    "stats": {}
+    "typehead.js": {}
   }
 }

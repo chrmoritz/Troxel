@@ -82,17 +82,14 @@ class THREE.TroxelControls extends THREE.EventDispatcher
     @pan.add @panOffset
 
   panXY: (deltaX, deltaY) -> # pass in x,y of change desired in pixel space, right and down are positive
-    if @object.fov?
+    if @object instanceof THREE.PerspectiveCamera
       position = @object.position
       targetDistance = position.clone().sub(@target).length()
       targetDistance *= Math.tan (@object.fov / 2) * Math.PI / 180.0 # half of the fov is center to top of screen
       @panLeft 2 * deltaX * targetDistance / @domElement.clientHeight # we actually don't use screenWidth, since perspective camera is fixed to screen height
       @panUp 2 * deltaY * targetDistance / @domElement.clientHeight
-    else if @object.top?
-      @panLeft deltaX * (@object.right - @object.left) / @domElement.clientWidth # orthographic
-      @panUp deltaY * (@object.top - @object.bottom) / @domElement.clientHeight
     else
-      console.warn 'WARNING: Controls.js encountered an unknown camera type - pan disabled.' # camera neither orthographic or perspective
+      console.warn 'WARNING: Controls.js only supports perspective camera type.'
 
   dollyIn: (dollyScale) ->
     dollyScale = @zoomSpeed unless dollyScale?
@@ -143,6 +140,8 @@ class THREE.TroxelControls extends THREE.EventDispatcher
     @state = @STATE.NONE
     @target.copy @target0
     @object.position.copy @position0
+    @object.updateProjectionMatrix()
+    @dispatchEvent type: 'change'
     @update()
 
   onMouseDown: (e) ->
@@ -186,7 +185,7 @@ class THREE.TroxelControls extends THREE.EventDispatcher
       @dollyDelta.subVectors @dollyEnd, @dollyStart
       if @dollyDelta.y > 0
         @dollyIn()
-      else
+      else if @dollyDelta.y < 0
         @dollyOut()
       @dollyStart.copy @dollyEnd
     else if @state == @STATE.PAN
@@ -219,7 +218,7 @@ class THREE.TroxelControls extends THREE.EventDispatcher
       delta = - e.detail
     if delta > 0
       @dollyOut()
-    else
+    else if delta < 0
       @dollyIn()
     @update()
     @dispatchEvent type: 'start'
@@ -318,7 +317,7 @@ class THREE.TroxelControls extends THREE.EventDispatcher
         @dollyDelta.subVectors @dollyEnd, @dollyStart
         if @dollyDelta.y > 0
           @dollyOut()
-        else
+        else if @dollyDelta.y < 0
           @dollyIn()
         @dollyStart.copy @dollyEnd
         @update()
