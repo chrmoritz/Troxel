@@ -141,4 +141,27 @@ class IO
     delete @voxels[iz][iy][iz] for ix in [x...@x] by 1 for iy in [0...@y] by 1 when @voxels[iz][iy]? for iz in [0...@z] by 1 when @voxels[iz]? if z < @z
     @x = x
 
+  resizeToBoundingBox: ->
+    maxX = maxY = maxZ = 0
+    minX = @x - 1
+    minY = @y - 1
+    minZ = @z - 1
+    for z in [0...@z] by 1 when @voxels[z]?
+      minZ = Math.min minZ, z
+      maxZ = Math.max maxZ, z
+      for y in [0...@y] by 1 when @voxels[z][y]?
+        minY = Math.min minY, y
+        maxY = Math.max maxY, y
+        for x in [0...@x] by 1 when @voxels[z][y][x]?
+          minX = Math.min minX, x
+          maxX = Math.max maxX, x
+    return if maxX == 0 # empty model
+    @x = maxX - minX + 1
+    @y = maxY - minY + 1
+    @z = maxZ - minZ + 1
+    @voxels = @voxels.slice minZ, maxZ + 1
+    for z in [0...@z] by 1 when @voxels[z]?
+      @voxels[z] = @voxels[z].slice minY, maxY + 1
+      @voxels[z][y] = @voxels[z][y].slice minX, maxX + 1 for y in [0...@y] by 1 when @voxels[z][y]?
+
 if typeof module == 'object' then module.exports = IO else window.IO = IO

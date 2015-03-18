@@ -364,7 +364,10 @@ $('#openResizeModal').click ->
 $('#resizeBtn').click ->
   return if not editor? or io.readonly
   $('#resizeModal').modal 'hide'
-  io.resize(parseInt($('#resizeX').val()), parseInt($('#resizeY').val()), parseInt($('#resizeZ').val()))
+  if $('#resizeBBcb').prop('checked')
+    io.resizeToBoundingBox()
+  else
+    io.resize(parseInt($('#resizeX').val()), parseInt($('#resizeY').val()), parseInt($('#resizeZ').val()))
   editor.reload io.voxels, io.x, io.y, io.z, true
   ioo = {voxels: io.voxels, x: io.x, y: io.y, z: io.z}
   base64 = new Base64IO(ioo).export false
@@ -392,3 +395,4 @@ $('#renderWireframes').change ->
 $('#renderControls').change ->
   editor.controls.mode = $(@).val() == "0" if editor?
 $('#QbImportMerge').prop('checked', false).change -> $('.QbMergeOff').prop('disabled', !$(@).prop('checked'))
+$('#resizeBBcb').prop('checked', false).change -> $('.resizeDim').prop('disabled', $(@).prop('checked'))

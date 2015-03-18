@@ -265,11 +265,14 @@ html(manifest=dev?null:'troxel.appcache')
           .modal-body
             .input-group
               span.input-group-addon x:
-              input#resizeX.form-control(type='number')
+              input#resizeX.resizeDim.form-control(type='number')
               span.input-group-addon y:
-              input#resizeY.form-control(type='number')
+              input#resizeY.resizeDim.form-control(type='number')
               span.input-group-addon z:
-              input#resizeZ.form-control(type='number')
+              input#resizeZ.resizeDim.form-control(type='number')
+            .checkbox: label
+              input#resizeBBcb(type='checkbox')
+              | resize to bounding box (shrink to smallest possible dimension without erasing voxels)
           .modal-footer
             button.btn.btn-default(data-dismiss='modal') Close
             button#resizeBtn.btn.btn-primary Resize voxel model
