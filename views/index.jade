@@ -263,16 +263,27 @@ html(manifest=dev?null:'troxel.appcache')
             button.close(data-dismiss='modal'): span &times;
             h4.modal-title Resize voxel model ...
           .modal-body
-            .input-group
-              span.input-group-addon x:
-              input#resizeX.resizeDim.form-control(type='number')
-              span.input-group-addon y:
-              input#resizeY.resizeDim.form-control(type='number')
-              span.input-group-addon z:
-              input#resizeZ.resizeDim.form-control(type='number')
-            .checkbox: label
-              input#resizeBBcb(type='checkbox')
-              | resize to bounding box (shrink to smallest possible dimension without erasing voxels)
+            .form-inline: .form-group
+              label new dimensions (size):
+              .input-group
+                span.input-group-addon x:
+                input#resizeX.resizeDim.form-control(type='number')
+                span.input-group-addon y:
+                input#resizeY.resizeDim.form-control(type='number')
+                span.input-group-addon z:
+                input#resizeZ.resizeDim.form-control(type='number')
+            .form-inline: .form-group
+              label resize offsets:
+              .input-group
+                span.input-group-addon x:
+                input#resizeOffX.resizeDim.form-control(type='number', value='0')
+                span.input-group-addon y:
+                input#resizeOffY.resizeDim.form-control(type='number', value='0')
+                span.input-group-addon z:
+                input#resizeOffZ.resizeDim.form-control(type='number', value='0')
+            p.help-block resizing will be done to the cube defined by the origin point (bottom back right point in default camera position), the offsets and the new dimensions
+            button#resizeCalcBBb.btn.btn-default.btn-block calculate bounding box
+            p.help-block this will move and resize your voxel model to the smallest possible dimension without erasing voxels
           .modal-footer
             button.btn.btn-default(data-dismiss='modal') Close
             button#resizeBtn.btn.btn-primary Resize voxel model

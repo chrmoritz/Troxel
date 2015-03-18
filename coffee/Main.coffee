@@ -361,13 +361,14 @@ $('#openResizeModal').click ->
   $('#resizeX').val(io.x)
   $('#resizeY').val(io.y)
   $('#resizeZ').val(io.z)
+  $('#resizeOffX').val(0)
+  $('#resizeOffY').val(0)
+  $('#resizeOffZ').val(0)
 $('#resizeBtn').click ->
   return if not editor? or io.readonly
   $('#resizeModal').modal 'hide'
-  if $('#resizeBBcb').prop('checked')
-    io.resizeToBoundingBox()
-  else
-    io.resize(parseInt($('#resizeX').val()), parseInt($('#resizeY').val()), parseInt($('#resizeZ').val()))
+  io.resize(parseInt($('#resizeX').val()), parseInt($('#resizeY').val()), parseInt($('#resizeZ').val()),
+    parseInt($('#resizeOffX').val()), parseInt($('#resizeOffY').val()), parseInt($('#resizeOffZ').val()))
   editor.reload io.voxels, io.x, io.y, io.z, true
   ioo = {voxels: io.voxels, x: io.x, y: io.y, z: io.z}
   base64 = new Base64IO(ioo).export false
@@ -375,6 +376,15 @@ $('#resizeBtn').click ->
     history.pushState ioo, 'Troxel', '#m=' + base64
   catch # reached the quota lime of state object (640k on firefox)
     history.pushState null, 'Troxel', '#m=' + base64
+$('#resizeCalcBBb').click ->
+  return if not editor? or io.readonly
+  [x, y, z, ox, oy, oz] = io.computeBoundingBox()
+  $('#resizeX').val(x)
+  $('#resizeY').val(y)
+  $('#resizeZ').val(z)
+  $('#resizeOffX').val(ox)
+  $('#resizeOffY').val(oy)
+  $('#resizeOffZ').val(oz)
 $($('.editTool')[0]).parent().button('toggle')
 $('#fillSameColor').prop('checked', true)
 $('.editTool').change ->
@@ -395,4 +405,3 @@ $('#renderWireframes').change ->
 $('#renderControls').change ->
   editor.controls.mode = $(@).val() == "0" if editor?
 $('#QbImportMerge').prop('checked', false).change -> $('.QbMergeOff').prop('disabled', !$(@).prop('checked'))
-$('#resizeBBcb').prop('checked', false).change -> $('.resizeDim').prop('disabled', $(@).prop('checked'))
