@@ -81,7 +81,7 @@ module.exports = (grunt) ->
       },
       jsonp: {
         src: 'tools/Trove.json',
-        dest: 'dist/static/Trove.jsonp'
+        dest: 'dist/static/Trove.json.js'
       }
     },
     copy: {

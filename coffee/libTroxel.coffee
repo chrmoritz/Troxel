@@ -10,7 +10,7 @@ window.Troxel =
     unless Troxel.webgl()
       console.warn "WebGL is not supported by your browser"
       return cb new Error "WebGl is not supported" if typeof cb == 'function'
-    $.ajax dataType: 'jsonp', url: 'https://chrmoritz.github.io/Troxel/static/Trove.jsonp', jsonpCallback: 'callback', cache: true, success: (data) ->
+    $.ajax dataType: 'jsonp', url: 'https://chrmoritz.github.io/Troxel/static/Trove.json.js', jsonpCallback: 'callback', cache: true, success: (data) ->
       Troxel.blueprints = data
       model = data[blueprintId]
       result = {error: new Error "blueprintId #{blueprintId} not found"}
