@@ -7,21 +7,17 @@ class Renderer
     @reload io.voxels, io.x, io.y, io.z, false, true
     # Controls and Camera
     @camera = new THREE.PerspectiveCamera 45, @width / @height, 1, 100000
-    miny = 0
     if @embedded
-      miny = @y
-      for z in [0...@z] by 1 when @voxels[z]? # ignore empty y (height) space on deco models
-        (miny = Math.min miny, y; break) for y in [0...@y] by 1 when @voxels[z]?[y]?
-      a = Math.max @x, @y - miny, @z # we are most likely autorotating => zoom that is always fit the camera
+      a = Math.max @x, @y, @z # we are most likely autorotating => zoom that is always fit the camera
       @camera.position.x = 155 * a
-      @camera.position.y = 50 * (a + miny)
-      @camera.position.z = 25 * a
+      @camera.position.y =  50 * a
+      @camera.position.z =  25 * a
     else
       @camera.position.x = 65 * @y + 35 * @x + 55 * @z
       @camera.position.y = 50 * @y
       @camera.position.z = 25 * @x
     @controls = new THREE.TroxelControls @camera, @domContainer[0] # ToDo: set min/maxDistance to something usefull
-    @controls.target = new THREE.Vector3 @z * 25, (@y + miny) * 25, @x * 25
+    @controls.target = new THREE.Vector3 @z * 25, @y * 25, @x * 25
     @controls.mode = renderControls
     @controls.addEventListener 'change', => @render()
     # Lights
@@ -63,20 +59,16 @@ class Renderer
 
   reload: (@voxels, @x, @y, @z, resize = false, init = false) ->
     if resize
-      miny = 0
       if @embedded
-        miny = @y
-        for z in [0...@z] by 1 when @voxels[z]? # ignore empty y (height) space on deco models
-          (miny = Math.min miny, y; break) for y in [0...@y] by 1 when @voxels[z]?[y]?
-        a = Math.max @x, @y - miny, @z # we are most likely autorotating => zoom that is always fit the camera
+        a = Math.max @x, @y, @z # we are most likely autorotating => zoom that is always fit the camera
         @camera.position.x = 155 * a
-        @camera.position.y = 50 * (a + miny)
-        @camera.position.z = 25 * a
+        @camera.position.y =  50 * a
+        @camera.position.z =  25 * a
       else
         @camera.position.x = 65 * @y + 35 * @x + 55 * @z
         @camera.position.y = 50 * @y
         @camera.position.z = 25 * @x
-      @controls.target = new THREE.Vector3 @z * 25, (@y + miny) * 25, @x * 25
+      @controls.target = new THREE.Vector3 @z * 25, @y * 25, @x * 25
     unless init
       @scene.remove @mesh
       @scene.remove @wireframe if @wireframe?
