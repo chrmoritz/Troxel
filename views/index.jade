@@ -492,6 +492,11 @@ html(manifest=dev?null:'troxel.appcache')
             button.mirrorBtn.btn.btn-default(data-mirror='y', data-toggle='tooltip', data-container='body', data-placement='left', title='mirror the voxel model in y-axis') Mirror y-axis
             button.mirrorBtn.btn.btn-default(data-mirror='z', data-toggle='tooltip', data-container='body', data-placement='left', title='mirror the voxel model in z-axis') Mirror z-axis
 
+    #AppCacheProgress.progress(style='position: fixed; bottom: 0px; width: 100%; margin: 0; display: none;')
+      .progress-bar.progress-bar-info.progress-bar-striped.active(style='width: 0%;')
+        span#AppCacheProgressFileCount 0
+        | /15
+
     script(src='static/js/jquery.min.js', type='text/javascript')
     script(src='static/js/bootstrap.min.js', type='text/javascript')
     script(src='static/js/three.min.js', type='text/javascript')

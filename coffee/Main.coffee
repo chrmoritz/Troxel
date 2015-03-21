@@ -2,15 +2,22 @@
 io = null
 dragFiles = null
 editor = null
-if window.applicationCache.status != window.applicationCache.UNCACHED
-  window.applicationCache.addEventListener 'updateready', ->
-    if window.applicationCache.status == window.applicationCache.UPDATEREADY
-      $.ajax({url: 'static/Recent_Changes.html', cache: false}).done (html) -> $('#recentChangesDiv').html(html)
-      $('#updateModal').modal 'show'
-      clearInterval updatechecker
-  updatechecker = setInterval (-> window.applicationCache.update()), 300000
+appCacheDownloadCount = 0
+window.applicationCache.addEventListener 'downloading', ->
+  appCacheDownloadCount = 0
+  $('#AppCacheProgressFileCount').text(0)
+  $('#AppCacheProgress').show().children().width('0%')
+window.applicationCache.addEventListener 'progress', ->
+  $('#AppCacheProgressFileCount').text(++appCacheDownloadCount)
+  $('#AppCacheProgress').children().width("#{appCacheDownloadCount*100/15}%")
+  $('#AppCacheProgress').fadeOut() if appCacheDownloadCount >= 15
+window.applicationCache.addEventListener 'updateready', ->
+  $.ajax({url: 'static/Recent_Changes.html', cache: false}).done (html) -> $('#recentChangesDiv').html(html)
+  $('#updateModal').modal 'show'
+  clearInterval updatechecker
+updatechecker = setInterval (-> window.applicationCache.update()), 300000
 $('#updateLater').click ->
-  updatechecker = setInterval (-> window.applicationCache.update()), parseInt($('#remindUpdateTime').val())
+  updatechecker = setInterval (-> window.applicationCache.update(); $('#updateModal').modal 'show'), parseInt($('#remindUpdateTime').val())
   $('#updateModal').modal 'hide'
 window.onpopstate = (e) ->
   if e?.state?
