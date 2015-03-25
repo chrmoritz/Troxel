@@ -97,7 +97,6 @@ class QubicleIO extends IO
       console.log "reading #{i}. matrix with name: #{name}"
       [x, y, z] = new Uint32Array ab.slice matrixBegin + 1 + nameLen, matrixBegin + 13 + nameLen
       console.log "dimensions: width: #{x} height: #{y} depth: #{z}"
-      return @error = true if y > 4294967000 # Trove import error
       [dx, dy, dz] = new Int32Array ab.slice matrixBegin + 13 + nameLen, matrixBegin + 25 + nameLen
       console.log "position: dx : #{dx} dy: #{dy} dz: #{dz} (ignored if only 1 matrix)"
       dx = dy = dz = 0 if matrixCount == 1
