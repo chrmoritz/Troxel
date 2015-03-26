@@ -32,21 +32,21 @@ exec 'del /q qbexport\\* & del /q %appdata%\\Trove\\DevTool.log', {timeout: 6000
         if f.length > 10 and f.indexOf('.blueprint') == f.length - 10
           exp = f.split('\\').pop()
           exp = exp.substring(0, exp.length - 10)
-          exec "Trove.exe -tool copyblueprint -generatemaps 1 blueprints\\#{f} qbexport\\#{exp}.qb", {timeout: 5000}, (err, stdout, stderr) ->
-            if err? and err.killed and err.signal? and err.code != 1 # ignore devtool error code 1
+          exec "Trove.exe -tool copyblueprint -generatemaps 1 blueprints\\#{f} qbexport\\#{exp}.qb", {timeout: 15000}, (err, stdout, stderr) ->
+            if err? and (err.killed or err.signal? or err.code != 1) # ignore devtool error code 1
               failedBlueprints.push(f)
               processedOne()
-              process.stderr.write "#{toProcess} blueprints remaining: skipped #{f} because of trove devtool not responding\n"
+              process.stderr.write "#{toProcess} bp left: skipped #{f} because of trove devtool not responding\n"
               return setImmediate processSny
             qbf = 'qbexport/' + exp
             io = new QubicleIO m: qbf + '.qb', a: qbf + '_a.qb', t: qbf + '_t.qb', s: qbf + '_s.qb', ->
               io.resize.apply io, io.computeBoundingBox()
               models[exp] = new Base64IO(io).export(true, 2)
-              process.stdout.write "#{toProcess} blueprints remaining: #{f}\n"
+              process.stdout.write "#{toProcess} bp left: #{f}\n"
               processedOne()
             setImmediate processSny
         else
           processedOne()
-          process.stdout.write "#{toProcess} blueprints remaining: skipped #{f} because not a blueprint\n"
+          process.stdout.write "#{toProcess} bp left: skipped #{f} because not a blueprint\n"
           setImmediate processSny
       processSny() for i in [0...cpus*2] by 1
