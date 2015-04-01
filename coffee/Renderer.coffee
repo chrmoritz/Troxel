@@ -8,10 +8,10 @@ class Renderer
     # Controls and Camera
     @camera = new THREE.PerspectiveCamera 45, @width / @height, 1, 100000
     if @embedded
-      a = Math.max @x, @y, @z # we are most likely autorotating => zoom that is always fit the camera
-      @camera.position.x = 155 * a
-      @camera.position.y =  50 * a
-      @camera.position.z =  25 * a
+      a = Math.max @x, @z # we are most likely autorotating => zoom that is always fit the camera
+      @camera.position.x = 80 * a + 65 * @y
+      @camera.position.y = 50 * @y
+      @camera.position.z = 25 * a
     else
       @camera.position.x = 65 * @y + 35 * @x + 55 * @z
       @camera.position.y = 50 * @y
@@ -60,10 +60,10 @@ class Renderer
   reload: (@voxels, @x, @y, @z, resize = false, init = false) ->
     if resize
       if @embedded
-        a = Math.max @x, @y, @z # we are most likely autorotating => zoom that is always fit the camera
-        @camera.position.x = 155 * a
-        @camera.position.y =  50 * a
-        @camera.position.z =  25 * a
+        a = Math.max @x, @z # we are most likely autorotating => zoom that is always fit the camera
+        @camera.position.x = 80 * a + 65 * @y
+        @camera.position.y = 50 * @y
+        @camera.position.z = 25 * a
       else
         @camera.position.x = 65 * @y + 35 * @x + 55 * @z
         @camera.position.y = 50 * @y
