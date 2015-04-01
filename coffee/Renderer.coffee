@@ -4,7 +4,7 @@ class Renderer
     @width = @domContainer.width()
     @height = @domContainer.height() - (if @embedded then 0 else 5)
     @scene = new THREE.Scene()
-    # Camera and ControlsCamera
+    # Camera and Controls
     @camera = new THREE.PerspectiveCamera 45, @width / @height, 1, 100000
     @controls = new THREE.TroxelControls @camera, @domContainer[0]
     @controls.mode = renderControls
