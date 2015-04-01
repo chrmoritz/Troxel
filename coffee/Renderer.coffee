@@ -4,22 +4,12 @@ class Renderer
     @width = @domContainer.width()
     @height = @domContainer.height() - (if @embedded then 0 else 5)
     @scene = new THREE.Scene()
-    @reload io.voxels, io.x, io.y, io.z, false, true
-    # Controls and Camera
+    # Camera and ControlsCamera
     @camera = new THREE.PerspectiveCamera 45, @width / @height, 1, 100000
-    if @embedded
-      a = Math.max @x, @z # we are most likely autorotating => zoom that is always fit the camera
-      @camera.position.x = 80 * a + 65 * @y
-      @camera.position.y = 50 * @y
-      @camera.position.z = 25 * a
-    else
-      @camera.position.x = 65 * @y + 35 * @x + 55 * @z
-      @camera.position.y = 50 * @y
-      @camera.position.z = 25 * @x
-    @controls = new THREE.TroxelControls @camera, @domContainer[0] # ToDo: set min/maxDistance to something usefull
-    @controls.target = new THREE.Vector3 @z * 25, @y * 25, @x * 25
+    @controls = new THREE.TroxelControls @camera, @domContainer[0]
     @controls.mode = renderControls
     @controls.addEventListener 'change', => @render()
+    @reload io.voxels, io.x, io.y, io.z, false, true
     # Lights
     @ambientLight = new THREE.AmbientLight 0x606060
     @scene.add @ambientLight
@@ -29,7 +19,7 @@ class Renderer
     @pointLight = new THREE.PointLight 0xffffff, 0.7, 100000
     @camera.add @pointLight
     @scene.add @camera
-    # renderer
+    # Renderer
     @renderer = new THREE.WebGLRenderer antialias: antialias
     @renderer.setClearColor 0x888888
     @renderer.setSize @width, @height
@@ -58,10 +48,10 @@ class Renderer
     return material
 
   reload: (@voxels, @x, @y, @z, resize = false, init = false) ->
-    if resize
+    if resize or init
       if @embedded
         a = Math.max @x, @z # we are most likely autorotating => zoom that is always fit the camera
-        @camera.position.x = 80 * a + 65 * @y
+        @camera.position.x = 85 * a + 65 * @y
         @camera.position.y = 50 * @y
         @camera.position.z = 25 * a
       else

@@ -233,7 +233,7 @@ class Editor extends Renderer
           $('#addVoxType').val(vox.t)
           $('#addVoxSpecular').val(vox.s)
           return $('#addVoxColor').change()
-      @reload @voxels, @x, @y, @z
+      @reload @voxels, @x, @y, @z, false, false
       ioo = {voxels: @voxels, x: @x, y: @y, z: @z}
       base64 = new Base64IO(ioo).export false
       try

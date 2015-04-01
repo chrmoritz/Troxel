@@ -58,16 +58,16 @@ window.Troxel =
     _resultOptions.blueprint = blueprintId or null
     Object.defineProperties resultOptions, {
       "base64":
-        set: (s) -> _resultOptions.base64 = s; io = new Base64IO s; renderer.reload io.voxels, io.x, io.y, io.z, true
+        set: (s) -> _resultOptions.base64 = s; io = new Base64IO s; renderer.reload io.voxels, io.x, io.y, io.z, true, false
         get: -> _resultOptions.base64
       "blueprint":
         set: (s) -> _resultOptions.blueprint = s; resultOptions.base64 = Troxel.blueprints[s]
         get: -> _resultOptions.blueprint
       "renderMode":
-        set: (s) -> _resultOptions.renderMode = s; renderer.renderMode = s; renderer.reload io.voxels, io.x, io.y, io.z
+        set: (s) -> _resultOptions.renderMode = s; renderer.renderMode = s; renderer.reload io.voxels, io.x, io.y, io.z, false, false
         get: -> _resultOptions.renderMode
       "renderWireframes":
-        set: (s) -> _resultOptions.renderWireframes = s; renderer.renderWireframes = s; renderer.reload io.voxels, io.x, io.y, io.z
+        set: (s) -> _resultOptions.renderWireframes = s; renderer.renderWireframes = s; renderer.reload io.voxels, io.x, io.y, io.z, false, false
         get: -> _resultOptions.renderWireframes
       "rendererClearColor":
         set: (s) -> _resultOptions.rendererClearColor = s; renderer.renderer.setClearColor s; renderer.render()

@@ -30,7 +30,7 @@ window.onpopstate = (e) ->
       $('#btnExport').hide()
     $('#btnExportPng').show()
     if reload
-      return editor.reload io.voxels, io.x, io.y, io.z, resize
+      return editor.reload io.voxels, io.x, io.y, io.z, resize, false
     else
       return editor = new Editor io
   io = null
@@ -42,7 +42,7 @@ window.onpopstate = (e) ->
       $('#btnExport').show() if io.readonly == 0
       $('#btnExportPng').show()
       if editor?
-        editor.reload io.voxels, io.x, io.y, io.z, true
+        editor.reload io.voxels, io.x, io.y, io.z, true, false
       else
         editor = new Editor io
       break
@@ -89,7 +89,7 @@ $('#open').click ->
       $('#btnExport').hide()
     $('#btnExportPng').show()
     if editor?
-      editor.reload io.voxels, io.x, io.y, io.z, true
+      editor.reload io.voxels, io.x, io.y, io.z, true, false
     else
       editor = new Editor io
     ioo = {voxels: io.voxels, x: io.x, y: io.y, z: io.z}
@@ -153,7 +153,7 @@ $('#open').click ->
         $('#btnExport').hide()
         $('#btnExportPng').show()
         if editor?
-          editor.reload io.voxels, io.x, io.y, io.z, true
+          editor.reload io.voxels, io.x, io.y, io.z, true, false
         else
           editor = new Editor io
         try
@@ -249,7 +249,7 @@ $('#ulSavedModels').parent().on 'show.bs.dropdown', (e) ->
     catch # reached the quota lime of state object (640k on firefox)
       history.pushState null, 'Troxel', '#m=' + $(@).data 'model'
     if editor?
-      editor.reload io.voxels, io.x, io.y, io.z, true
+      editor.reload io.voxels, io.x, io.y, io.z, true, false
     else
       editor = new Editor io
     $('#ulSavedModels li:eq(1) a').text $(@).text()
@@ -277,7 +277,7 @@ $('.rotateBtn').click ->
     when '-y' then io.rotateY(false)
     when  'z' then io.rotateZ(true)
     when '-z' then io.rotateZ(false)
-  editor.reload io.voxels, io.x, io.y, io.z, true
+  editor.reload io.voxels, io.x, io.y, io.z, true, false
   ioo = {voxels: io.voxels, x: io.x, y: io.y, z: io.z}
   base64 = new Base64IO(ioo).export false
   try
@@ -293,7 +293,7 @@ $('.moveBtn').click ->
     when '-y' then io.moveY(false, true)
     when  'z' then io.moveZ(true, true)
     when '-z' then io.moveZ(false, true)
-  editor.reload io.voxels, io.x, io.y, io.z
+  editor.reload io.voxels, io.x, io.y, io.z, false, false
   ioo = {voxels: io.voxels, x: io.x, y: io.y, z: io.z}
   base64 = new Base64IO(ioo).export false
   try
@@ -306,7 +306,7 @@ $('.mirrorBtn').click ->
     when 'x' then io.mirrorX(true)
     when 'y' then io.mirrorY(true)
     when 'z' then io.mirrorZ(true)
-  editor.reload io.voxels, io.x, io.y, io.z
+  editor.reload io.voxels, io.x, io.y, io.z, false, false
   ioo = {voxels: io.voxels, x: io.x, y: io.y, z: io.z}
   base64 = new Base64IO(ioo).export false
   try
@@ -376,7 +376,7 @@ $('#resizeBtn').click ->
   $('#resizeModal').modal 'hide'
   io.resize(parseInt($('#resizeX').val()), parseInt($('#resizeY').val()), parseInt($('#resizeZ').val()),
     parseInt($('#resizeOffX').val()), parseInt($('#resizeOffY').val()), parseInt($('#resizeOffZ').val()))
-  editor.reload io.voxels, io.x, io.y, io.z, true
+  editor.reload io.voxels, io.x, io.y, io.z, true, false
   ioo = {voxels: io.voxels, x: io.x, y: io.y, z: io.z}
   base64 = new Base64IO(ioo).export false
   try
@@ -404,11 +404,11 @@ $('#rendererAntialias').change ->
 $('#renderMode').change ->
   if editor?
     editor.renderMode = parseInt $(@).val()
-    editor.reload io.voxels, io.x, io.y, io.z
+    editor.reload io.voxels, io.x, io.y, io.z, false, false
 $('#renderWireframes').change ->
   if editor?
     editor.renderWireframes = parseInt $(@).val()
-    editor.reload io.voxels, io.x, io.y, io.z
+    editor.reload io.voxels, io.x, io.y, io.z, false, false
 $('#renderControls').change ->
   editor.controls.mode = $(@).val() == "0" if editor?
 $('#QbImportMerge').prop('checked', false).change -> $('.QbMergeOff').prop('disabled', !$(@).prop('checked'))
