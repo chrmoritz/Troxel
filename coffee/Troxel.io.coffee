@@ -8,7 +8,7 @@ class Base64IO extends IO
     vox = {}
     if data[0] == 85
       paletteSize = 256 * data[1] + data[2]
-      short = if data[1] == 0 then 1 else 2
+      short = if data[1] == 0 and data[2] < 128 then 1 else 2
       palette = [null]
       palette.push {r: data[j + 1], g: data[j + 2], b: data[j + 3], a: data[j + 4], s: data[j] % 16, t: data[j] >> 4} for j in [3...paletteSize * 5 + 3] by 5
       i = paletteSize * 5 + 3
@@ -94,8 +94,8 @@ class Base64IO extends IO
           rcolors[hex][mat] = (data.length - 7) / 5
           throw new Error "To many colors for Troxel2 palette" unless (data.length - 7) / 5 < 32768
       data[5] = (data.length - 7) // 1280
-      short = data[5] == 0
       data[6] = (data.length - 7) / 5 % 256
+      short = data[5] == 0 and data[6] < 128
       while i < vox.length
         r = 1 # repeat
         (if equal vox[i + r - 1], vox[i + r], i + r then r++ else break) while r < 129

@@ -127,7 +127,7 @@ class THREE.TroxelControls extends THREE.EventDispatcher
       @object.translateX @moveVector.x * 20
       @object.translateY @moveVector.y * 20
       @object.translateZ @moveVector.z * 20
-      @tmpQuaternion.set(@rotationVector.x * 0.003, @rotationVector.y * 0.003, @rotationVector.z * 0.003, 1).normalize()
+      @tmpQuaternion.set(@rotationVector.x * 0.005, @rotationVector.y * 0.005, @rotationVector.z * 0.005, 1).normalize()
       @object.quaternion.multiply @tmpQuaternion
       @object.rotation.setFromQuaternion @object.quaternion, @object.rotation.order # expose the rotation vector for convenience
     # update condition is: min(camera displacement, camera rotation in radians)^2 > EPS using small-angle approximation cos(x/2) = 1 - x^2 / 8
