@@ -124,8 +124,11 @@ $('#open').click ->
       if f and f.name.split('.').pop() == 'qb'
         if io? and $('#QbImportMerge').prop('checked')
           offsets = {x: parseInt($('#QbMergeOffX').val()), y: parseInt($('#QbMergeOffY').val()), z: parseInt($('#QbMergeOffZ').val())}
-          mergeTarget = {voxels: io.voxels, x: io.x, y: io.y, z: io.z, offsets: offsets}
-        io = new QubicleIO {m: f, a: f = $('#fqba').prop('files')[0], t: f = $('#fqbt').prop('files')[0], s: f = $('#fqbs').prop('files')[0]}, cb, mergeTarget
+          mio = new QubicleIO {m: f, a: f = $('#fqba').prop('files')[0], t: f = $('#fqbt').prop('files')[0], s: f = $('#fqbs').prop('files')[0]}, ->
+            io.merge mio, offsets
+            cb()
+        else
+          io = new QubicleIO {m: f, a: f = $('#fqba').prop('files')[0], t: f = $('#fqbt').prop('files')[0], s: f = $('#fqbs').prop('files')[0]}, cb
       else
         alert 'Please choose at least a valid main mesh Qubicle (.qb) file above!'
     when '#tabvox'

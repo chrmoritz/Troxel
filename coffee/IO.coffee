@@ -156,4 +156,17 @@ class IO
     return [@x, @y, @z, 0, 0, 0] if maxX == 0 # empty model
     return [maxX - minX + 1, maxY - minY + 1, maxZ - minZ + 1, minX, minY, minZ]
 
+  merge: (mio, offsets = {x: 0, y: 0, z: 0}) ->
+    return unless mio.x? and mio.y? and mio.z? and mio.voxels?
+    @x = Math.max @x, mio.x + offsets.x
+    @y = Math.max @y, mio.y + offsets.y
+    @z = Math.max @z, mio.z + offsets.z
+    for z in [offsets.z...@z] by 1 when mio.voxels[z - offsets.z]?
+      @voxels[z] = [] unless @voxels[z]?
+      for y in [offsets.y...@y] by 1 when mio.voxels[z - offsets.z][y - offsets.y]?
+        @voxels[z][y] = [] unless @voxels[z][y]?
+        for x in [offsets.x...@x] by 1 when mio.voxels[z - offsets.z][y - offsets.y][x - offsets.x]?
+          @voxels[z][y][x] = mio.voxels[z - offsets.z][y - offsets.y][x - offsets.x]
+    return
+
 if typeof module == 'object' then module.exports = IO else window.IO = IO
