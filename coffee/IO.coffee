@@ -188,7 +188,7 @@ class IO
       rx = Math.min 0, offsets.x
       ry = Math.min 0, offsets.y
       rz = Math.min 0, offsets.z
-      io.resize @x - rx, @y - ry, @z - rz, rx, ry, rz
+      @resize @x - rx, @y - ry, @z - rz, rx, ry, rz
       offsets.x = Math.max 0, offsets.x
       offsets.y = Math.max 0, offsets.y
       offsets.z = Math.max 0, offsets.z
