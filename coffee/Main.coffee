@@ -101,7 +101,7 @@ $('#open').click ->
     base64 = new Base64IO(ioo).export false
     try
       history.pushState ioo, 'Troxel', '#m=' + base64
-    catch # reached the quota lime of state object (640k on firefox)
+    catch # reached the quota limit of the state object (640k on firefox)
       history.pushState null, 'Troxel', '#m=' + base64
   console.log '##################################################'
   switch $('#filetabs li.active a').attr('href')
@@ -152,8 +152,10 @@ $('#open').click ->
         if io? and $('#ImportMerge').prop('checked')
           offsets = {x: parseInt($('#QbMergeOffX').val()), y: parseInt($('#QbMergeOffY').val()), z: parseInt($('#QbMergeOffZ').val())}
           io.merge new Base64IO(model), offsets, $('#ImportAPrelativeOffsets').prop('checked')
+          link = '#m=' + new Base64IO(io).export true
         else
           io = new Base64IO model
+          link = '#b=' + $('#sbtrove').val()
         $('#openModal').modal 'hide'
         $('#modeView').click() if $('#modeEdit').parent().hasClass('active')
         $('#btnExport').hide()
@@ -163,9 +165,9 @@ $('#open').click ->
         else
           editor = new Editor io
         try
-          history.pushState {voxels: io.voxels, x: io.x, y: io.y, z: io.z}, 'Troxel', '#b=' + $('#sbtrove').val()
-        catch # reached the quota lime of state object (640k on firefox)
-          history.pushState null, 'Troxel', '#b=' + $('#sbtrove').val()
+          history.pushState {voxels: io.voxels, x: io.x, y: io.y, z: io.z, readonly: true}, 'Troxel', link
+        catch # reached the quota limit of the state object (640k on firefox)
+          history.pushState null, 'Troxel', link
     when '#tabnew'
       x = parseInt $('#snewX').val()
       y = parseInt $('#snewY').val()
@@ -252,7 +254,7 @@ $('#ulSavedModels').parent().on 'show.bs.dropdown', (e) ->
     $('#btnExportPng').show()
     try
       history.pushState {voxels: @voxels, x: @x, y: @y, z: @z}, 'Troxel', '#m=' + $(@).data 'model'
-    catch # reached the quota lime of state object (640k on firefox)
+    catch # reached the quota limit of the state object (640k on firefox)
       history.pushState null, 'Troxel', '#m=' + $(@).data 'model'
     if editor?
       editor.reload io.voxels, io.x, io.y, io.z, true, false
@@ -288,7 +290,7 @@ $('.rotateBtn').click ->
   base64 = new Base64IO(ioo).export false
   try
     history.pushState ioo, 'Troxel', '#m=' + base64
-  catch # reached the quota lime of state object (640k on firefox)
+  catch # reached the quota limit of the state object (640k on firefox)
     history.pushState null, 'Troxel', '#m=' + base64
 $('.moveBtn').click ->
   return unless io?
@@ -304,7 +306,7 @@ $('.moveBtn').click ->
   base64 = new Base64IO(ioo).export false
   try
     history.pushState ioo, 'Troxel', '#m=' + base64
-  catch # reached the quota lime of state object (640k on firefox)
+  catch # reached the quota limit of the state object (640k on firefox)
     history.pushState null, 'Troxel', '#m=' + base64
 $('.mirrorBtn').click ->
   return unless io?
@@ -317,7 +319,7 @@ $('.mirrorBtn').click ->
   base64 = new Base64IO(ioo).export false
   try
     history.pushState ioo, 'Troxel', '#m=' + base64
-  catch # reached the quota lime of state object (640k on firefox)
+  catch # reached the quota limit of the state object (640k on firefox)
     history.pushState null, 'Troxel', '#m=' + base64
 $('.panel-heading').click ->
   span = $(@).find('button span')
@@ -387,7 +389,7 @@ $('#resizeBtn').click ->
   base64 = new Base64IO(ioo).export false
   try
     history.pushState ioo, 'Troxel', '#m=' + base64
-  catch # reached the quota lime of state object (640k on firefox)
+  catch # reached the quota limit of the state object (640k on firefox)
     history.pushState null, 'Troxel', '#m=' + base64
 $('#resizeCalcBBb').click ->
   return if not editor? or io.readonly
