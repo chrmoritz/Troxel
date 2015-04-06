@@ -125,7 +125,7 @@ $('#open').click ->
         if io? and $('#QbImportMerge').prop('checked')
           offsets = {x: parseInt($('#QbMergeOffX').val()), y: parseInt($('#QbMergeOffY').val()), z: parseInt($('#QbMergeOffZ').val())}
           mio = new QubicleIO {m: f, a: f = $('#fqba').prop('files')[0], t: f = $('#fqbt').prop('files')[0], s: f = $('#fqbs').prop('files')[0]}, ->
-            io.merge mio, offsets
+            io.merge mio, offsets, $('#ImportAPrelativeOffsets').prop('checked')
             cb()
         else
           io = new QubicleIO {m: f, a: f = $('#fqba').prop('files')[0], t: f = $('#fqbt').prop('files')[0], s: f = $('#fqbs').prop('files')[0]}, cb

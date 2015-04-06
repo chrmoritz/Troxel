@@ -109,11 +109,14 @@ html(manifest=dev?null:'troxel.appcache')
                       | merge model into existing model with offset:
                     .form-group(style='margin-left: 10px;'): .input-group
                       span.input-group-addon x:
-                      input#QbMergeOffX.form-control.QbMergeOff(type='number', value='0', style='width: 100px;', disabled)
+                      input#QbMergeOffX.form-control.QbMergeOff(type='number', value='0', style='width: 67px;', disabled)
                       span.input-group-addon y:
-                      input#QbMergeOffY.form-control.QbMergeOff(type='number', value='0', style='width: 100px;', disabled)
+                      input#QbMergeOffY.form-control.QbMergeOff(type='number', value='0', style='width: 67px;', disabled)
                       span.input-group-addon z:
-                      input#QbMergeOffZ.form-control.QbMergeOff(type='number', value='0', style='width: 100px;', disabled)
+                      input#QbMergeOffZ.form-control.QbMergeOff(type='number', value='0', style='width: 67px;', disabled)
+                      span.input-group-addon
+                        input#ImportAPrelativeOffsets.QbMergeOff(type='checkbox', style='margin-right: 3px;', disabled)
+                        |  relative from attachment point:
               #tabzox.tab-pane.fade
                 .form-horizontal
                   .form-group
@@ -281,7 +284,7 @@ html(manifest=dev?null:'troxel.appcache')
                 input#resizeOffY.resizeDim.form-control(type='number', value='0')
                 span.input-group-addon z:
                 input#resizeOffZ.resizeDim.form-control(type='number', value='0')
-            p.help-block resizing will be done to the cube defined by the origin point (bottom back right point in default camera position), the offsets and the new dimensions
+            p.help-block resizing will be done to the cube defined by the origin point (bottom back right point in default camera position), the offsets (positive or negative integers) and the new dimensions
             button#resizeCalcBBb.btn.btn-default.btn-block calculate bounding box
             p.help-block this will move and resize your voxel model to the smallest possible dimension without erasing voxels
           .modal-footer

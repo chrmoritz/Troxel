@@ -134,10 +134,23 @@ class IO
       delete @voxels[if d then @z - 1 else 0]
 
   resize: (@x, @y, @z, ox, oy, oz) ->
-    @voxels = @voxels.slice oz, @z + oz
+    if oz >= 0
+      @voxels = @voxels.slice oz, @z + oz
+    else
+      @voxels.unshift.apply @voxels, Array(-ox)
+      @voxels = @voxels.slice 0, @z
     for z in [0...@z] by 1 when @voxels[z]?
-      @voxels[z] = @voxels[z].slice oy, @y + oy
-      @voxels[z][y] = @voxels[z][y].slice ox, @x + ox for y in [0...@y] by 1 when @voxels[z][y]?
+      if oy >= 0
+        @voxels[z] = @voxels[z].slice oy, @y + oy
+      else
+        @voxels[z].unshift.apply @voxels[z], Array(-oy)
+        @voxels[z] = @voxels[z].slice 0, @y
+      for y in [0...@y] by 1 when @voxels[z][y]?
+        if ox >= 0
+          @voxels[z][y] = @voxels[z][y].slice ox, @x + ox
+        else
+          @voxels[z][y].unshift.apply @voxels[z][y], Array(-ox)
+          @voxels[z][y] = @voxels[z][y].slice 0, @x
 
   computeBoundingBox: ->
     maxX = maxY = maxZ = 0
@@ -156,8 +169,28 @@ class IO
     return [@x, @y, @z, 0, 0, 0] if maxX == 0 # empty model
     return [maxX - minX + 1, maxY - minY + 1, maxZ - minZ + 1, minX, minY, minZ]
 
-  merge: (mio, offsets = {x: 0, y: 0, z: 0}) ->
+  getAttachmentPoint: ->
+    for z in [0...@z] by 1 when @voxels[z]?
+      for y in [0...@y] by 1 when @voxels[z][y]?
+        for x in [0...@x] by 1 when @voxels[z][y][x]? and @voxels[z][y][x].t == 7
+          return [x, y, z]
+    return [0, 0, 0]
+
+  merge: (mio, offsets = {x: 0, y: 0, z: 0}, relativeAP) ->
     return unless mio.x? and mio.y? and mio.z? and mio.voxels?
+    if relativeAP
+      [apx, apy, apz] = mio.getAttachmentPoint()
+      offsets.x -= apx
+      offsets.y -= apy
+      offsets.z -= apz
+      unless offsets.x >= 0 and offsets.y >= 0 and offsets.z >= 0
+        rx = Math.min 0, offsets.x
+        ry = Math.min 0, offsets.y
+        rz = Math.min 0, offsets.z
+        io.resize @x - rx, @y - ry, @z - rz, rx, ry, rz
+        offsets.x = Math.max 0, offsets.x
+        offsets.y = Math.max 0, offsets.y
+        offsets.z = Math.max 0, offsets.z
     @x = Math.max @x, mio.x + offsets.x
     @y = Math.max @y, mio.y + offsets.y
     @z = Math.max @z, mio.z + offsets.z
