@@ -184,14 +184,14 @@ class IO
       offsets.x -= apx
       offsets.y -= apy
       offsets.z -= apz
-      unless offsets.x >= 0 and offsets.y >= 0 and offsets.z >= 0
-        rx = Math.min 0, offsets.x
-        ry = Math.min 0, offsets.y
-        rz = Math.min 0, offsets.z
-        io.resize @x - rx, @y - ry, @z - rz, rx, ry, rz
-        offsets.x = Math.max 0, offsets.x
-        offsets.y = Math.max 0, offsets.y
-        offsets.z = Math.max 0, offsets.z
+    if offsets.x < 0 or offsets.y < 0 or offsets.z < 0
+      rx = Math.min 0, offsets.x
+      ry = Math.min 0, offsets.y
+      rz = Math.min 0, offsets.z
+      io.resize @x - rx, @y - ry, @z - rz, rx, ry, rz
+      offsets.x = Math.max 0, offsets.x
+      offsets.y = Math.max 0, offsets.y
+      offsets.z = Math.max 0, offsets.z
     @x = Math.max @x, mio.x + offsets.x
     @y = Math.max @y, mio.y + offsets.y
     @z = Math.max @z, mio.z + offsets.z
