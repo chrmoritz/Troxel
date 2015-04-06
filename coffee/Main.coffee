@@ -81,6 +81,11 @@ document.addEventListener 'drop', (e) ->
     $('#tabdrag ul').append $ '<li>' + f.name + '</li>' for f in dragFiles
 $('#open').click ->
   cb = ->
+    if io? and $('#ImportMerge').prop('checked')
+      offsets = {x: parseInt($('#QbMergeOffX').val()), y: parseInt($('#QbMergeOffY').val()), z: parseInt($('#QbMergeOffZ').val())}
+      io.merge mio, offsets, $('#ImportAPrelativeOffsets').prop('checked')
+    else
+      io = mio
     $('#openModal').modal 'hide'
     $('#modeView').click() if $('#modeEdit').parent().hasClass('active')
     if !io.readonly? or io.readonly == 0
@@ -102,9 +107,9 @@ $('#open').click ->
   switch $('#filetabs li.active a').attr('href')
     when '#tabdrag'
       if dragFiles[0].name.split('.').pop() == 'zox'
-        io = new ZoxelIO dragFiles[0], cb
+        mio = new ZoxelIO dragFiles[0], cb
       else if dragFiles[0].name.split('.').pop() == 'vox'
-        io = new MagicaIO dragFiles[0], cb
+        mio = new MagicaIO dragFiles[0], cb
       else if dragFiles[0].name.split('.').pop() == 'qb'
         files = {}
         for f, i in dragFiles
@@ -114,7 +119,7 @@ $('#open').click ->
             when '_s.qb' then files.s = f unless files.s?
             else files.m = f if f.name.substr(-3) == '.qb'
         if files.m?
-          io = new QubicleIO files, cb
+          mio = new QubicleIO files, cb
         else
           alert "Can't find Qubicle main mesh file!"
       else
@@ -122,35 +127,33 @@ $('#open').click ->
     when '#tabqb'
       f = $('#fqb').prop('files')[0]
       if f and f.name.split('.').pop() == 'qb'
-        if io? and $('#QbImportMerge').prop('checked')
-          offsets = {x: parseInt($('#QbMergeOffX').val()), y: parseInt($('#QbMergeOffY').val()), z: parseInt($('#QbMergeOffZ').val())}
-          mio = new QubicleIO {m: f, a: f = $('#fqba').prop('files')[0], t: f = $('#fqbt').prop('files')[0], s: f = $('#fqbs').prop('files')[0]}, ->
-            io.merge mio, offsets, $('#ImportAPrelativeOffsets').prop('checked')
-            cb()
-        else
-          io = new QubicleIO {m: f, a: f = $('#fqba').prop('files')[0], t: f = $('#fqbt').prop('files')[0], s: f = $('#fqbs').prop('files')[0]}, cb
+        mio = new QubicleIO {m: f, a: f = $('#fqba').prop('files')[0], t: f = $('#fqbt').prop('files')[0], s: f = $('#fqbs').prop('files')[0]}, cb
       else
         alert 'Please choose at least a valid main mesh Qubicle (.qb) file above!'
     when '#tabvox'
       f = $('#fvox').prop('files')[0]
       if f and f.name.split('.').pop() == 'vox'
-        io = new MagicaIO f, cb
+        mio = new MagicaIO f, cb
       else
         alert 'Please choose a valid Magica Voxel (.vox) file above!'
     when '#tabzox'
       f = $('#fzox').prop('files')[0]
       if f and f.name.split('.').pop() == 'zox'
-        io = new ZoxelIO f, cb
+        mio = new ZoxelIO f, cb
       else
         alert 'Please choose a valid Zoxel (.zox) file above!'
     when '#tabjson'
-      io = new JsonIO $('#sjson').val()
+      mio = new JsonIO $('#sjson').val()
       cb()
     when '#tabtrove'
       $.getJSON 'static/Trove.json', (data) ->
         model = data[$('#sbtrove').val()]
         return unless model?
-        io = new Base64IO model
+        if io? and $('#ImportMerge').prop('checked')
+          offsets = {x: parseInt($('#QbMergeOffX').val()), y: parseInt($('#QbMergeOffY').val()), z: parseInt($('#QbMergeOffZ').val())}
+          io.merge new Base64IO(model), offsets, $('#ImportAPrelativeOffsets').prop('checked')
+        else
+          io = new Base64IO model
         $('#openModal').modal 'hide'
         $('#modeView').click() if $('#modeEdit').parent().hasClass('active')
         $('#btnExport').hide()
@@ -176,7 +179,7 @@ $('#open').click ->
           voxels[az] = []
           voxels[az][ay] = []
           voxels[az][ay][ax] = {r: 255, g: 0, b: 255, a: 250, t: 7, s: 7} # ToDo: correct alpha value for attachment point?
-      io = new IO x: x, y: y, z: z, voxels: voxels
+      mio = new IO x: x, y: y, z: z, voxels: voxels
       cb()
       $('#modeEdit').click()
   return
@@ -414,4 +417,4 @@ $('#renderWireframes').change ->
     editor.reload io.voxels, io.x, io.y, io.z, false, false
 $('#renderControls').change ->
   editor.controls.mode = $(@).val() == "0" if editor?
-$('#QbImportMerge').prop('checked', false).change -> $('.QbMergeOff').prop('disabled', !$(@).prop('checked'))
+$('#ImportMerge').prop('checked', false).change -> $('.QbMergeOff').prop('disabled', !$(@).prop('checked'))

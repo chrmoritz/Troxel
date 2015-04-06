@@ -103,20 +103,6 @@ html(manifest=dev?null:'troxel.appcache')
                     label.col-sm-3.control-label(for='fqbs') Specular map (*_s.qb):
                     .col-sm-9: input#fqbs(type='file', accept='.qb', style='margin-top: 5px;', multiple)
                   span.help-block Alpha, Type and Specular map are optional (only the main mesh is required)
-                  .form-inline
-                    .checkbox: label
-                      input#QbImportMerge(type='checkbox', style='margin-right: 5px;')
-                      | merge model into existing model with offset:
-                    .form-group(style='margin-left: 10px;'): .input-group
-                      span.input-group-addon x:
-                      input#QbMergeOffX.form-control.QbMergeOff(type='number', value='0', style='width: 67px;', disabled)
-                      span.input-group-addon y:
-                      input#QbMergeOffY.form-control.QbMergeOff(type='number', value='0', style='width: 67px;', disabled)
-                      span.input-group-addon z:
-                      input#QbMergeOffZ.form-control.QbMergeOff(type='number', value='0', style='width: 67px;', disabled)
-                      span.input-group-addon
-                        input#ImportAPrelativeOffsets.QbMergeOff(type='checkbox', style='margin-right: 3px;', disabled)
-                        |  relative from attachment point:
               #tabzox.tab-pane.fade
                 .form-horizontal
                   .form-group
@@ -173,6 +159,20 @@ html(manifest=dev?null:'troxel.appcache')
                       input#snewApY.snewApPos.form-control(type='number', value='10', disabled)
                       span.input-group-addon z:
                       input#snewApZ.snewApPos.form-control(type='number', value='10', disabled)
+            .form-inline
+              .checkbox: label
+                input#ImportMerge(type='checkbox', style='margin-right: 5px;')
+                | merge model into existing model with offset:
+              .form-group(style='margin-left: 10px;'): .input-group
+                span.input-group-addon x:
+                input#QbMergeOffX.form-control.QbMergeOff(type='number', value='0', style='width: 67px;', disabled)
+                span.input-group-addon y:
+                input#QbMergeOffY.form-control.QbMergeOff(type='number', value='0', style='width: 67px;', disabled)
+                span.input-group-addon z:
+                input#QbMergeOffZ.form-control.QbMergeOff(type='number', value='0', style='width: 67px;', disabled)
+                span.input-group-addon
+                  input#ImportAPrelativeOffsets.QbMergeOff(type='checkbox', style='margin-right: 3px;', disabled)
+                  |  relative from attachment point:
           .modal-footer
             button.btn.btn-default(data-dismiss='modal') Close
             button#open.btn.btn-primary Open model

@@ -178,6 +178,7 @@ class IO
 
   merge: (mio, offsets = {x: 0, y: 0, z: 0}, relativeAP) ->
     return unless mio.x? and mio.y? and mio.z? and mio.voxels?
+    io.readonly = true if mio.readonly
     if relativeAP
       [apx, apy, apz] = mio.getAttachmentPoint()
       offsets.x -= apx
