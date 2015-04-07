@@ -152,7 +152,7 @@ $('#open').click ->
         if io? and $('#ImportMerge').prop('checked')
           offsets = {x: parseInt($('#QbMergeOffX').val()), y: parseInt($('#QbMergeOffY').val()), z: parseInt($('#QbMergeOffZ').val())}
           io.merge new Base64IO(model), offsets, $('#ImportAPrelativeOffsets').prop('checked')
-          link = '#m=' + new Base64IO(io).export true
+          link = '#m=' + new Base64IO(io).export true, 2
         else
           io = new Base64IO model
           link = '#b=' + $('#sbtrove').val()
