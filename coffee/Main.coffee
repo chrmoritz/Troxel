@@ -286,7 +286,7 @@ $('.rotateBtn').click ->
     when  'z' then io.rotateZ(true)
     when '-z' then io.rotateZ(false)
   editor.reload io.voxels, io.x, io.y, io.z, true, false
-  ioo = {voxels: io.voxels, x: io.x, y: io.y, z: io.z}
+  ioo = {voxels: io.voxels, x: io.x, y: io.y, z: io.z, readonly: io.readonly}
   base64 = new Base64IO(ioo).export false
   try
     history.pushState ioo, 'Troxel', '#m=' + base64
@@ -302,7 +302,7 @@ $('.moveBtn').click ->
     when  'z' then io.moveZ(true, true)
     when '-z' then io.moveZ(false, true)
   editor.reload io.voxels, io.x, io.y, io.z, false, false
-  ioo = {voxels: io.voxels, x: io.x, y: io.y, z: io.z}
+  ioo = {voxels: io.voxels, x: io.x, y: io.y, z: io.z, readonly: io.readonly}
   base64 = new Base64IO(ioo).export false
   try
     history.pushState ioo, 'Troxel', '#m=' + base64
@@ -315,7 +315,7 @@ $('.mirrorBtn').click ->
     when 'y' then io.mirrorY(true)
     when 'z' then io.mirrorZ(true)
   editor.reload io.voxels, io.x, io.y, io.z, false, false
-  ioo = {voxels: io.voxels, x: io.x, y: io.y, z: io.z}
+  ioo = {voxels: io.voxels, x: io.x, y: io.y, z: io.z, readonly: io.readonly}
   base64 = new Base64IO(ioo).export false
   try
     history.pushState ioo, 'Troxel', '#m=' + base64

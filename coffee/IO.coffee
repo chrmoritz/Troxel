@@ -6,6 +6,7 @@ class IO
       @x = other.x
       @y = other.y
       @z = other.z
+      @readonly = true if other.readonly
       return true
 
   verify: ->

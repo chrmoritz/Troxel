@@ -62,6 +62,7 @@ class Base64IO extends IO
     console.log @voxels unless @readonly
 
   export: (readonly, version = 1) ->
+    readonly = true if @readonly
     equal = (a, b, index) ->
       return false unless index < vox.length # check if last voxes is reached
       return true if !a? and !b?
