@@ -1,5 +1,6 @@
 fs = require 'fs'
 exec = require('child_process').exec
+stringify = require 'json-stable-stringify'
 global.IO = require '../coffee/IO.coffee'
 QubicleIO = require '../coffee/Qubicle.io.coffee'
 {Base64IO} = require '../coffee/Troxel.io.coffee'
@@ -20,7 +21,7 @@ exec 'del /q qbexport\\* & del /q %appdata%\\Trove\\DevTool.log', {timeout: 6000
       toProcess = files.length
       processedOne = ->
         if --toProcess == 0
-          fs.writeFile jsonPath, JSON.stringify(models), -> thow err if err?
+          fs.writeFile jsonPath, stringify(models, space: '  '), (err) -> thow err if err?
           count = Object.keys(models).length
           process.stdout.write "base64 data of #{count} blueprints successfully written to static/Trove.json\nskipped #{failedBlueprints.length} broken blueprints:\n\n"
           process.stdout.write " * #{bp}\n" for bp in failedBlueprints
