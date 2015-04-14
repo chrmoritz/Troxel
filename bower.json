@@ -15,7 +15,7 @@
     "test"
   ],
   "dependencies": {
-    "angular": ">1.4.0-beta.0 <1.4.0-beta.99",
+    "angular": "~1.4.0",
     "bootstrap": "~3.3",
     "catiline": "~2.9",
     "jquery": "~2.1",
