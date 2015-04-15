@@ -78,7 +78,7 @@ module.exports = (grunt) ->
       options: {
         banner: 'callback(',
         footer: ');',
-        process: (c, s) -> c.replace(/[ \n]/g,'')
+        process: (c, s) -> c.replace(/\s/g,'')
       },
       jsonp: {
         src: 'tools/Trove.json',
@@ -86,7 +86,7 @@ module.exports = (grunt) ->
       }
     },
     copy: {
-      json: {src: 'tools/Trove.json', dest: 'dist/static/Trove.json', options: process: (c, s) -> c.replace(/[ \n]/g,'')}
+      json: {src: 'tools/Trove.json', dest: 'dist/static/Trove.json', options: process: (c, s) -> c.replace(/\s/g,'')}
       appcache: {src: 'tools/troxel.appcache', dest: 'dist/troxel.appcache'},
       typeahead: {src: 'bower_components/typehead.js/dist/typeahead.bundle.min.js', dest: 'dist/static/js/typeahead.min.js'},
       example: {src: 'test/libTroxelTest.html', dest: 'dist/static/libTroxelTest.html'}
