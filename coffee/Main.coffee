@@ -371,6 +371,8 @@ $('#addVoxType').change ->
 $('#addVoxAlpha').val(112)
 $('#editVoxNoiseBright').val(0)
 $('#editVoxNoiseHSL').val(0)
+$('#resizeModal').on 'shown.bs.modal', ->
+  $('#resizeModal').modal 'hide' unless editor?
 $('#openResizeModal').click ->
   return unless editor?
   $('#resizeX').val(io.x)
@@ -380,19 +382,19 @@ $('#openResizeModal').click ->
   $('#resizeOffY').val(0)
   $('#resizeOffZ').val(0)
 $('#resizeBtn').click ->
-  return if not editor? or io.readonly
+  return unless editor?
   $('#resizeModal').modal 'hide'
   io.resize(parseInt($('#resizeX').val()), parseInt($('#resizeY').val()), parseInt($('#resizeZ').val()),
     parseInt($('#resizeOffX').val()), parseInt($('#resizeOffY').val()), parseInt($('#resizeOffZ').val()))
   editor.reload io.voxels, io.x, io.y, io.z, true, false
-  ioo = {voxels: io.voxels, x: io.x, y: io.y, z: io.z}
+  ioo = {voxels: io.voxels, x: io.x, y: io.y, z: io.z, readonly: io.readonly}
   base64 = new Base64IO(ioo).export false
   try
     history.pushState ioo, 'Troxel', '#m=' + base64
   catch # reached the quota limit of the state object (640k on firefox)
     history.pushState null, 'Troxel', '#m=' + base64
 $('#resizeCalcBBb').click ->
-  return if not editor? or io.readonly
+  return unless editor?
   [x, y, z, ox, oy, oz] = io.computeBoundingBox()
   $('#resizeX').val(x)
   $('#resizeY').val(y)

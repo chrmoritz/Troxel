@@ -166,7 +166,7 @@ class Renderer
 
   render: (exportPng) ->
     @renderer.render @scene, @camera
-    window.open @renderer.domElement.toDataURL('image/png'), 'Exported png' if exportPng
+    window.open @renderer.domElement.toDataURL(), 'Exported png' if exportPng
 
   onWindowResize: ->
     @width = @domContainer.width()
