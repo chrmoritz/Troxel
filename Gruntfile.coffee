@@ -1,4 +1,5 @@
 module.exports = (grunt) ->
+  require('time-grunt')(grunt)
   grunt.initConfig {
     pkg: grunt.file.readJSON('package.json'),
     coffeelint: {
@@ -121,7 +122,8 @@ module.exports = (grunt) ->
         logConcurrentOutput: true
       },
       serve: ['watch', 'pages']
-    }
+    },
+    notify_hooks: options: success: true
   }
 
   grunt.loadNpmTasks 'grunt-continue'
@@ -137,6 +139,9 @@ module.exports = (grunt) ->
   grunt.loadNpmTasks 'grunt-jekyll-pages'
   grunt.loadNpmTasks 'grunt-contrib-watch'
   grunt.loadNpmTasks 'grunt-concurrent'
+  unless process.env.CI
+    grunt.loadNpmTasks 'grunt-notify'
+    grunt.task.run 'notify_hooks'
 
   grunt.registerTask 'default', ['test', 'build']
   grunt.registerTask 'test', ['continue:on', 'lint', 'continue:off', 'mochaTest', 'continue:fail-on-warning']
