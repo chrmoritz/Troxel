@@ -23,7 +23,7 @@ exec 'del /q qbexport\\* & del /q %appdata%\\Trove\\DevTool.log', {timeout: 6000
         if --toProcess == 0
           fs.writeFile jsonPath, stringify(models, space: '  '), (err) -> thow err if err?
           count = Object.keys(models).length
-          process.stdout.write "base64 data of #{count} blueprints successfully written to static/Trove.json\nskipped #{failedBlueprints.length} broken blueprints:\n\n"
+          process.stdout.write "\nbase64 data of #{count} blueprints successfully written to static/Trove.json\nskipped #{failedBlueprints.length} broken blueprints:\n\n"
           process.stdout.write " * #{bp}\n" for bp in failedBlueprints
           process.stdout.write "\ndeleting qbexport (could take a minute)...\n"
           exec 'del /q qbexport\\*', {timeout: 180000}, (err, stdout, stderr) -> throw err if err?
