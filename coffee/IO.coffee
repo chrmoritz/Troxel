@@ -138,7 +138,7 @@ class IO
     if oz >= 0
       @voxels = @voxels.slice oz, @z + oz
     else
-      @voxels.unshift.apply @voxels, Array(-ox)
+      @voxels.unshift.apply @voxels, Array(-oz)
       @voxels = @voxels.slice 0, @z
     for z in [0...@z] by 1 when @voxels[z]?
       if oy >= 0
