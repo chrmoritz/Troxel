@@ -104,6 +104,9 @@ module.exports = (grunt) ->
       }
     },
     watch: {
+      options: {
+        interrupt: true,
+      },
       coffee: {
         files: 'coffee/*',
         tasks: ['coffee', 'uglify:main', 'uglify:lib']
