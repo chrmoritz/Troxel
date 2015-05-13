@@ -3,7 +3,7 @@ version: "{build}"
 environment:
   matrix:
   - nodejs_version: "0.12" # node.js
-  - nodejs_version: "1"  # io.js
+  - nodejs_version: ""  # io.js
 
 install:
   - ps: Install-Product node $env:nodejs_version
