@@ -49,12 +49,18 @@ window.onpopstate = (e) ->
     if param == 'b' # load Trove model from blueprint id
       $.getJSON 'static/Trove.json', (data) ->
         model = data[value]
-        return unless model?
+        unless model?
+          # ToDo: improve this
+          $('#WebGlContainer').empty()
+          return editor = null
         io = new Base64IO model
         $('#btnExport').hide()
         $('#btnExportPng').show()
-        editor = new Editor io
-      break
+        if editor?
+          editor.reload io.voxels, io.x, io.y, io.z, true, false
+        else
+          editor = new Editor io
+      return
   unless io?
     # ToDo: improve this
     $('#WebGlContainer').empty()
