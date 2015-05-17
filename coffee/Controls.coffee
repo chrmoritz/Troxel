@@ -15,6 +15,7 @@ class THREE.TroxelControls extends THREE.EventDispatcher
     @autoRotateSpeed = -4.0
     @noKeys = false
     # internals
+    @needsRender = false
     @EPS = 0.000001
     @rotateStart = new THREE.Vector2()
     @rotateEnd = new THREE.Vector2()
@@ -135,6 +136,11 @@ class THREE.TroxelControls extends THREE.EventDispatcher
       @dispatchEvent type: 'change'
       @lastPosition.copy @object.position
       @lastQuaternion.copy @object.quaternion
+      @needsRender = false
+    if @needsRender
+      console.log 'needsRender'
+      @dispatchEvent type: 'change'
+      @needsRender = false
 
   reset = ->
     @state = @STATE.NONE

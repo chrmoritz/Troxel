@@ -86,7 +86,7 @@ class Editor extends Renderer
       @grid.visible = false
       @rollOverMesh.visible = false
       @controls.enabled = true
-    @render()
+    @controls.needsRender = true
 
   reload: (@voxels, @x, @y, @z, resize = false, init = false) ->
     if resize
@@ -110,7 +110,7 @@ class Editor extends Renderer
       intersect = intersects[0]
       @rollOverMesh.position.copy(intersect.point).add(intersect.face.normal)
       @rollOverMesh.position.divideScalar(50).floor().multiplyScalar(50).addScalar(25)
-    @render()
+    @controls.needsRender = true
 
   onDocumentMouseDown: (e) ->
     return if !@editMode or $('#openModal').css('display') == 'block' or $('#exportModal').css('display') == 'block' or $('#saveModal').css('display') == 'block'
@@ -240,7 +240,7 @@ class Editor extends Renderer
         history.pushState ioo, 'Troxel', '#m=' + base64
       catch # reached the quota lime of state object (640k on firefox)
         history.pushState null, 'Troxel', '#m=' + base64
-      @render()
+      @controls.needsRender = true
 
   onDocumentKeyDown: (e) ->
     return if $('.active #modeView').length == 1

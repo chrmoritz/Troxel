@@ -157,7 +157,7 @@ class Renderer
       @wireframe = new THREE.Line wireGeo, linemat, THREE.LinePieces
       @scene.add @wireframe
     @scene.add @mesh
-    @render() unless init
+    @controls.needsRender = true unless init
 
   animate: ->
     requestAnimationFrame => @animate()
@@ -174,6 +174,6 @@ class Renderer
     @camera.aspect = @width / @height
     @camera.updateProjectionMatrix()
     @renderer.setSize @width, @height
-    @render()
+    @controls.needsRender = true
 
 if typeof module == 'object' then module.exports = Renderer else window.Renderer = Renderer
