@@ -337,30 +337,30 @@ $('.panel-heading').click ->
 $('#ambLightColor').val('#606060').change ->
   return unless editor?
   editor.ambientLight.color = new THREE.Color($(@).val())
-  editor.render()
+  editor.controls.needsRender = true
 $('#dirLightColor').val('#ffffff').change ->
   return unless editor?
   editor.directionalLight.color = new THREE.Color($(@).val())
-  editor.render()
+  editor.controls.needsRender = true
 $('#dirLightIntensity').val(0.3).change ->
   return unless editor?
   editor.directionalLight.intensity = parseFloat $(@).val()
-  editor.render()
+  editor.controls.needsRender = true
 $('#pointLightColor').val('#ffffff').change ->
   return unless editor?
   editor.pointLight.color = new THREE.Color($(@).val())
-  editor.render()
+  editor.controls.needsRender = true
 $('#pointLightIntensity').val(0.7).change ->
   return unless editor?
   editor.pointLight.intensity = parseFloat $(@).val()
-  editor.render()
+  editor.controls.needsRender = true
 $('#dirLightX').val('-0.5')
 $('#dirLightY').val('-0.5')
 $('#dirLightZ').val('1')
 $('#dirLightVector').click ->
   return unless editor?
   editor.directionalLight.position.set(parseFloat($('#dirLightX').val()), parseFloat($('#dirLightY').val()), parseFloat($('#dirLightZ').val())).normalize()
-  editor.render()
+  editor.controls.needsRender = true
 $('#addVoxAP').click ->
   $('#addVoxColor').val('#ff00ff')
   $('#addVoxAlpha, #addVoxType, #addVoxSpecular').prop('disabled', true)

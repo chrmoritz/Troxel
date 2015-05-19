@@ -56,6 +56,7 @@ window.Troxel =
                       ,directionalLightVector: {x: -0.5, y: -0.5, z: 1}, pointLightColor: 0xffffff, pointLightIntensity: 0.7, base64: base64, controls: true
                       ,autoRotate: true, autoRotateSpeed: -4.0, noZoom: false, noPan: false, noRotate: false, renderMode: 0, renderWireframes: 0}
     _resultOptions.blueprint = blueprintId or null
+    # ToDo: replace renderer.render() with controls dirty flag
     Object.defineProperties resultOptions, {
       "base64":
         set: (s) -> _resultOptions.base64 = s; io = new Base64IO s; renderer.reload io.voxels, io.x, io.y, io.z, true, false
