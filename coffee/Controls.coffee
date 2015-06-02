@@ -38,8 +38,8 @@ class THREE.TroxelControls extends THREE.EventDispatcher
     @lastQuaternion = new THREE.Quaternion()
     @STATE = NONE: -1, ROTATE: 0, DOLLY: 1, PAN: 2, TOUCH_ROTATE: 3, TOUCH_DOLLY: 4, TOUCH_PAN: 5, FLY: 6
     @state = @STATE.NONE
-    @target0 = this.target.clone()
-    @position0 = this.object.position.clone()
+    @target0 = @target.clone()
+    @position0 = @object.position.clone()
     @quat = new THREE.Quaternion().setFromUnitVectors @object.up, new THREE.Vector3 0, 1, 0  # so camera.up is the orbit axis
     @quatInverse = @quat.clone().inverse()
     # Fly Controls internals
@@ -250,7 +250,7 @@ class THREE.TroxelControls extends THREE.EventDispatcher
           when 37 then @panXY 7.0, 0; @update() # left arrow key
           when 39 then @panXY -7.0, 0; @update() # right arrow key
     else # Fly Controls
-      (@rotationVector.set(0,0,0); @mousefly = false) if @mousefly
+      (@rotationVector.set(0, 0, 0); @mousefly = false) if @mousefly
       switch e.keyCode
         when 87 then @moveVector.z = -1 # W
         when 83 then @moveVector.z = 1 # S

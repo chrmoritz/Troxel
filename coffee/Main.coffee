@@ -34,7 +34,7 @@ window.onpopstate = (e) ->
     else
       return editor = new Editor io
   io = null
-  for hash in decodeURI(window.location.hash).replace('#','').split('&')
+  for hash in decodeURI(window.location.hash).replace('#', '').split('&')
     [param, value] = hash.split('=')
     if param == 'm' # load from base64 data
       io = new Base64IO value

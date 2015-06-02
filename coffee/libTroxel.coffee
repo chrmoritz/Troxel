@@ -53,8 +53,8 @@ window.Troxel =
       domElement.append info.css position: 'absolute', bottom: '0px', width: '100%', textAlign: 'center'
     resultOptions = {}
     _resultOptions = {rendererClearColor: 0x888888, ambientLightColor: 0x606060, directionalLightColor: 0xffffff, directionalLightIntensity: 0.3
-                      ,directionalLightVector: {x: -0.5, y: -0.5, z: 1}, pointLightColor: 0xffffff, pointLightIntensity: 0.7, base64: base64, controls: true
-                      ,autoRotate: true, autoRotateSpeed: -4.0, noZoom: false, noPan: false, noRotate: false, renderMode: 0, renderWireframes: 0}
+                    , directionalLightVector: {x: -0.5, y: -0.5, z: 1}, pointLightColor: 0xffffff, pointLightIntensity: 0.7, base64: base64, controls: true
+                    , autoRotate: true, autoRotateSpeed: -4.0, noZoom: false, noPan: false, noRotate: false, renderMode: 0, renderWireframes: 0}
     _resultOptions.blueprint = blueprintId or null
     # ToDo: replace renderer.render() with controls dirty flag
     Object.defineProperties resultOptions, {

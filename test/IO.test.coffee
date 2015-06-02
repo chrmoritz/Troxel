@@ -34,9 +34,9 @@ describe 'IO', ->
       new IO({x: 1, z: 1, voxels: [[[{r: 128, g: 64, b: 32, a: 255, t: 1, s: 2}]]]}).verify().should.be.false
       new IO({x: 0, y: 1, z: 1, voxels: [[[{r: 128, g: 64, b: 32, a: 255, t: 1, s: 2}]]]}).verify().should.be.false
       new IO({x: 1, y: 1, z: 1, voxels: 42}).verify().should.be.false
-      new IO({x: 1, y: 1, z: 1, voxels: [[[{r: 128, g: 64, b: 32, a: 255, t: 1, s: 2}]],[]]}).verify().should.be.false
-      new IO({x: 1, y: 1, z: 1, voxels: [[[{r: 128, g: 64, b: 32, a: 255, t: 1, s: 2}],[]]]}).verify().should.be.false
-      new IO({x: 1, y: 1, z: 1, voxels: [[[{r: 128, g: 64, b: 32, a: 255, t: 1, s: 2},{}]]]}).verify().should.be.false
+      new IO({x: 1, y: 1, z: 1, voxels: [[[{r: 128, g: 64, b: 32, a: 255, t: 1, s: 2}]], []]}).verify().should.be.false
+      new IO({x: 1, y: 1, z: 1, voxels: [[[{r: 128, g: 64, b: 32, a: 255, t: 1, s: 2}], []]]}).verify().should.be.false
+      new IO({x: 1, y: 1, z: 1, voxels: [[[{r: 128, g: 64, b: 32, a: 255, t: 1, s: 2}, {}]]]}).verify().should.be.false
       new IO({x: 1, y: 1, z: 1, voxels: [[[42]]]}).verify().should.be.false
       new IO({x: 1, y: 1, z: 1, voxels: [[[{r: 128, b: 32, a: 255, t: 1, s: 2}]]]}).verify().should.be.false
       new IO({x: 1, y: 1, z: 1, voxels: [[[{r: 128, g: 9000, b: 32, a: 255, t: 1, s: 2}]]]}).verify().should.be.false
