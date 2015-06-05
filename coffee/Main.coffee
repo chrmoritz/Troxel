@@ -428,3 +428,10 @@ $('#renderWireframes').change ->
 $('#renderControls').change ->
   editor.controls.mode = $(@).val() == "0" if editor?
 $('#ImportMerge').prop('checked', false).change -> $('.QbMergeOff').prop('disabled', !$(@).prop('checked'))
+$('#renderAutoRotateSpeed').val(0).change ->
+  ars = parseInt $(@).val()
+  if ars == 0
+    editor.controls.autoRotate = false
+  else
+    editor.controls.autoRotate = true
+    editor.controls.autoRotateSpeed = ars
