@@ -418,17 +418,18 @@ $('[data-toggle="tooltip"]').tooltip()
 $('#rendererAntialias').change ->
   editor = new Editor io if editor?
 $('#renderMode').change ->
-  if editor?
-    editor.renderMode = parseInt $(@).val()
-    editor.reload io.voxels, io.x, io.y, io.z, false, false
+  return unless editor?
+  editor.renderMode = parseInt $(@).val()
+  editor.reload io.voxels, io.x, io.y, io.z, false, false
 $('#renderWireframes').change ->
-  if editor?
-    editor.renderWireframes = parseInt $(@).val()
-    editor.reload io.voxels, io.x, io.y, io.z, false, false
+  return unless editor?
+  editor.renderWireframes = parseInt $(@).val()
+  editor.reload io.voxels, io.x, io.y, io.z, false, false
 $('#renderControls').change ->
   editor.controls.mode = $(@).val() == "0" if editor?
 $('#ImportMerge').prop('checked', false).change -> $('.QbMergeOff').prop('disabled', !$(@).prop('checked'))
 $('#renderAutoRotateSpeed').val(0).change ->
+  return unless editor?
   ars = parseInt $(@).val()
   if ars == 0
     editor.controls.autoRotate = false
