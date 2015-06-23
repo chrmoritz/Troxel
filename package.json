@@ -32,7 +32,7 @@
     "grunt-bower-task": "^0.4.0",
     "grunt-cli": "^0.1.13",
     "grunt-coffeelint": "0.0.13",
-    "grunt-concurrent": "^1.0.0",
+    "grunt-concurrent": "^2.0.0",
     "grunt-continue": "^0.1.0",
     "grunt-contrib-clean": "^0.6.0",
     "grunt-contrib-coffee": "^0.13.0",
@@ -44,11 +44,10 @@
     "grunt-jekyll-pages": "^0.4.0",
     "grunt-mocha-test": "^0.12.6",
     "grunt-notify": "^0.4.1",
-    "jade": "^1.8.2",
     "json-stable-stringify": "^1.0.0",
     "markdown": "^0.5.0",
     "mocha": "^2.1.0",
-    "should": "^6.0.0",
+    "should": "^7.0.0",
     "time-grunt": "^1.1.1"
   }
 }
