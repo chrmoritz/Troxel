@@ -26,7 +26,7 @@ class Renderer
     @renderer.setSize @width, @height
     @domContainer.empty().append @renderer.domElement
     # Event handlers
-    window.addEventListener    'resize', (e) => @onWindowResize(e)
+    window.addEventListener 'resize', (e) => @onWindowResize(e)
     @animate() if @embedded
 
   getMaterial: (color, a, t, s) ->
@@ -161,7 +161,7 @@ class Renderer
     @controls.needsRender = true unless init
 
   animate: ->
-    requestAnimationFrame => @animate()
+    requestAnimationFrame @animate
     @controls.update()
     @stats.update() unless @embedded
 
