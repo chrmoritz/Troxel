@@ -22,6 +22,7 @@ class Renderer
     # Renderer
     @renderer = new THREE.WebGLRenderer antialias: antialias
     @renderer.setClearColor 0x888888
+    @renderer.setPixelRatio window.devicePixelRatio
     @renderer.setSize @width, @height
     @domContainer.empty().append @renderer.domElement
     # Event handlers
