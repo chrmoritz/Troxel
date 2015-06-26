@@ -161,7 +161,7 @@ class Renderer
     @controls.needsRender = true unless init
 
   animate: ->
-    requestAnimationFrame @animate
+    requestAnimationFrame => @animate()
     @controls.update()
     @stats.update() unless @embedded
 
