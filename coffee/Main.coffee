@@ -272,16 +272,19 @@ $('#saveModelAs').click ->
   window.localStorage.setItem $('#saveModelName').val(), new Base64IO(io).export io.readonly
   $('#saveModal').modal 'hide'
 $('#modeView').click ->
+  return if !io? or $(@).parent().hasClass('active')
   $(@).parent().addClass('active')
   $('#modeEdit').parent().removeClass('active')
   editor.changeEditMode(false)
   $('#addPanel').fadeOut()
+  ga 'send', 'pageview', '/' if ga?
 $('#modeEdit').click ->
-  return if !io? or io.readonly
+  return if !io? or io.readonly or $(@).parent().hasClass('active')
   $(@).parent().addClass('active')
   $('#modeView').parent().removeClass('active')
   editor.changeEditMode(true)
   $('#addPanel').fadeIn()
+  ga 'send', 'pageview', '/edit' if ga?
 $('.rotateBtn').click ->
   return unless io?
   switch $(@).data('rotate')

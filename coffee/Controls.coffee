@@ -138,7 +138,6 @@ class THREE.TroxelControls extends THREE.EventDispatcher
       @lastQuaternion.copy @object.quaternion
       @needsRender = false
     if @needsRender
-      console.log 'needsRender'
       @dispatchEvent type: 'change'
       @needsRender = false
 
