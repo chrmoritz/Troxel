@@ -15,9 +15,9 @@ exec 'del /q qbexport\\* & del /q %appdata%\\Trove\\DevTool.log', {timeout: 6000
   throw err if err?
   fs.readdir 'blueprints', (err, files) ->
     throw err if err?
-    fs.readdir 'blueprints\\equipment\\ring', (err, ringRiles) ->
-      ringRiles.forEach (e, i, a) -> a[i] = 'equipment\\ring\\' + e
-      Array.prototype.push.apply files, ringRiles
+    fs.readdir 'blueprints\\equipment\\ring', (err, ringFiles) ->
+      ringFiles.forEach (e, i, a) -> a[i] = 'equipment\\ring\\' + e
+      Array.prototype.push.apply files, ringFiles
       toProcess = files.length
       processedOne = ->
         if --toProcess == 0
@@ -41,7 +41,8 @@ exec 'del /q qbexport\\* & del /q %appdata%\\Trove\\DevTool.log', {timeout: 6000
               return setImmediate processSny
             qbf = 'qbexport/' + exp
             io = new QubicleIO m: qbf + '.qb', a: qbf + '_a.qb', t: qbf + '_t.qb', s: qbf + '_s.qb', ->
-              io.resize.apply io, io.computeBoundingBox()
+              [x, y, z, ox, oy, oz] = io.computeBoundingBox()
+              io.resize x, y, z, ox, oy, oz
               models[exp] = new Base64IO(io).export(true, 2)
               process.stdout.write "#{toProcess} bp left: #{f}\n"
               processedOne()
