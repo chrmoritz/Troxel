@@ -11,13 +11,12 @@ models = {}
 failedBlueprints = []
 jsonPath = process.cwd() + '/tools/Trove.json'
 process.chdir(process.argv[2] || 'C:/Program Files/Trove/')
-exec 'del /q qbexport\\* & del /q %appdata%\\Trove\\DevTool.log', {timeout: 60000}, (err, stdout, stderr) ->
+exec 'del /q qbexport\\* & del /q bpexport\\* & del /q %appdata%\\Trove\\DevTool.log', {timeout: 60000}, (err, stdout, stderr) ->
   throw err if err?
-  fs.readdir 'blueprints', (err, files) ->
-    throw err if err?
-    fs.readdir 'blueprints\\equipment\\ring', (err, ringFiles) ->
-      ringFiles.forEach (e, i, a) -> a[i] = 'equipment\\ring\\' + e
-      Array.prototype.push.apply files, ringFiles
+  exec 'Trove.exe -tool extractarchive blueprints bpexport & Trove.exe -tool extractarchive blueprints\equipment\ring bpexport', {timeout: 60000}, (err, stdout, stderr) ->
+    throw err if err? and (err.killed or err.signal? or err.code != 1) # ignore devtool error code 1
+    fs.readdir 'bpexport', (err, files) ->
+      throw err if err?
       toProcess = files.length
       processedOne = ->
         if --toProcess == 0
@@ -33,7 +32,7 @@ exec 'del /q qbexport\\* & del /q %appdata%\\Trove\\DevTool.log', {timeout: 6000
         if f.length > 10 and f.indexOf('.blueprint') == f.length - 10
           exp = f.split('\\').pop()
           exp = exp.substring(0, exp.length - 10)
-          exec "Trove.exe -tool copyblueprint -generatemaps 1 blueprints\\#{f} qbexport\\#{exp}.qb", {timeout: 15000}, (err, stdout, stderr) ->
+          exec "Trove.exe -tool copyblueprint -generatemaps 1 bpexport\\#{f} qbexport\\#{exp}.qb", {timeout: 15000}, (err, stdout, stderr) ->
             if err? and (err.killed or err.signal? or err.code != 1) # ignore devtool error code 1
               failedBlueprints.push(f)
               processedOne()
