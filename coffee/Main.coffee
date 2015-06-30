@@ -48,7 +48,7 @@ window.onpopstate = (e) ->
       break
     if param == 'b' # load Trove model from blueprint id
       $.getJSON 'static/Trove.json', (data) ->
-        model = data[value]
+        model = data[value.toLowerCase()]
         unless model?
           # ToDo: improve this
           $('#WebGlContainer').empty()
@@ -60,6 +60,8 @@ window.onpopstate = (e) ->
           editor.reload io.voxels, io.x, io.y, io.z, true, false
         else
           editor = new Editor io
+        try # Try to add a state object to the current history state (if below limit)
+          history.pushState {voxels: io.voxels, x: io.x, y: io.y, z: io.z, readonly: true}, 'Troxel', '#b=' + value.toLowerCase()
       return
   unless io?
     # ToDo: improve this
@@ -153,7 +155,7 @@ $('#open').click ->
       cb()
     when '#tabtrove'
       $.getJSON 'static/Trove.json', (data) ->
-        model = data[$('#sbtrove').val()]
+        model = data[$('#sbtrove').val().toLowerCase()]
         return unless model?
         if io? and $('#ImportMerge').prop('checked')
           offsets = {x: parseInt($('#QbMergeOffX').val()), y: parseInt($('#QbMergeOffY').val()), z: parseInt($('#QbMergeOffZ').val())}
@@ -161,7 +163,7 @@ $('#open').click ->
           link = '#m=' + new Base64IO(io).export true, 2
         else
           io = new Base64IO model
-          link = '#b=' + $('#sbtrove').val()
+          link = '#b=' + $('#sbtrove').val().toLowerCase()
         $('#openModal').modal 'hide'
         $('#modeView').click() if $('#modeEdit').parent().hasClass('active')
         $('#btnExport').hide()

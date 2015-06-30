@@ -7,6 +7,7 @@ window.Troxel =
   catch
     false
   renderBlueprint: (blueprintId, domElement, options, cb) ->
+    blueprintId = blueprintId.toLowerCase()
     unless Troxel.webgl()
       console.warn "WebGL is not supported by your browser"
       return cb new Error "WebGl is not supported" if typeof cb == 'function'
