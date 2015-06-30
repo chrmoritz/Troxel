@@ -63,7 +63,7 @@ window.Troxel =
         set: (s) -> _resultOptions.base64 = s; io = new Base64IO s; renderer.reload io.voxels, io.x, io.y, io.z, true, false
         get: -> _resultOptions.base64
       "blueprint":
-        set: (s) -> _resultOptions.blueprint = s; resultOptions.base64 = Troxel.blueprints[s]
+        set: (s) -> _resultOptions.blueprint = s.toLowerCase(); resultOptions.base64 = Troxel.blueprints[s.toLowerCase()]
         get: -> _resultOptions.blueprint
       "renderMode":
         set: (s) -> _resultOptions.renderMode = s; renderer.renderMode = s; renderer.reload io.voxels, io.x, io.y, io.z, false, false
