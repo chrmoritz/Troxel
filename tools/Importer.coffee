@@ -25,7 +25,7 @@ exec 'del /q qbexport\\* & del /q bpexport\\* & del /q %appdata%\\Trove\\DevTool
           process.stdout.write "\nbase64 data of #{count} blueprints successfully written to static/Trove.json\nskipped #{failedBlueprints.length} broken blueprints:\n\n"
           process.stdout.write " * #{bp}\n" for bp in failedBlueprints
           process.stdout.write "\ndeleting qbexport (could take a minute)...\n"
-          exec 'del /q qbexport\\*', {timeout: 180000}, (err, stdout, stderr) -> throw err if err?
+          exec 'del /q qbexport\\* & del /q bpexport\\*', {timeout: 180000}, (err, stdout, stderr) -> throw err if err?
       processSny = ->
         f = files.pop()
         return unless f? # all files processed

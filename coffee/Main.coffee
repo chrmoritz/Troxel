@@ -61,7 +61,7 @@ window.onpopstate = (e) ->
         else
           editor = new Editor io
         try # Try to add a state object to the current history state (if below limit)
-          history.pushState {voxels: io.voxels, x: io.x, y: io.y, z: io.z, readonly: true}, 'Troxel', '#b=' + value.toLowerCase()
+          history.replaceState {voxels: io.voxels, x: io.x, y: io.y, z: io.z, readonly: true}, 'Troxel', '#b=' + value.toLowerCase()
       return
   unless io?
     # ToDo: improve this
