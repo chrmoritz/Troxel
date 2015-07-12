@@ -38,7 +38,7 @@
     "grunt-contrib-coffee": "^0.13.0",
     "grunt-contrib-concat": "^0.5.0",
     "grunt-contrib-copy": "^0.8.0",
-    "grunt-contrib-jade": "gruntjs/grunt-contrib-jade",
+    "grunt-contrib-jade": "^0.15.0",
     "grunt-contrib-uglify": "^0.9.0",
     "grunt-contrib-watch": "^0.6.1",
     "grunt-jekyll-pages": "^0.4.0",
