@@ -231,9 +231,15 @@ html(manifest=dev?null:'troxel.appcache')
                   label(data-toggle='tooltip', data-placement='right', data-container='body', title='disables exports and edits of your voxel model if checked')
                     input#exportBase64Ro(type='checkbox')
                     | readonly
-                  label(data-toggle='tooltip', data-placement='right', data-container='body', title='enables experimental color palette compression (recommended for lairs and dungeons)', style="margin-left: 10px;")
-                    input#exportBase64V2(type='checkbox' checked)
-                    | color palette compression (recommended for lairs and dungeons)
+                  label(data-toggle='tooltip', data-placement='right', data-container='body', title='enables color palette compression for reducing link length (highly recommended for lairs and dungeons)', style="margin-left: 10px;")
+                    input#exportBase64V2(type='checkbox', checked)
+                    | color palette compression (highly recommended for lairs and dungeons)
+                  label(data-toggle='tooltip', data-placement='right', data-container='body', title='resize the modal to its minimal bounding box (removes empty voxel space around the model)')
+                    input#exportBase64Rbb(type='checkbox', checked)
+                    | resize to bounding box
+                  label(data-toggle='tooltip', data-placement='right', data-container='body', title='use Trovesaurus link shortener for getting a shorturl redirecting to your model', style="margin-left: 10px;")
+                    input#exportBase64Tsl(type='checkbox')
+                    | use Trovesaurus link shortener (shorturl)
                 button#exportBase64.btn.btn-primary.btn-lg.btn-block Export as Troxel Link
                 textarea#exportBase64Ta.form-control(rows=7, style='resize: vertical; min-height: 100px; display: none; margin-top: 5px;')
               #tabexjson.tab-pane.fade

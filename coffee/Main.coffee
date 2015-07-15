@@ -239,8 +239,13 @@ $('#exportVox').click ->
   $(@).text('Download as Magica Voxel (.vox)').attr('download', "#{filename}.vox").attr 'href', new MagicaIO(io).export() unless $(@).attr('href')?
 $('#exportBase64').click ->
   return if io.readonly
-  $('#exportBase64Ta').val(window.location.toString().split('#')[0] + '#m=' +
-    new Base64IO(io).export($('#exportBase64Ro').prop('checked'), if $('#exportBase64V2').prop('checked') then 2 else 1)).fadeIn()
+  if $('#exportBase64Rbb').prop('checked')
+    [x, y, z, ox, oy, oz] = io.computeBoundingBox()
+    io.resize x, y, z, ox, oy, oz
+  l = window.location.toString().split('#')[0] + '#m=' + new Base64IO(io).export($('#exportBase64Ro').prop('checked'), if $('#exportBase64V2').prop('checked') then 2 else 1)
+  $('#exportBase64Ta').val(l).fadeIn()
+  if $('#exportBase64Tsl').prop('checked')
+    $.post('http://www.trovesaurus.com/shorturl.php', {TroxelData: l}).done (url) -> $('#exportBase64Ta').val(url)
 $('#exportJson').click ->
   return if io.readonly
   $('#exportJsonTa').val(new JsonIO(io).export($('#exportJsonPret').prop('checked'))).fadeIn()

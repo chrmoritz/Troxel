@@ -1,14 +1,11 @@
 :markdown
   #### Recent Changes:
 
+  * new options for exporting as link: calculate bounding box and create Trovesaurus shorturl
+    * tip: use the 'Export model as Link' dialog for sharing your voxel model because of the much shorter link length.
   * reimport Trove blueprints for [Dancing Allies and Server Capacity Edition](http://forums.trovegame.com/showthread.php?27037-Dancing-Allies-and-Server-Capacity-Edition#post180745)
   * reimport Trove blueprints for [Launch is Coming Update](http://forums.trovegame.com/showthread.php?24812-Launch-is-Coming-Update#post166973)
   * renderer optimizations
-  * improved model merging and resizing (more generic, attachment point relative offsets, negative offsets)
-  * more advanced voxel model resizing: resize offsets and calculate bounding box (resize to smallest possible dimension without erasing voxels)
-  * support for lairs / dungeons: merge models, fly controls, color palette compressed base64 format (1/2 - 1/3 the link length for big models)
-  * Qubicle: fix orientation issues with right handed z coords and migrated Renderer to use right handed coords instead of left handed
-  * Editor: added support for big models (lair / dungeon sized models)
-  * added new render options: render mode and wireframes
-  * libTroxel: major API improvements (changing options and voxel model after initialisation, better camera position, improved [example](https://chrmoritz.github.io/Troxel/static/libTroxelTest.html))
-  * new vertex based Renderer (a very lot faster than old renderer, can renderer big models without lag, improved glass rendering)
+  * improved model merging and resizing: resize offsets (attachment point relative or negative offstes) and calculate bounding box
+  * added support for big models (lair / dungeon sized models): merge models, fly controls, color palette compressed base64 format
+  * new faster Renderer with mor render options + libTroxel API improvements
