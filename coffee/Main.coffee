@@ -446,3 +446,48 @@ $('#renderAutoRotateSpeed').val(0).change ->
   else
     editor.controls.autoRotate = true
     editor.controls.autoRotateSpeed = ars
+$('#TroveCreationsLint').click ->
+  return unless editor?
+  $('#TroveCreationsExportLink').hide()
+  if io.readonly
+    $('#TroveCreationsExportDiv').hide()
+  else
+    $('#TroveCreationsExportDiv').show()
+  type = $('#TroveCreationsType').val()
+  tcl = new TroveCreationsLint io, type
+  $('#TroveCreationsLintingResults').empty()
+  $('#TroveCreationsLintingResults').append("<div class=\"alert alert-danger\"><h4>#{e.title}</h4>#{e.body}</div>") for e in tcl.errors
+  $('#TroveCreationsLintingResults').append("<div class=\"alert alert-warning\"><h4>#{w.title}</h4>#{w.body}</div>") for w in tcl.warnings
+  $('#TroveCreationsLintingResults').append("<div class=\"alert alert-success\"><h4>All test passed!</h4>There is nothing to complain about your
+                                             model. Thats great, go submitting it!</div>") if tcl.warnings.length == tcl.errors.length == 0
+  $('#TroveCreationsLintingCount').text("Warning: You have #{tcl.errors.length} errors and #{tcl.warnings.length} warnings for your voxel model.
+              Please try to fix them for submitting it to the Trove Creation Reddit!") unless tcl.warnings.length == tcl.errors.length == 0
+  text = switch type
+    when 'meele' then 'meele weapon creation check out the
+      <a href="http://trove.wikia.com/wiki/Melee_weapon_creation" class="alert-link" target="_blank">melee weapon creation guide</a>'
+    when 'gun' then 'gun creation check out the
+      <a href="http://trove.wikia.com/wiki/Gun_Weapon_Creation" class="alert-link" target="_blank">gun creation guide</a>'
+    when 'staff' then 'staff creation check out the
+      <a href="http://trove.wikia.com/wiki/Staff_Creation_Guide" class="alert-link" target="_blank">staff creation guide</a>'
+    when 'bow' then 'bow creation check out the
+      <a href="http://trove.wikia.com/wiki/Bow_Creation_Guide" class="alert-link" target="_blank">bow creation guide</a>'
+    when 'mask' then 'mask creation check out the
+      <a href="http://trove.wikia.com/wiki/Mask_creation" class="alert-link" target="_blank">mask creation guide</a>'
+    when 'hat' then 'hat creation check out the
+      <a href="http://trove.wikia.com/wiki/Hat_creation" class="alert-link" target="_blank">hat creation guide</a>'
+    when 'hair' then 'hair creation check out the
+      <a href="http://trove.wikia.com/wiki/Hair_creation" class="alert-link" target="_blank">hair creation guide</a>'
+    when 'deco' then 'decoration creation check out the
+      <a href="http://trove.wikia.com/wiki/Cornerstone_decoration_creation" class="alert-link" target="_blank">decoration creation guide</a>'
+    when 'lair', 'dungeon' then 'lair and dungeon creation check out the
+      <a href="http://trove.wikia.com/wiki/Lair_and_Dungeon_creation" class="alert-link" target="_blank">lair and dungeon creation guide</a>'
+    else 'Trove creations check out the <a href="http://trove.wikia.com/wiki/Guides" class="alert-link" target="_blank">trove creations guides</a>'
+  $('#TroveCreationsLintingResults').append("<div class=\"alert alert-info\">For more information about #{text}.</div>")
+$('#TroveCreationsExport').click ->
+  return if io.readonly
+  l = window.location.toString().split('#')[0] + '#m=' + new Base64IO(io).export($('#TroveCreationsReadonly').prop('checked'), 2)
+  $('#TroveCreationsExportLink').val("[Troxel Link](#{l})").fadeIn()
+  if $('#TroveCreationsTsl').prop('checked')
+    $.post('http://www.trovesaurus.com/shorturl.php', {TroxelData: l}).done (url) -> $('#TroveCreationsExportLink').val(url)
+$('#TroveCreationLinterModal').on 'shown.bs.modal', ->
+  $('#TroveCreationLinterModal').modal 'hide' unless editor?

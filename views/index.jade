@@ -132,7 +132,7 @@ html(manifest=dev?null:'troxel.appcache')
                   span.help-block All rights for the here listed voxel models belongs to Trion Worlds and or their respective voxel model authors.
                   span.help-block
                     | Hint: Check out&nbsp;
-                    a(href='http://www.trovesaurus.com/') Trovesaurus
+                    a(href='http://www.trovesaurus.com/', target='_blank') Trovesaurus
                     |  for a categorized list of Trove items with metatdata.
               #tabnew.tab-pane.fade
                 .form-horizontal
@@ -316,6 +316,34 @@ html(manifest=dev?null:'troxel.appcache')
               option(value=3600000) 1 hour
               option(value=7200000) 2 hours
             button(onclick="javascript:location.reload();").btn.btn-primary Update now
+      
+    #TroveCreationLinterModal.modal.fade(tabindex='-1', role='dialog')
+      .modal-dialog.modal-lg
+        .modal-content
+          .modal-header
+            button.close(data-dismiss='modal'): span &times;
+            h3.modal-title Trove Creation linting results and export to Reddit link
+          .modal-body
+            .alert.alert-info
+              strong Experimental Feature:
+              |  Do not exclusively rely on the errors and warnings shown here and check the creation guides in doubt.
+              | Please report any false positive linting results
+              a.alert-link(href='https://www.reddit.com/message/compose/?to=Ignitas', target='_blank')  to me.
+            #TroveCreationsLintingResults
+            #TroveCreationsExportDiv
+              h3 Export as Reddit Link
+              p#TroveCreationsLintingCount.text-danger
+              .checkbox
+                label(data-toggle='tooltip', data-placement='right', data-container='body', title='disables exports and edits of your voxel model if checked')
+                  input#TroveCreationsReadonly(type='checkbox')
+                  | readonly (allow no edits and export)
+                label(data-toggle='tooltip', data-placement='right', data-container='body', title='use Trovesaurus link shortener for getting a shorturl redirecting to your model', style="margin-left: 10px;")
+                  input#TroveCreationsTsl(type='checkbox')
+                  | use Trovesaurus link shortener (shorturl, recommended for lairs / dungeons)
+                button#TroveCreationsExport.btn.btn-primary.btn-lg.btn-block(style="margin-top: 5px;") Export as Reddit Link
+                textarea#TroveCreationsExportLink.form-control(rows=7, style='resize: vertical; min-height: 100px; display: none; margin-top: 5px;')
+          .modal-footer
+            button.btn.btn-default(data-dismiss='modal') Close
 
     div(style="position: absolute; top: 50px; bottom: 0px; width: 100%;")
       #WebGlContainer(style='position: absolute; right: 220px; left: 0px; height: 100%;')
@@ -452,8 +480,26 @@ html(manifest=dev?null:'troxel.appcache')
         .panel.panel-default
           .panel-heading
             button.btn.btn-default.btn-sm.pull-right(style='margin-top: -6px;'): span.glyphicon.glyphicon-minus
+            h3.panel-title Trove Creations
+          .form-inline
+            select#TroveCreationsType.form-control.input-sm(style='margin-right: 10px;')
+              option(value='meele') Meele
+              option(value='gun') Gun
+              option(value='staff') Staff
+              option(value='bow') Bow
+              option(value='spear') Spear
+              option(value='mask') Mask
+              option(value='hat') Hat
+              option(value='hair') Hair
+              option(value='deco') Deco
+              option(value='lair') Lair
+              option(value='dungeon') Dungeon
+            button#TroveCreationsLint.btn.btn-default.btn-sm(data-toggle='modal', data-target='#TroveCreationLinterModal') lint and export ...
+        .panel.panel-default
+          .panel-heading
+            button.btn.btn-default.btn-sm.pull-right(style='margin-top: -6px;'): span.glyphicon.glyphicon-minus
             h3.panel-title Resize model
-          button#openResizeModal.btn.btn-default.btn-sm.btn-block(data-toggle='modal', data-target='#resizeModal') resize voxel model...
+          button#openResizeModal.btn.btn-default.btn-sm.btn-block(data-toggle='modal', data-target='#resizeModal') resize voxel model ...
         .panel.panel-default
           .panel-heading
             button.btn.btn-default.btn-sm.pull-right(style='margin-top: -6px;'): span.glyphicon.glyphicon-minus
@@ -532,6 +578,7 @@ html(manifest=dev?null:'troxel.appcache')
       != js('Renderer', {'type': 'text/javascript'})
       != js('Controls', {'type': 'text/javascript'})
       != js('Editor', {'type': 'text/javascript'})
+      != js('TroveCreationsLint', {'type': 'text/javascript'})
       != js('Main', {'type': 'text/javascript'})
     else
       script(src='static/troxel.min.js', type='text/javascript')
