@@ -463,7 +463,7 @@ $('#TroveCreationsLint').click ->
   $('#TroveCreationsLintingCount').text("Warning: You have #{tcl.errors.length} errors and #{tcl.warnings.length} warnings for your voxel model.
               Please try to fix them for submitting it to the Trove Creation Reddit!") unless tcl.warnings.length == tcl.errors.length == 0
   text = switch type
-    when 'meele' then 'meele weapon creation check out the
+    when 'melee' then 'melee weapon creation check out the
       <a href="http://trove.wikia.com/wiki/Melee_weapon_creation" class="alert-link" target="_blank">melee weapon creation guide</a>'
     when 'gun' then 'gun creation check out the
       <a href="http://trove.wikia.com/wiki/Gun_Weapon_Creation" class="alert-link" target="_blank">gun creation guide</a>'
