@@ -11,8 +11,8 @@ class TroveCreationsLint
     if @io.warn
       @warnings.push {
         title: 'Troxel had to fix issues in your material maps for you!'
-        body: 'There were issues in your material maps like invalid color values in the type / alpha / specualr map or
-               have a voxel in one map and not in another. These were fixed automatically on import my Troxel for you.
+        body: 'There were issues in your material maps like invalid color values in the type / alpha / specualr map or having a voxel in one map
+               but not in another. These were fixed automatically on import my Troxel for you (Check the WebConsole for more information.).
                It\'s recommended that you either fix these isues by yourself in your sourcefiles or use the .qb files
                exported by Troxel for creating your blueprint for submission.'
       }

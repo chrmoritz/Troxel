@@ -155,7 +155,7 @@ class Editor extends Renderer
               @voxels[z][y][x] = r: Math.floor(color.r * 255), g: Math.floor(color.g * 255), b: Math.floor(color.b * 255), a: a, t: t, s: s
             when 1 # fill single voxel
               return if intersect.object in @planes
-              intersect.point.add(intersect.face.normal).divideScalar(50).floor().sub(intersect.face.normal)
+              intersect.point.add(intersect.face.normal).divideScalar(50).floor().sub(intersect.face.normal).round()
               x = intersect.point.z
               y = intersect.point.y
               z = intersect.point.x
@@ -175,7 +175,7 @@ class Editor extends Renderer
               @voxels[z][y][x].s = s
         when 2 # right mouse button
           return if intersect.object in @planes
-          intersect.point.add(intersect.face.normal).divideScalar(50).floor().sub(intersect.face.normal)
+          intersect.point.add(intersect.face.normal).divideScalar(50).floor().sub(intersect.face.normal).round()
           x = intersect.point.z
           y = intersect.point.y
           z = intersect.point.x
@@ -222,7 +222,7 @@ class Editor extends Renderer
                     delete @voxels[z][y][x].filled if @voxels[z][y][x].filled
         when 1 # middle mouse button => color picker
           return if intersect.object in @planes
-          intersect.point.add(intersect.face.normal).divideScalar(50).floor().sub(intersect.face.normal)
+          intersect.point.add(intersect.face.normal).divideScalar(50).floor().sub(intersect.face.normal).round()
           x = intersect.point.z
           y = intersect.point.y
           z = intersect.point.x
