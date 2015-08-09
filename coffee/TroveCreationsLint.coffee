@@ -8,7 +8,14 @@ class TroveCreationsLint
     @hasExactlyOneAttachmentPoint() if @type not in ['deco', 'lair', 'dungeon']
     @hasNoFloatingVoxels() if @type not in ['lair', 'dungeon']
     @usesMaterialMaps() if @type not in ['lair', 'dungeon']
-    @checkForAlphaWithoutGlass() if @type not in ['lair', 'dungeon']
+    if @io.warn
+      @warnings.push {
+        title: 'Troxel had to fix issues in your material maps for you!'
+        body: 'There were issues in your material maps like invalid color values in the type / alpha / specualr map or
+               have a voxel in one map and not in another. These were fixed automatically on import my Troxel for you.
+               It\'s recommended that you either fix these isues by yourself in your sourcefiles or use the .qb files
+               exported by Troxel for creating your blueprint for submission.'
+      }
     switch @type
       when 'meele' then @validateMeele()
       when 'gun' then @validateGun()
@@ -28,9 +35,18 @@ class TroveCreationsLint
     i = 0
     for z in [0...@io.z] by 1 when @io.voxels[z]?
       for y in [0...@io.y] by 1 when @io.voxels[z][y]?
-        for x in [0...@io.x] by 1 when @io.voxels[z][y][x]? and @io.voxels[z][y][x].t == 7
-          i++
-    return @correctAttachmentPoint = true if i == 1
+        for x in [0...@io.x] by 1 when @io.voxels[z][y][x]?
+          vox = @io.voxels[z][y][x]
+          if vox.t == 7 or vox.s == 7 or vox.a == 250 or (vox.r == vox.b == 255 and vox.g == 0)
+            i++
+            t = vox.t == vox.s == 7 and vox.a == 250 and vox.r == vox.b == 255 and vox.g == 0
+    if i == 1
+      @errors.push {
+        title: 'Attachment point not in all material maps found!'
+        body: 'Your attachment point is only marked in some but not all material maps as a pink voxel.
+               You need to change the voxel to a pink (255,0,255) voxel in all material maps!'
+      } unless t
+      return @correctAttachmentPoint = true
     @correctAttachmentPoint = false
     if i == 0
       return @errors.push {
@@ -40,7 +56,7 @@ class TroveCreationsLint
     @errors.push {
       title: 'Multiple attachment points found!'
       body: 'You have more the one attachment point in your model. Avoid the usage of excatly pink (255,0,255) voxels in your model
-             except for the attachment point.'
+             except for the attachment point in EVERY material map.'
     }
 
   hasNoFloatingVoxels: ->
@@ -61,11 +77,12 @@ class TroveCreationsLint
           if @io.voxels[z][y][x].checked
             delete @io.voxels[z][y][x].checked
           else
-            t = true unless @io.voxels[z][y][x].t == 7 and @type in ['hair', 'hat', 'mask']
+            t = true unless @io.voxels[z][y][x].t == 7 and @type in ['hair', 'hat', 'mask'] # attachment point have to float
     if t
       @warnings.push {
         title: 'Your model has floating voxels!'
-        body: 'There will be only a few exceptions where models with floating voxels will be accepted. Try to avoid them!
+        body: 'There are voxels in your model, which are not directly connected to other voxels (in some cases caused by a unnecessary hole).
+               There will be only a few exceptions where models with floating voxels will be accepted. Try to avoid them!
                You will get feedback if this is the case for you in the submission process and Trove Creations reddit.'
       }
 
@@ -87,36 +104,24 @@ class TroveCreationsLint
              awesome stuff you can do using material maps. The usage of material maps will increase the chance, that your model gets accepted too.'
     }
 
-  checkForAlphaWithoutGlass: ->
-    for z in [0...@io.z] by 1 when @io.voxels[z]?
-      for y in [0...@io.y] by 1 when @io.voxels[z][y]?
-        for x in [0...@io.x] by 1 when @io.voxels[z][y][x]? and @io.voxels[z][y][x].a < 250 and @io.voxels[z][y][x].t not in [1, 2, 4]
-          return @warnings.push {
-            title: 'Usage of transparency on a solid block!'
-            body: 'It looks like you tried to make voxels transparent but left their type to a solid type.
-                   For transparency you have to create a type map too and set the type of the transparent voxels to a glass type. Check out the
-                  <a href="http://trove.wikia.com/wiki/Material_Map_Guide" class="alert-link" target="_blank">Material Map Guide</a> for
-                  more informations.'
-          }
-
   validateMeele: ->
     if @io.x > 10 or @io.y > 10 or @io.z > 35 # oriantation and dimension
       if @io.z <= 10 and ((@io.x <= 35 and @io.y <= 10) or (@io.x <= 10 and @io.y <= 35))
-        @errors.push {
+        return @errors.push {
           title: 'Incorrect meele weapon model oriantation!'
-          body: 'You meele weapon model is incorrectly oriantated and will be thereby held in a wrong direction ingame.
+          body: 'Your meele weapon model is incorrectly oriantated and will be thereby held in a wrong direction ingame.
                  Rotate it so that the tip of your weapon is facing the front!
                  Don\'t forget to fix this in your local files too before creating and submitting the blueprint to the devs.'
         }
       else
         @errors.push {
           title: 'Incorrect meele weapon model dimensions!'
-          body: 'A meele weapon model should not exceed 10x10x35 voxels.'
+          body: "A meele weapon model should not exceed 10x10x35 voxels, but yours is #{@io.x}x#{@io.y}x#{@io.z}."
         }
     return unless @correctAttachmentPoint
     [ax, ay, az] = @io.getAttachmentPoint() # attachment point position and surrounding
     if ay > 4 or @io.y - ay > 6
-      @errors.push {
+      @warnings.push {
         title: 'Incorrect attachment point height!'
         body: 'There shouldn\'t be voxels heigher than 5 voxel above or lower than 4 voxels below the attachment point.'
       }
@@ -129,7 +134,7 @@ class TroveCreationsLint
           else
             t = true if @io.voxels[z]?[y]?[x]?
     if t
-      @errors.push {
+      @warnings.push {
         title: 'Incorrect attachment point surrounding / handle!'
         body: 'Around the attachment point there should be only one voxel on either side lengthwise
                and nothing else in a 3x3x3 cube around the attachment point.'
@@ -138,16 +143,16 @@ class TroveCreationsLint
   validateGun: ->
     if @io.x > 5 or @io.y > 12 or @io.z > 5 # oriantation and dimension
       if @io.y <= 5 and ((@io.x <= 12 and @io.z <= 5) or (@io.x <= 5 and @io.z <= 12))
-        @errors.push {
+        return @errors.push {
           title: 'Incorrect gun weapon model oriantation!'
-          body: 'You gun weapon model is incorrectly oriantated and will be thereby held in a wrong direction ingame.
+          body: 'Your gun weapon model is incorrectly oriantated and will be thereby held in a wrong direction ingame.
                  Rotate it so that the muzzle is facing down!
                  Don\'t forget to fix this in your local files too before creating and submitting the blueprint to the devs.'
         }
       else
         @errors.push {
           title: 'Incorrect gun weapon model dimensions!'
-          body: 'A gun weapon model should not exceed 5x12x5 voxels.'
+          body: "A gun weapon model should not exceed 5x12x5 voxels, but yours is #{@io.x}x#{@io.y}x#{@io.z}."
         }
     return unless @correctAttachmentPoint
     [ax, ay, az] = @io.getAttachmentPoint() # attachment point position and surrounding
@@ -165,7 +170,7 @@ class TroveCreationsLint
           else
             t = true if @io.voxels[z]?[y]?[x]?
     if t
-      @errors.push {
+      @warnings.push {
         title: 'Incorrect attachment point surrounding / handle!'
         body: 'Around the attachment point there should be only one voxel to the front
                and nothing else in a 3x3x3 cube around the attachment point.'
@@ -174,26 +179,26 @@ class TroveCreationsLint
   validateStaff: ->
     if @io.x > 10 or @io.y > 10 or @io.z > 35 # oriantation and dimension
       if @io.z <= 10 and ((@io.x <= 35 and @io.y <= 10) or (@io.x <= 10 and @io.y <= 35))
-        @errors.push {
+        return @errors.push {
           title: 'Incorrect staff weapon model oriantation!'
-          body: 'You meele weapon model is incorrectly oriantated and will be thereby held in a wrong direction ingame.
+          body: 'Your staff weapon model is incorrectly oriantated and will be thereby held in a wrong direction ingame.
                  Rotate it so that the tip of your weapon is facing the front!
                  Don\'t forget to fix this in your local files too before creating and submitting the blueprint to the devs.'
         }
       else
         @errors.push {
           title: 'Incorrect staff weapon model dimensions!'
-          body: 'A meele weapon model should not exceed 10x10x35 voxels.'
+          body: "A staff weapon model should not exceed 10x10x35 voxels, but yours is #{@io.x}x#{@io.y}x#{@io.z}."
         }
     return unless @correctAttachmentPoint
     [ax, ay, az] = @io.getAttachmentPoint() # attachment point position and surrounding
     if az < 8 or az > 14
-      @errors.push {
+      @warnings.push {
         title: 'Incorrect attachment point location!'
         body: 'The handle of the staff befind the attachment point must have a length between 8 and 14 voxels.'
       }
     if @io.z - az < 17
-      @errors.push {
+      @warnings.push {
         title: 'Incorrect attachment point location!'
         body: 'There must be at least 16 voxels between attachment point and the tip of your staff.'
       }
@@ -206,7 +211,7 @@ class TroveCreationsLint
           else
             t = true if @io.voxels[z]?[y]?[x]?
     if t
-      @errors.push {
+      @warnings.push {
         title: 'Incorrect attachment point surrounding / handle!'
         body: 'Around the attachment point there should be only one voxel on either side lengthwise
                and nothing else in a 3x3x3 cube around the attachment point.'
@@ -215,7 +220,7 @@ class TroveCreationsLint
   validateBow: ->
     if @io.x > 3 or @io.y > 9 or @io.z > 21 # oriantation and dimension
       if @io.z <= 9 and ((@io.x <= 21 and @io.y <= 9) or (@io.x <= 9 and @io.y <= 21))
-        @errors.push {
+        return @errors.push {
           title: 'Incorrect bow weapon model oriantation!'
           body: 'You bow weapon model is incorrectly oriantated and will be thereby held in a wrong direction ingame.
                  Rotate it so that the bowstring goes from back to front!
@@ -224,12 +229,12 @@ class TroveCreationsLint
       else
         @errors.push {
           title: 'Incorrect bow weapon model dimensions!'
-          body: 'A meele weapon model should not exceed 3x9x21 voxels.'
+          body: "A bow weapon model should not exceed 3x9x21 voxels, but yours is #{@io.x}x#{@io.y}x#{@io.z}."
         }
     return unless @correctAttachmentPoint
     [ax, ay, az] = @io.getAttachmentPoint() # attachment point position and surrounding
     if ay > 3 or @io.y - ay > 6
-      @errors.push {
+      @warnings.push {
         title: 'Incorrect attachment point height!'
         body: 'There shouldn\'t be voxels heigher than 5 voxel above or lower than 3 voxels below the attachment point.'
       }
@@ -242,7 +247,7 @@ class TroveCreationsLint
           else
             t = true if @io.voxels[z]?[y]?[x]?
     if t
-      @errors.push {
+      @warnings.push {
         title: 'Incorrect attachment point surrounding / handle!'
         body: 'Around the attachment point there should be only one voxel on either side lengthwise
                and nothing else in a 3x3x3 cube around the attachment point.'
@@ -258,7 +263,7 @@ class TroveCreationsLint
     if @io.x > 10 or @io.y > 10 # dimension
       @errors.push {
         title: 'Incorrect mask model dimensions!'
-        body: 'A mask model should not exceed 10x10x5 voxels.'
+        body: "A mask model should not exceed 10x10x5 voxels, but yours is #{@io.x}x#{@io.y}x#{@io.z - 6}."
       }
     if @io.z > 11
       @warnings.push {
@@ -269,7 +274,7 @@ class TroveCreationsLint
     return unless @correctAttachmentPoint
     [ax, ay, az] = @io.getAttachmentPoint() # attachment point position
     unless az == 0
-      @errors.push {
+      return @errors.push {
         title: 'Incorrect mask model oriantation!'
         body: 'You mask model is incorrectly oriantated and will be thereby not weared correctly ingame.
                Rotate it so that it is facing the front!
@@ -289,15 +294,15 @@ class TroveCreationsLint
           }
 
   validateHat: ->
-    if @io.x > 20 or @io.y > 20 or @io.z > 20# dimension
+    if @io.x > 20 or @io.y > 20 or @io.z > 20 # dimension
       @errors.push {
         title: 'Incorrect hat model dimensions!'
-        body: 'A hat model should not exceed 20x14x20 voxels.'
+        body: "A hat model should not exceed 20x14x20 voxels, but yours is #{@io.x}x#{@io.y - 6}x#{@io.z}."
       }
     return unless @correctAttachmentPoint
     [ax, ay, az] = @io.getAttachmentPoint() # attachment point position
     unless ay == 0
-      @errors.push {
+      return @errors.push {
         title: 'Incorrect hat model oriantation!'
         body: 'You hat model is incorrectly oriantated and will be thereby not weared correctly ingame.
                Rotate it so that top of the hat is facing up!
@@ -320,7 +325,7 @@ class TroveCreationsLint
     if @io.x > 20 or @io.y > 20 or @io.z > 20 # dimension
       @errors.push {
         title: 'Incorrect hat model dimensions!'
-        body: 'A hat model should not exceed 20x14x20 voxels.'
+        body: "A hair model should not exceed 20x14x20 voxels, but yours is #{@io.x}x#{@io.y - 6}x#{@io.z}."
       }
     return unless @correctAttachmentPoint
     [ax, ay, az] = @io.getAttachmentPoint() # attachment point position
@@ -334,7 +339,7 @@ class TroveCreationsLint
     if @io.x > 12 or @io.y > 12 or @io.z > 12
       @errors.push {
         title: 'Incorrect decoration model dimensions!'
-        body: 'A decorations model should not exceed 12x12x12 voxels.'
+        body: "A decorations model should not exceed 12x12x12 voxels, but yours is #{@io.x}x#{@io.y}x#{@io.z}."
       }
 
 if typeof module == 'object' then module.exports = TroveCreationsLint else window.TroveCreationsLint = TroveCreationsLint

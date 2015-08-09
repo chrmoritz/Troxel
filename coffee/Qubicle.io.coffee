@@ -154,17 +154,23 @@ class QubicleIO extends IO
     @voxels[z][y][x] = {r: r, g: g, b: b, a: 255, t: 0, s: 0}
 
   addAlphaValues: (x, y, z, r, g, b) ->
-    return console.warn "Ignoring alpha voxel because of non existing color voxel at the same position" unless @voxels[z]?[y]?[x]?
+    unless @voxels[z]?[y]?[x]?
+      @warn = true
+      return console.warn "Ignoring alpha voxel because of non existing color voxel at the same position"
     if r == g and g == b
       return @voxels[z][y][x].a = r if r in [16, 48, 80, 112, 144, 176, 208, 240, 255]
       console.warn "invalid alpha value #{r}: falling back to 122"
+      @warn = true
       return @voxels[z][y][x].a = 112
     return @voxels[z][y][x].a = 250 if r == b == 255 and g == 0 # attachment point
     console.warn "invalid alpha value: r, g and b are not equal, falling back to 112"
+    @warn = true
     @voxels[z][y][x].a = 112
 
   addTypeValues: (x, y, z, r, g, b) ->
-    return console.warn "Ignoring type voxel because of non existing color voxel at the same position" unless @voxels[z]?[y]?[x]?
+    unless @voxels[z]?[y]?[x]?
+      @warn = true
+      return console.warn "Ignoring type voxel because of non existing color voxel at the same position"
     return @voxels[z][y][x].t = 0 if r == 255 and g == 255 and b == 255 # solid
     return @voxels[z][y][x].t = 1 if r == 128 and g == 128 and b == 128 # glass
     return @voxels[z][y][x].t = 2 if r ==  64 and g ==  64 and b ==  64 # tiled glass
@@ -172,16 +178,20 @@ class QubicleIO extends IO
     return @voxels[z][y][x].t = 4 if r == 255 and g == 255 and b ==   0 # glowing glass
     return @voxels[z][y][x].t = 7 if r == 255 and g ==   0 and b == 255 # attachment point
     console.warn "invalid type value (r: #{r}, g: #{g}, b: #{b}), falling back to solid"
+    @warn = true
     @voxels[z][y][x].t = 0
 
   addSpecularValues: (x, y, z, r, g, b) ->
-    return console.warn "Ignoring specular voxel because of non existing color voxel at the same position" unless @voxels[z]?[y]?[x]?
+    unless @voxels[z]?[y]?[x]?
+      @warn = true
+      return console.warn "Ignoring specular voxel because of non existing color voxel at the same position"
     return @voxels[z][y][x].s = 0 if r == 128 and g ==   0 and b ==   0 # rough
     return @voxels[z][y][x].s = 1 if r ==   0 and g == 128 and b ==   0 # metal
     return @voxels[z][y][x].s = 2 if r ==   0 and g ==   0 and b == 128 # water
     return @voxels[z][y][x].s = 3 if r == 128 and g == 128 and b ==   0 # iridescent
     return @voxels[z][y][x].s = 7 if r == 255 and g ==   0 and b == 255 # attachment point
     console.warn "invalid specular value (r: #{r}, g: #{g}, b: #{b}), falling back to rough" unless r == g == b == 255 # Trove relies on this fallback often
+    @warn = true
     @voxels[z][y][x].s = 0
 
   export: (comp) ->
