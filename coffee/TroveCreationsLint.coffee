@@ -55,8 +55,8 @@ class TroveCreationsLint
       }
     @errors.push {
       title: 'Multiple attachment points found!'
-      body: 'You have more the one attachment point in your model (#{i} found). Avoid the usage of excatly pink (255, 0, 255) voxels in your model
-             except for the attachment point in EVERY material map.'
+      body: "You have more the one attachment point in your model (#{i} found). Avoid the usage of excatly pink (255, 0, 255) voxels in your model
+             except for the attachment point in EVERY material map."
     }
 
   hasNoFloatingVoxels: ->
