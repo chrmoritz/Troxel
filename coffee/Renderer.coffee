@@ -62,7 +62,10 @@ class Renderer
       @controls.target = new THREE.Vector3 @z * 25, @y * 25, @x * 25
     unless init
       @scene.remove @mesh
-      @scene.remove @wireframe if @wireframe?
+      @mesh.geometry.dispose()
+      if @wireframe?
+        @scene.remove @wireframe
+        @wireframe.geometry.dispose()
     matrix = new THREE.Matrix4() # dummy matrix
     color = new THREE.Color()    # dummy color
     px = new THREE.PlaneGeometry 50, 50 # back

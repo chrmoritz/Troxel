@@ -90,8 +90,9 @@ class Editor extends Renderer
 
   reload: (@voxels, @x, @y, @z, resize = false, init = false) ->
     if resize
-      @scene.remove p for p in @planes
+      (@scene.remove p; p.geometry.dispose()) for p in @planes
       @scene.remove @grid
+      @grid.geometry.dispose()
       @setupGrid()
       @changeEditMode($('#modeEdit').parent().hasClass('active'))
     unless init
