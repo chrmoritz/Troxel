@@ -455,6 +455,13 @@ $('#TroveCreationsLint').click ->
     $('#TroveCreationsExportDiv').show()
   type = $('#TroveCreationsType').val()
   tcl = new TroveCreationsLint io, type
+  editor.reload io.voxels, io.x, io.y, io.z, true, false
+  ioo = {voxels: io.voxels, x: io.x, y: io.y, z: io.z, readonly: io.readonly}
+  base64 = new Base64IO(ioo).export false
+  try
+    history.pushState ioo, 'Troxel', '#m=' + base64
+  catch # reached the quota limit of the state object (640k on firefox)
+    history.pushState null, 'Troxel', '#m=' + base64
   $('#TroveCreationsLintingResults').empty()
   $('#TroveCreationsLintingResults').append("<div class=\"alert alert-danger\"><h4>#{e.title}</h4>#{e.body}</div>") for e in tcl.errors
   $('#TroveCreationsLintingResults').append("<div class=\"alert alert-warning\"><h4>#{w.title}</h4>#{w.body}</div>") for w in tcl.warnings
