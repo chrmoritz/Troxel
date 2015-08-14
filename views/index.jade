@@ -345,9 +345,9 @@ html(manifest=dev?null:'troxel.appcache')
           .modal-footer
             button.btn.btn-default(data-dismiss='modal') Close
 
-    div(style="position: absolute; top: 50px; bottom: 0px; width: 100%;")
-      #WebGlContainer(style='position: absolute; right: 220px; left: 0px; height: 100%;')
-      div(style='position: absolute; right: 0px; width: 220px; height: 100%; overflow: auto;')
+    div(style="position: fixed; top: 50px; bottom: 0px; width: 100%;")
+      #WebGlContainer(style='position: fixed; right: 220px; left: 0px; height: 100%;')
+      div(style='position: fixed; right: 0px; width: 220px; height: 100%; overflow: auto;')
         #addPanel.panel.panel-default(style='display: none;')
           .panel-heading
             button.btn.btn-default.btn-sm.pull-right(style='margin-top: -6px;'): span.glyphicon.glyphicon-minus

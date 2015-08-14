@@ -2,7 +2,7 @@
 class Renderer
   constructor: (io, @embedded = false, @domContainer = $('#WebGlContainer'), @renderMode = 0, @renderWireframes = 0, antialias = true, renderControls = true) ->
     @width = @domContainer.width()
-    @height = @domContainer.height() - (if @embedded then 0 else 5)
+    @height = @domContainer.height()
     @scene = new THREE.Scene()
     # Camera and Controls
     @camera = new THREE.PerspectiveCamera 45, @width / @height, 1, 100000
@@ -16,7 +16,7 @@ class Renderer
     @directionalLight = new THREE.DirectionalLight 0xffffff, 0.3
     @directionalLight.position.set(-0.5, -0.5, 1).normalize()
     @scene.add @directionalLight
-    @pointLight = new THREE.PointLight 0xffffff, 0.7, 100000
+    @pointLight = new THREE.PointLight 0xffffff, 0.6, 100000
     @camera.add @pointLight
     @scene.add @camera
     # Renderer
@@ -175,7 +175,7 @@ class Renderer
 
   onWindowResize: ->
     @width = @domContainer.width()
-    @height = @domContainer.height() - (if @embedded then 0 else 5)
+    @height = @domContainer.height()
     @camera.aspect = @width / @height
     @camera.updateProjectionMatrix()
     @renderer.setSize @width, @height
