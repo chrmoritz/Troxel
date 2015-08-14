@@ -178,8 +178,8 @@ class TroveCreationsLint
       }
 
   validateStaff: ->
-    if @io.x > 10 or @io.y > 10 or @io.z > 35 # oriantation and dimension
-      if @io.z <= 10 and ((@io.x <= 35 and @io.y <= 10) or (@io.x <= 10 and @io.y <= 35))
+    if @io.x > 12 or @io.y > 12 or @io.z > 35 # oriantation and dimension
+      if @io.z <= 12 and ((@io.x <= 35 and @io.y <= 12) or (@io.x <= 12 and @io.y <= 35))
         return @errors.push {
           title: 'Incorrect staff weapon model oriantation!'
           body: 'Your staff weapon model is incorrectly oriantated and will be thereby held in a wrong direction ingame.
@@ -189,7 +189,7 @@ class TroveCreationsLint
       else
         @errors.push {
           title: 'Incorrect staff weapon model dimensions!'
-          body: "A staff weapon model should not exceed 10x10x35 voxels, but yours is #{@io.x}x#{@io.y}x#{@io.z}."
+          body: "A staff weapon model should not exceed 12x12x35 voxels, but yours is #{@io.x}x#{@io.y}x#{@io.z}."
         }
     return unless @correctAttachmentPoint
     [ax, ay, az] = @io.getAttachmentPoint() # attachment point position and surrounding
