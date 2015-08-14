@@ -165,11 +165,12 @@ class Renderer
 
   animate: ->
     requestAnimationFrame => @animate()
-    @controls.update()
-    @stats.update() unless @embedded
+    @stats.begin() unless @embedded
+    @controls.update @stats
 
   render: (exportPng) ->
     @renderer.render @scene, @camera
+    @stats.end() unless @embedded
     window.open @renderer.domElement.toDataURL(), 'Exported png' if exportPng
 
   onWindowResize: ->

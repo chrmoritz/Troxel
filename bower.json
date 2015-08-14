@@ -19,7 +19,7 @@
     "bootstrap": "~3.3",
     "catiline": "~2.9",
     "jquery": "~2.1",
-    "stats.js": "r12",
+    "stats.js": "r14",
     "threejs": "r71",
     "typehead.js": "~0.10"
   },

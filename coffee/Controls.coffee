@@ -100,7 +100,7 @@ class THREE.TroxelControls extends THREE.EventDispatcher
     dollyScale = @zoomSpeed unless dollyScale?
     @scale *= dollyScale
 
-  update: ->
+  update: (stats) ->
     if @mode # Orbital Controls
       position = @object.position
       @offset.copy(position).sub @target
@@ -136,10 +136,11 @@ class THREE.TroxelControls extends THREE.EventDispatcher
       @dispatchEvent type: 'change'
       @lastPosition.copy @object.position
       @lastQuaternion.copy @object.quaternion
-      @needsRender = false
+      return @needsRender = false
     if @needsRender
       @dispatchEvent type: 'change'
-      @needsRender = false
+      return @needsRender = false
+    stats.end() if stats?
 
   reset = ->
     @state = @STATE.NONE
