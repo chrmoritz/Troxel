@@ -345,217 +345,216 @@ html(manifest=dev?null:'troxel.appcache')
           .modal-footer
             button.btn.btn-default(data-dismiss='modal') Close
 
-    div(style="position: fixed; top: 50px; bottom: 0px; width: 100%;")
-      #WebGlContainer(style='position: fixed; right: 220px; left: 0px; height: 100%;')
-      div(style='position: fixed; right: 0px; width: 220px; height: 100%; overflow: auto;')
-        #addPanel.panel.panel-default(style='display: none;')
-          .panel-heading
-            button.btn.btn-default.btn-sm.pull-right(style='margin-top: -6px;'): span.glyphicon.glyphicon-minus
-            h3.panel-title Editing options
-          .panel-body
-            .form-horizontal
-              .form-group(style='margin-bottom: 0px;')
-                label.col-sm-3.control-label(for='editTool', style='padding-top: 0px;') Tool:
-                .col-sm-9(style='padding-right: 0px;'): .btn-group.btn-group-xs(data-toggle='buttons', style='margin-bottom: 5px;')
-                  label.btn.btn-info.active(data-toggle='tooltip', data-container='body', data-placement='left', title='LMB = add voxel | RMB = remove voxel | MMB = pick voxel')
-                    input.editTool(type='radio', name='editTool', data-edittool=0, checked)
-                    | add/remove
-                  label.btn.btn-info(data-toggle='tooltip', data-container='body', data-placement='left', title='LMB = fill single voxel | RMB = fill connected voxels | MMB = pick voxel')
-                    input.editTool(type='radio', name='editTool', data-edittool=1)
-                    | fill mode
-              #fillSameColorDiv.form-group(style='margin-bottom: 0px; display: none;')
-                .col-sm-offset-3.col-sm-9: .checkbox(style='padding-top: 0px;')
-                  label(data-toggle='tooltip', data-container='body', data-placement='left', title='Enable this to fill only voxels with the same color or disable it to fill all connected voxels (rightclick)')
-                    input#fillSameColor(type='checkbox', checked)
-                    | same color only
-              .form-group(style='margin-bottom: 10px;')
-                label.col-sm-4.control-label(for='addVoxColor') Color:
-                .col-sm-8: .input-group.input-group-sm
-                  input#addVoxColor.form-control.input-sm(type='color', value='#ffb248')
-                  span.input-group-btn: button#addVoxAP.btn.btn-default(data-toggle='tooltip', data-container='body', data-placement='left', title='adds an attachment point') AP
-              .form-group(style='margin-bottom: 0px;')
-                label.col-sm-6.control-label(for='editVoxNoiseBright', style='padding-top: 0px; padding-right: 0px;') Noise-bright.:
-                .col-sm-6
-                  input#editVoxNoiseBright(type='range', min=0, max=0.3, step=0.01, value=0, data-toggle='tooltip', data-container='body', data-placement='left', title='Brightness noise of the color (R/G/B multiplied by the same random number)')
-              .form-group(style='margin-bottom: 0px;')
-                label.col-sm-6.control-label(for='editVoxNoiseHSL', style='padding-top: 0px;') Noise-HSL:
-                .col-sm-6
-                  input#editVoxNoiseHSL(type='range', min=0, max=0.3, step=0.01, value=0, data-toggle='tooltip', data-container='body', data-placement='left', title='HSL noise of the color (hue/saturation/lightness multiplied by different random number)')
-              .form-group(style='margin-bottom: 0px;')
-                label.col-sm-4.control-label(for='addVoxAlpha') Alpha:
-                .col-sm-8
-                  input#addVoxAlpha(type='range', min=16, max=240, step=32, value=112, disabled)
-                span.help-block transparent => solid
-              .form-group(style='margin-bottom: 10px;')
-                label.col-sm-4.control-label(for='addVoxType') Type:
-                .col-sm-8
-                  select#addVoxType.form-control.input-sm
-                    option(value=0, selected) solid
-                    option(value=1) glass
-                    option(value=2) tiled glass
-                    option(value=3) glowing solid
-                    option(value=4) glowing glass
-              .form-group(style='margin-bottom: 0px;')
-                label.col-sm-4.control-label(for='addVoxSpecular') Specular:
-                .col-sm-8
-                  select#addVoxSpecular.form-control.input-sm
-                    option(value=0, selected) rough
-                    option(value=1) metal
-                    option(value=2) water
-                    option(value=3) iridescent
-        .panel.panel-default
-          .panel-heading
-            button.btn.btn-default.btn-sm.pull-right(style='margin-top: -6px;'): span.glyphicon.glyphicon-minus
-            h3.panel-title Render options
-          .panel-body(style='padding: 5px 15px 0px;')
-            .form-horizontal
-              .form-group(style='margin-bottom: 5px;')
-                label.col-sm-5.control-label(for='renderMode') Rend.mode:
-                .col-sm-7(style='padding-right: 5px;')
-                  select#renderMode.form-control.input-sm
-                    option(value=0, selected) pretty (default)
-                    option(value=1) Color only
-                    option(value=2) Alpha map
-                    option(value=3) Type map
-                    option(value=4) Specular map
-              .form-group(style='margin-bottom: 5px;')
-                label.col-sm-5.control-label(for='renderWireframes') Wireframes:
-                .col-sm-7(style='padding-right: 5px;')
-                  select#renderWireframes.form-control.input-sm
-                    option(value=0, selected) Off (default)
-                    option(value=1) Darkgrey
-                    option(value=2) Color
-                    option(value=3) Alpha
-                    option(value=4) Type
-                    option(value=5) Specular
-              .form-group(style='margin-bottom: 5px;')
-                label.col-sm-5.control-label(for='rendererAntialias') Antialias:
-                .col-sm-7(style='padding-right: 5px;')
-                  select#rendererAntialias.form-control.input-sm
-                    option(value=1, selected) On (default)
-                    option(value=0) Off
-              .form-group(style='margin-bottom: 5px;')
-                label.col-sm-5.control-label(for='renderControls') Controls:
-                .col-sm-7(style='padding-right: 5px;')
-                  select#renderControls.form-control.input-sm
-                    option(value=0, selected) Orbital (default)
-                    option(value=1) Fly (lair/dungeon)
-              .form-group(style='margin-bottom: 10px;')
-                label.col-sm-5.control-label(for='renderAutoRotateSpeed') autorotate:
-                .col-sm-7
-                  input#renderAutoRotateSpeed(type='range', min=-10, max=10, step=1, value=0, style='margin-top: 5px;')
-              .form-group(style='margin-bottom: 10px;')
-                label.col-sm-7.control-label(for='ambLightColor', style='padding-right: 5px;') Ambient light:
-                .col-sm-5
-                  input#ambLightColor.form-control.input-sm(type='color', value='#606060', style='padding: 5px;')
-            .h5: b: u Directional light:
-            .form-horizontal
-              .form-group(style='margin-bottom: 0px;')
-                label.col-sm-4.control-label(for='dirLightColor') Color:
-                .col-sm-8
-                  input#dirLightColor.form-control.input-sm(type='color', value='#ffffff', style='padding: 5px;')
-              .form-group(style='margin-bottom: 10px;')
-                label.col-sm-4.control-label(for='dirLightIntensity') Intensity:
-                .col-sm-8
-                  input#dirLightIntensity(type='range', min=0, max=1, step=0.01, value=0.3, style='margin-top: 5px;')
-            .input-group.input-group-sm(style='margin: 0px -8px 5px;', data-toggle='tooltip', data-container='body', data-placement='left', title='normal vector for the direction of the directional light')
-              span.input-group-addon(style='padding: 5px;') x:
-              input#dirLightX.form-control(type='text', value='-0.5', style='padding: 5px;')
-              span.input-group-addon(style='padding: 5px;') y:
-              input#dirLightY.form-control(type='text', value='-0.5', style='padding: 5px;')
-              span.input-group-addon(style='padding: 5px;') z:
-              input#dirLightZ.form-control(type='text', value='1', style='padding: 5px;')
-              span.input-group-btn
-                button#dirLightVector.btn.btn-default(style='padding: 5px;') go
-            .h5: b: u Point light (camera):
-            .form-horizontal
-              .form-group(style='margin-bottom: 0px;')
-                label.col-sm-4.control-label(for='pointLightColor') Color:
-                .col-sm-8
-                  input#pointLightColor.form-control.input-sm(type='color', value='#ffffff', style='padding: 5px;')
-              .form-group(style='margin-bottom: 10px;')
-                label.col-sm-4.control-label(for='pointLightIntensity') Intensity:
-                .col-sm-8
-                  input#pointLightIntensity(type='range', min=0, max=3, step=0.01, value=0.7, style='margin-top: 5px;')
-        .panel.panel-default
-          .panel-heading
-            button.btn.btn-default.btn-sm.pull-right(style='margin-top: -6px;'): span.glyphicon.glyphicon-minus
-            h3.panel-title Trove Creations
-          .form-inline
-            select#TroveCreationsType.form-control.input-sm(style='margin-right: 5px; width: 85px;')
-              option(value='melee') Melee
-              option(value='gun') Gun
-              option(value='staff') Staff
-              option(value='bow') Bow
-              option(value='spear') Spear
-              option(value='mask') Mask
-              option(value='hat') Hat
-              option(value='hair') Hair
-              option(value='deco') Deco
-              option(value='lair') Lair
-              option(value='dungeon') Dungeon
-            button#TroveCreationsLint.btn.btn-default.btn-sm(data-toggle='modal', data-target='#TroveCreationLinterModal') lint and export ...
-        .panel.panel-default
-          .panel-heading
-            button.btn.btn-default.btn-sm.pull-right(style='margin-top: -6px;'): span.glyphicon.glyphicon-minus
-            h3.panel-title Resize model
-          button#openResizeModal.btn.btn-default.btn-sm.btn-block(data-toggle='modal', data-target='#resizeModal') resize voxel model ...
-        .panel.panel-default
-          .panel-heading
-            button.btn.btn-default.btn-sm.pull-right(style='margin-top: -6px;'): span.glyphicon.glyphicon-minus
-            h3.panel-title Rotate model
-          .panel-body
-            .form-horizontal
-              .form-group(style='margin-bottom: 10px;')
-                label.col-sm-5.control-label x-axis:
-                .col-sm-7
-                  .btn-group.btn-group-sm
-                    button.rotateBtn.btn.btn-default(data-rotate='-x', data-toggle='tooltip', data-container='body', data-placement='left', title='rotate the voxel model up') up
-                    button.rotateBtn.btn.btn-default(data-rotate='x', data-toggle='tooltip', data-container='body', data-placement='left', title='rotate the voxel model down') down
-              .form-group(style='margin-bottom: 10px;')
-                label.col-sm-5.control-label y-axis:
-                .col-sm-7
-                  .btn-group.btn-group-sm
-                    button.rotateBtn.btn.btn-default(data-rotate='-y', data-toggle='tooltip', data-container='body', data-placement='left', title='rotate the voxel model left') left
-                    button.rotateBtn.btn.btn-default(data-rotate='y', data-toggle='tooltip', data-container='body', data-placement='left', title='rotate the voxel model right') right
-              .form-group(style='margin-bottom: 0px;')
-                label.col-sm-5.control-label z-axis:
-                .col-sm-7
-                  .btn-group.btn-group-sm
-                    button.rotateBtn.btn.btn-default(data-rotate='-z', data-toggle='tooltip', data-container='body', data-placement='left', title='rotate the voxel model clockwise') cw
-                    button.rotateBtn.btn.btn-default(data-rotate='z', data-toggle='tooltip', data-container='body', data-placement='left', title='rotate the voxel model counterclockwise') ccw
-        .panel.panel-default
-          .panel-heading
-            button.btn.btn-default.btn-sm.pull-right(style='margin-top: -6px;'): span.glyphicon.glyphicon-minus
-            h3.panel-title Move model
-          .panel-body
-            .form-horizontal
-              .form-group(style='margin-bottom: 10px;')
-                label.col-sm-5.control-label x-axis:
-                .col-sm-7
-                  .btn-group.btn-group-sm
-                    button.moveBtn.btn.btn-default(data-move='-x', data-toggle='tooltip', data-container='body', data-placement='left', title='move the voxel model one voxel left') left
-                    button.moveBtn.btn.btn-default(data-move='x', data-toggle='tooltip', data-container='body', data-placement='left', title='move the voxel model one voxel right') right
-              .form-group(style='margin-bottom: 10px;')
-                label.col-sm-5.control-label y-axis:
-                .col-sm-7
-                  .btn-group.btn-group-sm
-                    button.moveBtn.btn.btn-default(data-move='-y', data-toggle='tooltip', data-container='body', data-placement='left', title='move the voxel model one voxel up') up
-                    button.moveBtn.btn.btn-default(data-move='y', data-toggle='tooltip', data-container='body', data-placement='left', title='move the voxel model one voxel down') down
-              .form-group(style='margin-bottom: 0px;')
-                label.col-sm-5.control-label z-axis:
-                .col-sm-7
-                  .btn-group.btn-group-sm
-                    button.moveBtn.btn.btn-default(data-move='-z', data-toggle='tooltip', data-container='body', data-placement='left', title='move the voxel model one voxel to the front') fw
-                    button.moveBtn.btn.btn-default(data-move='z', data-toggle='tooltip', data-container='body', data-placement='left', title='move the voxel model one voxel to the back') back
-        .panel.panel-default
-          .panel-heading
-            button.btn.btn-default.btn-sm.pull-right(style='margin-top: -6px;'): span.glyphicon.glyphicon-minus
-            h3.panel-title Mirror model
-          .btn-group-vertical.btn-group-sm(style='width: 100%;')
-            button.mirrorBtn.btn.btn-default(data-mirror='x', data-toggle='tooltip', data-container='body', data-placement='left', title='mirror the voxel model in x-axis') Mirror x-axis
-            button.mirrorBtn.btn.btn-default(data-mirror='y', data-toggle='tooltip', data-container='body', data-placement='left', title='mirror the voxel model in y-axis') Mirror y-axis
-            button.mirrorBtn.btn.btn-default(data-mirror='z', data-toggle='tooltip', data-container='body', data-placement='left', title='mirror the voxel model in z-axis') Mirror z-axis
+    #WebGlContainer(style='position: fixed; right: 220px; left: 0px; top: 50px; bottom: 0px;')
+    div(style='position: fixed; right: 0px; width: 220px; top: 50px; bottom: 0px; overflow: auto;')
+      #addPanel.panel.panel-default(style='display: none;')
+        .panel-heading
+          button.btn.btn-default.btn-sm.pull-right(style='margin-top: -6px;'): span.glyphicon.glyphicon-minus
+          h3.panel-title Editing options
+        .panel-body
+          .form-horizontal
+            .form-group(style='margin-bottom: 0px;')
+              label.col-sm-3.control-label(for='editTool', style='padding-top: 0px;') Tool:
+              .col-sm-9(style='padding-right: 0px;'): .btn-group.btn-group-xs(data-toggle='buttons', style='margin-bottom: 5px;')
+                label.btn.btn-info.active(data-toggle='tooltip', data-container='body', data-placement='left', title='LMB = add voxel | RMB = remove voxel | MMB = pick voxel')
+                  input.editTool(type='radio', name='editTool', data-edittool=0, checked)
+                  | add/remove
+                label.btn.btn-info(data-toggle='tooltip', data-container='body', data-placement='left', title='LMB = fill single voxel | RMB = fill connected voxels | MMB = pick voxel')
+                  input.editTool(type='radio', name='editTool', data-edittool=1)
+                  | fill mode
+            #fillSameColorDiv.form-group(style='margin-bottom: 0px; display: none;')
+              .col-sm-offset-3.col-sm-9: .checkbox(style='padding-top: 0px;')
+                label(data-toggle='tooltip', data-container='body', data-placement='left', title='Enable this to fill only voxels with the same color or disable it to fill all connected voxels (rightclick)')
+                  input#fillSameColor(type='checkbox', checked)
+                  | same color only
+            .form-group(style='margin-bottom: 10px;')
+              label.col-sm-4.control-label(for='addVoxColor') Color:
+              .col-sm-8: .input-group.input-group-sm
+                input#addVoxColor.form-control.input-sm(type='color', value='#ffb248')
+                span.input-group-btn: button#addVoxAP.btn.btn-default(data-toggle='tooltip', data-container='body', data-placement='left', title='adds an attachment point') AP
+            .form-group(style='margin-bottom: 0px;')
+              label.col-sm-6.control-label(for='editVoxNoiseBright', style='padding-top: 0px; padding-right: 0px;') Noise-bright.:
+              .col-sm-6
+                input#editVoxNoiseBright(type='range', min=0, max=0.3, step=0.01, value=0, data-toggle='tooltip', data-container='body', data-placement='left', title='Brightness noise of the color (R/G/B multiplied by the same random number)')
+            .form-group(style='margin-bottom: 0px;')
+              label.col-sm-6.control-label(for='editVoxNoiseHSL', style='padding-top: 0px;') Noise-HSL:
+              .col-sm-6
+                input#editVoxNoiseHSL(type='range', min=0, max=0.3, step=0.01, value=0, data-toggle='tooltip', data-container='body', data-placement='left', title='HSL noise of the color (hue/saturation/lightness multiplied by different random number)')
+            .form-group(style='margin-bottom: 0px;')
+              label.col-sm-4.control-label(for='addVoxAlpha') Alpha:
+              .col-sm-8
+                input#addVoxAlpha(type='range', min=16, max=240, step=32, value=112, disabled)
+              span.help-block transparent => solid
+            .form-group(style='margin-bottom: 10px;')
+              label.col-sm-4.control-label(for='addVoxType') Type:
+              .col-sm-8
+                select#addVoxType.form-control.input-sm
+                  option(value=0, selected) solid
+                  option(value=1) glass
+                  option(value=2) tiled glass
+                  option(value=3) glowing solid
+                  option(value=4) glowing glass
+            .form-group(style='margin-bottom: 0px;')
+              label.col-sm-4.control-label(for='addVoxSpecular') Specular:
+              .col-sm-8
+                select#addVoxSpecular.form-control.input-sm
+                  option(value=0, selected) rough
+                  option(value=1) metal
+                  option(value=2) water
+                  option(value=3) iridescent
+      .panel.panel-default
+        .panel-heading
+          button.btn.btn-default.btn-sm.pull-right(style='margin-top: -6px;'): span.glyphicon.glyphicon-minus
+          h3.panel-title Render options
+        .panel-body(style='padding: 5px 15px 0px;')
+          .form-horizontal
+            .form-group(style='margin-bottom: 5px;')
+              label.col-sm-5.control-label(for='renderMode') Rend.mode:
+              .col-sm-7(style='padding-right: 5px;')
+                select#renderMode.form-control.input-sm
+                  option(value=0, selected) pretty (default)
+                  option(value=1) Color only
+                  option(value=2) Alpha map
+                  option(value=3) Type map
+                  option(value=4) Specular map
+            .form-group(style='margin-bottom: 5px;')
+              label.col-sm-5.control-label(for='renderWireframes') Wireframes:
+              .col-sm-7(style='padding-right: 5px;')
+                select#renderWireframes.form-control.input-sm
+                  option(value=0, selected) Off (default)
+                  option(value=1) Darkgrey
+                  option(value=2) Color
+                  option(value=3) Alpha
+                  option(value=4) Type
+                  option(value=5) Specular
+            .form-group(style='margin-bottom: 5px;')
+              label.col-sm-5.control-label(for='rendererAntialias') Antialias:
+              .col-sm-7(style='padding-right: 5px;')
+                select#rendererAntialias.form-control.input-sm
+                  option(value=1, selected) On (default)
+                  option(value=0) Off
+            .form-group(style='margin-bottom: 5px;')
+              label.col-sm-5.control-label(for='renderControls') Controls:
+              .col-sm-7(style='padding-right: 5px;')
+                select#renderControls.form-control.input-sm
+                  option(value=0, selected) Orbital (default)
+                  option(value=1) Fly (lair/dungeon)
+            .form-group(style='margin-bottom: 10px;')
+              label.col-sm-5.control-label(for='renderAutoRotateSpeed') autorotate:
+              .col-sm-7
+                input#renderAutoRotateSpeed(type='range', min=-10, max=10, step=1, value=0, style='margin-top: 5px;')
+            .form-group(style='margin-bottom: 10px;')
+              label.col-sm-7.control-label(for='ambLightColor', style='padding-right: 5px;') Ambient light:
+              .col-sm-5
+                input#ambLightColor.form-control.input-sm(type='color', value='#606060', style='padding: 5px;')
+          .h5: b: u Directional light:
+          .form-horizontal
+            .form-group(style='margin-bottom: 0px;')
+              label.col-sm-4.control-label(for='dirLightColor') Color:
+              .col-sm-8
+                input#dirLightColor.form-control.input-sm(type='color', value='#ffffff', style='padding: 5px;')
+            .form-group(style='margin-bottom: 10px;')
+              label.col-sm-4.control-label(for='dirLightIntensity') Intensity:
+              .col-sm-8
+                input#dirLightIntensity(type='range', min=0, max=1, step=0.01, value=0.3, style='margin-top: 5px;')
+          .input-group.input-group-sm(style='margin: 0px -8px 5px;', data-toggle='tooltip', data-container='body', data-placement='left', title='normal vector for the direction of the directional light')
+            span.input-group-addon(style='padding: 5px;') x:
+            input#dirLightX.form-control(type='text', value='-0.5', style='padding: 5px;')
+            span.input-group-addon(style='padding: 5px;') y:
+            input#dirLightY.form-control(type='text', value='-0.5', style='padding: 5px;')
+            span.input-group-addon(style='padding: 5px;') z:
+            input#dirLightZ.form-control(type='text', value='1', style='padding: 5px;')
+            span.input-group-btn
+              button#dirLightVector.btn.btn-default(style='padding: 5px;') go
+          .h5: b: u Point light (camera):
+          .form-horizontal
+            .form-group(style='margin-bottom: 0px;')
+              label.col-sm-4.control-label(for='pointLightColor') Color:
+              .col-sm-8
+                input#pointLightColor.form-control.input-sm(type='color', value='#ffffff', style='padding: 5px;')
+            .form-group(style='margin-bottom: 10px;')
+              label.col-sm-4.control-label(for='pointLightIntensity') Intensity:
+              .col-sm-8
+                input#pointLightIntensity(type='range', min=0, max=3, step=0.01, value=0.7, style='margin-top: 5px;')
+      .panel.panel-default
+        .panel-heading
+          button.btn.btn-default.btn-sm.pull-right(style='margin-top: -6px;'): span.glyphicon.glyphicon-minus
+          h3.panel-title Trove Creations
+        .form-inline
+          select#TroveCreationsType.form-control.input-sm(style='margin-right: 5px; width: 85px;')
+            option(value='melee') Melee
+            option(value='gun') Gun
+            option(value='staff') Staff
+            option(value='bow') Bow
+            option(value='spear') Spear
+            option(value='mask') Mask
+            option(value='hat') Hat
+            option(value='hair') Hair
+            option(value='deco') Deco
+            option(value='lair') Lair
+            option(value='dungeon') Dungeon
+          button#TroveCreationsLint.btn.btn-default.btn-sm(data-toggle='modal', data-target='#TroveCreationLinterModal') lint and export ...
+      .panel.panel-default
+        .panel-heading
+          button.btn.btn-default.btn-sm.pull-right(style='margin-top: -6px;'): span.glyphicon.glyphicon-minus
+          h3.panel-title Resize model
+        button#openResizeModal.btn.btn-default.btn-sm.btn-block(data-toggle='modal', data-target='#resizeModal') resize voxel model ...
+      .panel.panel-default
+        .panel-heading
+          button.btn.btn-default.btn-sm.pull-right(style='margin-top: -6px;'): span.glyphicon.glyphicon-minus
+          h3.panel-title Rotate model
+        .panel-body
+          .form-horizontal
+            .form-group(style='margin-bottom: 10px;')
+              label.col-sm-5.control-label x-axis:
+              .col-sm-7
+                .btn-group.btn-group-sm
+                  button.rotateBtn.btn.btn-default(data-rotate='-x', data-toggle='tooltip', data-container='body', data-placement='left', title='rotate the voxel model up') up
+                  button.rotateBtn.btn.btn-default(data-rotate='x', data-toggle='tooltip', data-container='body', data-placement='left', title='rotate the voxel model down') down
+            .form-group(style='margin-bottom: 10px;')
+              label.col-sm-5.control-label y-axis:
+              .col-sm-7
+                .btn-group.btn-group-sm
+                  button.rotateBtn.btn.btn-default(data-rotate='-y', data-toggle='tooltip', data-container='body', data-placement='left', title='rotate the voxel model left') left
+                  button.rotateBtn.btn.btn-default(data-rotate='y', data-toggle='tooltip', data-container='body', data-placement='left', title='rotate the voxel model right') right
+            .form-group(style='margin-bottom: 0px;')
+              label.col-sm-5.control-label z-axis:
+              .col-sm-7
+                .btn-group.btn-group-sm
+                  button.rotateBtn.btn.btn-default(data-rotate='-z', data-toggle='tooltip', data-container='body', data-placement='left', title='rotate the voxel model clockwise') cw
+                  button.rotateBtn.btn.btn-default(data-rotate='z', data-toggle='tooltip', data-container='body', data-placement='left', title='rotate the voxel model counterclockwise') ccw
+      .panel.panel-default
+        .panel-heading
+          button.btn.btn-default.btn-sm.pull-right(style='margin-top: -6px;'): span.glyphicon.glyphicon-minus
+          h3.panel-title Move model
+        .panel-body
+          .form-horizontal
+            .form-group(style='margin-bottom: 10px;')
+              label.col-sm-5.control-label x-axis:
+              .col-sm-7
+                .btn-group.btn-group-sm
+                  button.moveBtn.btn.btn-default(data-move='-x', data-toggle='tooltip', data-container='body', data-placement='left', title='move the voxel model one voxel left') left
+                  button.moveBtn.btn.btn-default(data-move='x', data-toggle='tooltip', data-container='body', data-placement='left', title='move the voxel model one voxel right') right
+            .form-group(style='margin-bottom: 10px;')
+              label.col-sm-5.control-label y-axis:
+              .col-sm-7
+                .btn-group.btn-group-sm
+                  button.moveBtn.btn.btn-default(data-move='-y', data-toggle='tooltip', data-container='body', data-placement='left', title='move the voxel model one voxel up') up
+                  button.moveBtn.btn.btn-default(data-move='y', data-toggle='tooltip', data-container='body', data-placement='left', title='move the voxel model one voxel down') down
+            .form-group(style='margin-bottom: 0px;')
+              label.col-sm-5.control-label z-axis:
+              .col-sm-7
+                .btn-group.btn-group-sm
+                  button.moveBtn.btn.btn-default(data-move='-z', data-toggle='tooltip', data-container='body', data-placement='left', title='move the voxel model one voxel to the front') fw
+                  button.moveBtn.btn.btn-default(data-move='z', data-toggle='tooltip', data-container='body', data-placement='left', title='move the voxel model one voxel to the back') back
+      .panel.panel-default
+        .panel-heading
+          button.btn.btn-default.btn-sm.pull-right(style='margin-top: -6px;'): span.glyphicon.glyphicon-minus
+          h3.panel-title Mirror model
+        .btn-group-vertical.btn-group-sm(style='width: 100%;')
+          button.mirrorBtn.btn.btn-default(data-mirror='x', data-toggle='tooltip', data-container='body', data-placement='left', title='mirror the voxel model in x-axis') Mirror x-axis
+          button.mirrorBtn.btn.btn-default(data-mirror='y', data-toggle='tooltip', data-container='body', data-placement='left', title='mirror the voxel model in y-axis') Mirror y-axis
+          button.mirrorBtn.btn.btn-default(data-mirror='z', data-toggle='tooltip', data-container='body', data-placement='left', title='mirror the voxel model in z-axis') Mirror z-axis
 
     #AppCacheProgress.progress(style='position: fixed; bottom: 0px; width: 100%; margin: 0; display: none;')
       .progress-bar.progress-bar-info.progress-bar-striped.active(style='width: 0%;')
