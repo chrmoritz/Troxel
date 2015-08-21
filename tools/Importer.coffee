@@ -9,7 +9,8 @@ cpus = require('os').cpus().length
 
 models = {}
 failedBlueprints = []
-jsonPath = process.cwd() + '/tools/Trove.json'
+jsonPath = "#{process.cwd()}/tools/Trove.json"
+logPath = "#{process.cwd()}/tools/TroveChangelog/#{new Date('Fri Aug 21 17:42:02 2015').toISOString().split('T')[0]}.md"
 process.chdir(process.argv[2] || 'C:/Program Files/Trove/')
 exec 'del /q qbexport\\* & del /q bpexport\\* & del /q %appdata%\\Trove\\DevTool.log', {timeout: 60000}, (err, stdout, stderr) ->
   throw err if err?
@@ -20,12 +21,16 @@ exec 'del /q qbexport\\* & del /q bpexport\\* & del /q %appdata%\\Trove\\DevTool
       toProcess = files.length
       processedOne = ->
         if --toProcess == 0
-          fs.writeFile jsonPath, stringify(models, space: '  '), (err) -> thow err if err?
+          oldModels = require(jsonPath)
+          fs.writeFile jsonPath, stringify(models, space: '  '), (err) -> throw err if err?
           count = Object.keys(models).length
-          process.stdout.write "\nbase64 data of #{count} blueprints successfully written to static/Trove.json\nskipped #{failedBlueprints.length} broken blueprints:\n\n"
+          process.stdout.write "\nbase64 data of #{count} blueprints successfully written to #{jsonPath}\nskipped #{failedBlueprints.length} broken blueprints:\n\n"
           process.stdout.write " * #{bp}\n" for bp in failedBlueprints
-          process.stdout.write "\ndeleting qbexport (could take a minute)...\n"
-          exec 'del /q qbexport\\* & del /q bpexport\\*', {timeout: 180000}, (err, stdout, stderr) -> throw err if err?
+          process.stdout.write "\ncleaning up (could take a minute)...\n"
+          exec 'del /q qbexport\\* & del /q bpexport\\*', {timeout: 180000}, (err, stdout, stderr) ->
+            throw err if err?
+            process.stdout.write "finished cleaning up qbexport and bpexport\n"
+          generateChangelog oldModels, models, logPath
       processSny = ->
         f = files.pop()
         return unless f? # all files processed
@@ -51,3 +56,19 @@ exec 'del /q qbexport\\* & del /q bpexport\\* & del /q %appdata%\\Trove\\DevTool
           process.stdout.write "#{toProcess} bp left: skipped #{f} because not a blueprint\n"
           setImmediate processSny
       processSny() for i in [0...cpus*2] by 1
+
+generateChangelog = (oldObj, newObj, path) ->
+  log = ''
+  for newName, newData of newObj
+    if oldObj[newName]?
+      if newData != oldObj[newName]
+        log += "* updated blueprint: [newName](//chrmoritz.github.io/Troxel/#b=#{newName})
+                from [old version](//chrmoritz.github.io/Troxel/#m=#{oldObj[newName]})"
+      delete oldObj[newName]
+    else
+      log += "* added new blueprint: [newName](//chrmoritz.github.io/Troxel/#b=#{newName})"
+  for name, data of oldObj
+    log += "* removed blueprint: [name](//chrmoritz.github.io/Troxel/#m=#{data})"
+  fs.writeFile path, log, (err) ->
+    throw err if err?
+    process.stdout.write "Trove blueprints changelog successfully written to #{path}\n"
