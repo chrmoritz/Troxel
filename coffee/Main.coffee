@@ -489,7 +489,10 @@ $('#TroveCreationsLint').click ->
     when 'lair', 'dungeon' then 'lair and dungeon creation check out the
       <a href="http://trove.wikia.com/wiki/Lair_and_Dungeon_creation" class="alert-link" target="_blank">lair and dungeon creation guide</a>'
     else 'Trove creations check out the <a href="http://trove.wikia.com/wiki/Guides" class="alert-link" target="_blank">trove creations guides</a>'
-  $('#TroveCreationsLintingResults').append("<div class=\"alert alert-info\">For more information about #{text}.</div>")
+  $('#TroveCreationsLintingResults').prepend("<div class=\"alert alert-info\">For more information about #{text}. Also check out the
+  <a href=\"http://trove.wikia.com/wiki/Material_Map_Guide\" class=\"alert-link\" target=\"_blank\">Material Maps Guide</a>, the
+  <a href=\"http://trove.wikia.com/wiki/Style_guidelines\" class=\"alert-link\" target=\"_blank\">offical Style Guidelines</a> and the
+  <a href=\"http://trove.wikia.com/wiki/Mods'_Style_Guidelines\" class=\"alert-link\" target=\"_blank\"> Mods' Style Guidelines</a>!</div>")
 $('#TroveCreationsExport').click ->
   return if io.readonly
   l = window.location.toString().split('#')[0] + '#m=' + new Base64IO(io).export($('#TroveCreationsReadonly').prop('checked'), 2)
