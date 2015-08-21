@@ -7,6 +7,22 @@ QubicleIO = require '../coffee/Qubicle.io.coffee'
 require '../test/TestUtils.coffee'
 cpus = require('os').cpus().length
 
+generateChangelog = (oldObj, newObj, path) ->
+  log = ''
+  for newName, newData of newObj
+    if oldObj[newName]?
+      if newData != oldObj[newName]
+        log += "* updated blueprint: [#{newName}](//chrmoritz.github.io/Troxel/#b=#{newName})
+                from [old version](//chrmoritz.github.io/Troxel/#m=#{oldObj[newName]})\n"
+      delete oldObj[newName]
+    else
+      log += "* added new blueprint: [#{newName}](//chrmoritz.github.io/Troxel/#b=#{newName})\n"
+  for name, data of oldObj
+    log += "* removed blueprint: [#{name}](//chrmoritz.github.io/Troxel/#m=#{data})\n"
+  fs.writeFile path, log, (err) ->
+    throw err if err?
+    process.stdout.write "Trove blueprints changelog successfully written to #{path}\n"
+
 models = {}
 failedBlueprints = []
 jsonPath = "#{process.cwd()}/tools/Trove.json"
@@ -56,19 +72,3 @@ exec 'del /q qbexport\\* & del /q bpexport\\* & del /q %appdata%\\Trove\\DevTool
           process.stdout.write "#{toProcess} bp left: skipped #{f} because not a blueprint\n"
           setImmediate processSny
       processSny() for i in [0...cpus*2] by 1
-
-generateChangelog = (oldObj, newObj, path) ->
-  log = ''
-  for newName, newData of newObj
-    if oldObj[newName]?
-      if newData != oldObj[newName]
-        log += "* updated blueprint: [newName](//chrmoritz.github.io/Troxel/#b=#{newName})
-                from [old version](//chrmoritz.github.io/Troxel/#m=#{oldObj[newName]})"
-      delete oldObj[newName]
-    else
-      log += "* added new blueprint: [newName](//chrmoritz.github.io/Troxel/#b=#{newName})"
-  for name, data of oldObj
-    log += "* removed blueprint: [name](//chrmoritz.github.io/Troxel/#m=#{data})"
-  fs.writeFile path, log, (err) ->
-    throw err if err?
-    process.stdout.write "Trove blueprints changelog successfully written to #{path}\n"
