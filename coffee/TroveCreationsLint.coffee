@@ -51,7 +51,8 @@ class TroveCreationsLint
     if i == 0
       return @errors.push {
         title: 'No attachment point found!'
-        body: 'You need to specify an attachment point thereby your model will be aligned correctly ingame.'
+        body: 'You need to specify an attachment point (a (255, 0, 255) = #FF00FF pink voxel) thereby your model will be aligned correctly ingame.
+               Check out the guide for your specific creation type linked in the blue infobox below for more informations!'
       }
     @errors.push {
       title: 'Multiple attachment points found!'
@@ -190,7 +191,7 @@ class TroveCreationsLint
         body: 'Around the attachment point there should be only one voxel to the front
                and nothing else in a 3x3x3 cube around the attachment point. Check out the
                <a href="http://trove.wikia.com/wiki/Gun_Weapon_Creation#Handle_size_and_attachment" class="alert-link" target="_blank">gun
-               weapon creation guide</a> for more informations!'
+               weapon creation guide</a> for more informations! Exceptions may be made for guns which are designed to be worn like a glove.'
       }
 
   validateStaff: ->
@@ -327,17 +328,19 @@ class TroveCreationsLint
     if ax > 5 or @io.x - ax > 5 or ay > 4 or @io.y - ay > 6
       @errors.push {
         title: 'Incorrect attachment point position!'
-        body: 'Check the <a href="http://trove.wikia.com/wiki/Mask_creation#Head_attachment" class="alert-link" target="_blank">mask creation guide</a>
-               on the wiki for it\'s correct position..'
+        body: "There shouldn't be more than 5 voxels to the right (#{ax}), 4 to the left (#{@io.x - ax - 1}), 5 above (#{@io.y - ay - 1})
+               and 4 below (#{ay}) the attachment point (your models distances are in the brackest). Check out the
+               <a href=\"http://trove.wikia.com/wiki/Mask_creation#Head_attachment\" class=\"alert-link\" target=\"_blank\">mask creation guide</a>
+               on the wiki for are more in depth attachment point position guide. "
       }
     for z in [0...5] by 1 when @io.voxels[z]?
       for y in [0...@io.y] by 1 when @io.voxels[z][y]?
         for x in [0...@io.x] by 1 when @io.voxels[z][y][x]? and @io.voxels[z][y][x].t != 7
           return @errors.push {
             title: 'Incorrect attachment point position!'
-            body: 'The attachment point should be 6 voxels behind the mask and there shouldn\'t be any voxels behind this distance. Check out
-                   the <a href="http://trove.wikia.com/wiki/Mask_creation#Head_attachment" class="alert-link" target="_blank">mask creation guide</a>
-                   for more informations!'
+            body: "The attachment point should be 6 voxels behind the mask and there shouldn't be any voxels behind this distance. Check out the
+                   <a href=\"http://trove.wikia.com/wiki/Mask_creation#Head_attachment\" class=\"alert-link\" target=\"_blank\">mask creation guide</a>
+                   for more informations! (minimal distance to the mask was #{z} instead of 6 voxels)"
           }
 
   validateHat: ->
@@ -360,17 +363,19 @@ class TroveCreationsLint
     if ax > 10 or @io.x - ax > 10 or az > 9 or @io.z - az > 11
       @errors.push {
         title: 'Incorrect attachment point position!'
-        body: 'Check the <a href="http://trove.wikia.com/wiki/Hat_creation#Head_attachment" class="alert-link" target="_blank">hat creation guide</a>
-               on the wiki for it\'s correct position.'
+        body: "There shouldn't be more than 10 voxels to the right (#{ax}), 9 to the left (#{@io.x - ax - 1}), 10 in front of (#{@io.z - az - 1})
+               and 9 behind (#{az}) the attachment point (your models distances are in the brackest). Check out the
+               <a href=\"http://trove.wikia.com/wiki/Hat_creation#Head_attachment\" class=\"alert-link\" target=\"_blank\">hat creation guide</a>
+               on the wiki for are more in depth attachment point position guide."
       }
     for z in [0...@io.z] by 1 when @io.voxels[z]?
       for y in [0...5] by 1 when @io.voxels[z][y]?
         for x in [0...@io.x] by 1 when @io.voxels[z][y][x]? and @io.voxels[z][y][x].t != 7
           return @errors.push {
             title: 'Incorrect attachment point position!'
-            body: 'The attachment point should be 6 voxels below the hat and there shouldn\'t be any voxels below this distance. Check out
-                   the <a href="http://trove.wikia.com/wiki/Hat_creation#Head_attachment" class="alert-link" target="_blank">hat creation guide</a>
-                   for more informations!'
+            body: "The attachment point should be 6 voxels below the hat and there shouldn't be any voxels below this distance. Check out the
+                   <a href=\"http://trove.wikia.com/wiki/Hat_creation#Head_attachment\" class=\"alert-link\" target=\"_blank\">hat creation guide</a>
+                   for more informations! (minimal distance to the hat was #{y} instead of 6 voxels)"
           }
 
   validateHair: ->
