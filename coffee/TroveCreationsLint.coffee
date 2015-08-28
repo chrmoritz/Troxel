@@ -18,14 +18,14 @@ class TroveCreationsLint
       }
     switch @type
       when 'melee' then @validateMelee()
-      when 'gun' then @validateGun()
+      when 'gun'   then @validateGun()
       when 'staff' then @validateStaff()
-      when 'bow' then @validateBow()
+      when 'bow'   then @validateBow()
       when 'spear' then @validateSpear()
-      when 'mask' then @validateMask()
-      when 'hat' then @validateHat()
-      when 'hair' then @validateHair()
-      when 'deco' then @validateDeco()
+      when 'mask'  then @validateMask()
+      when 'hat'   then @validateHat()
+      when 'hair'  then @validateHair()
+      when 'deco'  then @validateDeco()
       else @warnings.push {
         title: 'Linting lairs and dungeons not yet supported!'
         body: 'Linting lairs and dungeons is not yet supported. Get feedback in the Trove Creations reddit!'
