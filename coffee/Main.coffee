@@ -478,6 +478,8 @@ $('#TroveCreationsLint').click ->
       <a href="http://trove.wikia.com/wiki/Staff_Creation_Guide" class="alert-link" target="_blank">staff creation guide</a>'
     when 'bow' then 'bow creation check out the
       <a href="http://trove.wikia.com/wiki/Bow_Creation_Guide" class="alert-link" target="_blank">bow creation guide</a>'
+    when 'spear' then 'spear creation check out the
+      <a href="http://trove.wikia.com/wiki/Spear_Creation_Guide" class="alert-link" target="_blank">spear creation guide</a>'
     when 'mask' then 'mask creation check out the
       <a href="http://trove.wikia.com/wiki/Mask_creation" class="alert-link" target="_blank">mask creation guide</a>'
     when 'hat' then 'hat creation check out the

@@ -295,10 +295,47 @@ class TroveCreationsLint
       }
 
   validateSpear: ->
-    @warnings.push {
-      title: 'Linting spears weapon models not yet supported!'
-      body: 'Linting spears weapon models is not yet supported. Get feedback in the Trove Creations reddit!'
-    }
+    if @io.x > 11 or @io.y > 11 or @io.z > 45 # oriantation and dimension
+      if @io.z <= 11 and ((@io.x <= 45 and @io.y <= 11) or (@io.x <= 11 and @io.y <= 45))
+        return @errors.push {
+          title: 'Incorrect spear weapon model oriantation!'
+          body: 'Your spear weapon model is incorrectly oriantated and will be thereby held in a wrong direction ingame.
+                 Rotate it so that the tip/head of your weapon is facing the front!
+                 Don\'t forget to fix this in your local files too before creating and submitting the .blueprint.'
+        }
+      else
+        @errors.push {
+          title: 'Incorrect spear weapon model dimensions!'
+          body: "A spear weapon model should not exceed 11x11x45 voxels, but yours is #{@io.x}x#{@io.y}x#{@io.z}. Check out
+                 the <a href=\"http://trove.wikia.com/wiki/Spear_Creation_Guide#Weapon_Dimensions\" class=\"alert-link\" target=\"_blank\">spear
+                 weapon creation guide</a> for more informations!"
+        }
+    return unless @correctAttachmentPoint
+    [ax, ay, az] = @io.getAttachmentPoint() # attachment point position
+    if az < 5 or az > 12
+      @errors.push {
+        title: 'Incorrect attachment point position!'
+        body: "The attachment point in the shaft of the spear should be between 2 and 9 voxel away from the base of the spear, but yours is #{az - 3}
+               voxel away."
+      }
+    for z in [0...2] by 1 when @io.voxels[z]? # check base
+      for y in [0...@io.y] by 1 when @io.voxels[z][y]?
+        for x in [0...@io.x] by 1 when @io.voxels[z][y][x]? and (x > ax + 1 or x < ax - 1 or y > ay + 1 or y < ay - 1)
+          return @errors.push {
+            title: 'Incorrect spear base!'
+            body: "The spear base should fit in a 3x3x3 area with the shaft connected in the center of the base. Check out the
+                   <a href=\"http://trove.wikia.com/wiki/Spear_Creation_Guide#Weapon_Dimensions\" class=\"alert-link\" target=\"_blank\">spear
+                   creation guide</a> for more informations!"
+          }
+    for z in [3...@io.z - 15] by 1 when @io.voxels[z]? # check shaft
+      for y in [0...@io.y] by 1 when @io.voxels[z][y]?
+        for x in [0...@io.x] by 1 when @io.voxels[z][y][x]? and (x != ax or y != ay)
+          return @errors.push {
+            title: 'Incorrect spear shaft or head!'
+            body: "The spear shaft should only be 1 voxel thick and connect the base with the maximal 15 voxel long spear head. Check out the
+                   <a href=\"http://trove.wikia.com/wiki/Spear_Creation_Guide#Weapon_Dimensions\" class=\"alert-link\" target=\"_blank\">spear
+                   creation guide</a> for more informations! (your spear head is #{@io.z - z} voxel long or the shaft too thick)"
+          }
 
   validateMask: ->
     if @io.x > 10 or @io.y > 10 # dimension
@@ -331,9 +368,9 @@ class TroveCreationsLint
         body: "There shouldn't be more than 5 voxels to the right (#{ax}), 4 to the left (#{@io.x - ax - 1}), 5 above (#{@io.y - ay - 1})
                and 4 below (#{ay}) the attachment point (your models distances are in the brackest). Check out the
                <a href=\"http://trove.wikia.com/wiki/Mask_creation#Head_attachment\" class=\"alert-link\" target=\"_blank\">mask creation guide</a>
-               on the wiki for are more in depth attachment point position guide. "
+               on the wiki for are more in depth attachment point position guide."
       }
-    for z in [0...5] by 1 when @io.voxels[z]?
+    for z in [0..5] by 1 when @io.voxels[z]?
       for y in [0...@io.y] by 1 when @io.voxels[z][y]?
         for x in [0...@io.x] by 1 when @io.voxels[z][y][x]? and @io.voxels[z][y][x].t != 7
           return @errors.push {
@@ -369,7 +406,7 @@ class TroveCreationsLint
                on the wiki for are more in depth attachment point position guide."
       }
     for z in [0...@io.z] by 1 when @io.voxels[z]?
-      for y in [0...5] by 1 when @io.voxels[z][y]?
+      for y in [0..5] by 1 when @io.voxels[z][y]?
         for x in [0...@io.x] by 1 when @io.voxels[z][y][x]? and @io.voxels[z][y][x].t != 7
           return @errors.push {
             title: 'Incorrect attachment point position!'
