@@ -22,11 +22,19 @@ generateChangelog = (oldObj, newObj, path) ->
   fs.writeFile path, log, (err) ->
     throw err if err?
     process.stdout.write "Trove blueprints changelog successfully written to #{path}\n"
+  # ToDo. Added, updated, renamed (same data), removed
+  fs.readdir logDir, (err, files) ->
+    throw err if err?
+    files.splice files.indexOf('index.json'), 1
+    fs.writeFile "#{logDir}/index.json", JSON.stringify(files), (err) ->
+      throw err if err?
+      process.stdout.write "Trove blueprints changelog index successfully written to #{logDir}/index.json\n"
 
 models = {}
 failedBlueprints = []
 jsonPath = "#{process.cwd()}/tools/Trove.json"
-logPath = "#{process.cwd()}/tools/TroveChangelog/#{new Date('Fri Aug 21 17:42:02 2015').toISOString().split('T')[0]}.md"
+logDir = "#{process.cwd()}/tools/TroveChangelog"
+logPath = "#{logDir}/#{new Date().toISOString().split('T')[0]}.md"
 process.chdir(process.argv[2] || 'C:/Program Files/Trove/')
 exec 'del /q qbexport\\* & del /q bpexport\\* & del /q %appdata%\\Trove\\DevTool.log', {timeout: 60000}, (err, stdout, stderr) ->
   throw err if err?
