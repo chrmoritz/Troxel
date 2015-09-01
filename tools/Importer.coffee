@@ -23,12 +23,12 @@ generateChangelog = (oldObj, newObj, path) ->
     throw err if err?
     process.stdout.write "Trove blueprints changelog successfully written to #{path}\n"
   # ToDo. Added, updated, renamed (same data), removed
-  fs.readdir logDir, (err, files) ->
-    throw err if err?
-    files.splice files.indexOf('index.json'), 1
-    fs.writeFile "#{logDir}/index.json", JSON.stringify(files), (err) ->
+    fs.readdir logDir, (err, files) ->
       throw err if err?
-      process.stdout.write "Trove blueprints changelog index successfully written to #{logDir}/index.json\n"
+      files.splice files.indexOf('index.json'), 1
+      fs.writeFile "#{logDir}/index.json", JSON.stringify(files), (err) ->
+        throw err if err?
+        process.stdout.write "Trove blueprints changelog index successfully written to #{logDir}/index.json\n"
 
 models = {}
 failedBlueprints = []
