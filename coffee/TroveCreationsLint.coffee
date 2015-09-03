@@ -6,6 +6,7 @@ class TroveCreationsLint
     [x, y, z, ox, oy, oz] = @io.computeBoundingBox()
     @io.resize x, y, z, ox, oy, oz
     @hasExactlyOneAttachmentPoint() if @type not in ['deco', 'lair', 'dungeon']
+    @hasNoBlackVoxels()
     @hasNoFloatingVoxels() if @type not in ['lair', 'dungeon']
     @usesMaterialMaps() if @type not in ['lair', 'dungeon']
     if @io.warn
@@ -51,7 +52,7 @@ class TroveCreationsLint
     if i == 0
       return @errors.push {
         title: 'No attachment point found!'
-        body: 'You need to specify an attachment point (a (255, 0, 255) = #FF00FF pink voxel) thereby your model will be aligned correctly ingame.
+        body: 'You need to specify an attachment point, a (255, 0, 255) = #FF00FF pink voxel, thereby your model will be aligned correctly ingame.
                Check out the guide for your specific creation type linked in the blue infobox below for more informations!'
       }
     @errors.push {
@@ -59,6 +60,20 @@ class TroveCreationsLint
       body: "You have more the one attachment point in your model (#{i} found). Avoid the usage of excatly pink (255, 0, 255) voxels in your model
              except for the attachment point in EVERY material map."
     }
+
+  hasNoBlackVoxels: ->
+    for z in [0...@io.z] by 1 when @io.voxels[z]?
+      for y in [0...@io.y] by 1 when @io.voxels[z][y]?
+        for x in [0...@io.x] by 1 when @io.voxels[z][y][x]?
+          vox = @io.voxels[z][y][x]
+          if Math.min(vox.r, vox.g, vox.b) + Math.max(vox.r, vox.g, vox.b) < 20
+            return @errors.push {
+              title: 'Too dark voxel found!'
+              body: "There shouldn't be voxels darker than (10, 10, 10) in your voxel model, but we found a voxel with (#{vox.r}, #{vox.g}, #{vox.b}).
+                     Try to use a (brighter) dark grey voxel instead. Check out the
+                     <a href=\"http://trove.wikia.com/wiki/Style_guidelines#Full_Black\" class=\"alert-link\" target=\"_blank\">style guide</a>
+                     for more informations!"
+            }
 
   hasNoFloatingVoxels: ->
     toCheck = @getStartingVoxel()
