@@ -3,6 +3,7 @@ class TroveCreationsLint
   constructor: (@io, @type) ->
     @errors = []
     @warnings = []
+    @infos = []
     [x, y, z, ox, oy, oz] = @io.computeBoundingBox()
     @io.resize x, y, z, ox, oy, oz
     @hasExactlyOneAttachmentPoint() if @type not in ['deco', 'lair', 'dungeon']
@@ -27,7 +28,7 @@ class TroveCreationsLint
       when 'hat'   then @validateHat()
       when 'hair'  then @validateHair()
       when 'deco'  then @validateDeco()
-      else @warnings.push {
+      else @infos.push {
         title: 'Linting lairs and dungeons not yet supported!'
         body: 'Linting lairs and dungeons is not yet supported. Get feedback in the Trove Creations reddit!'
       }
@@ -77,6 +78,7 @@ class TroveCreationsLint
 
   hasNoFloatingVoxels: ->
     toCheck = @getStartingVoxel()
+    return unless toCheck?
     @io.voxels[toCheck[0][0]][toCheck[0][1]][toCheck[0][2]].checked = true
     while toCheck.length > 0
       [z, y, x] = toCheck.pop()
@@ -115,7 +117,7 @@ class TroveCreationsLint
       for y in [0...@io.y] by 1 when @io.voxels[z][y]?
         for x in [0...@io.x] by 1 when @io.voxels[z][y][x]? and (@io.voxels[z][y][x].t > 0 or @io.voxels[z][y][x].s > 0) and @io.voxels[z][y][x].t != 7
           return
-    @warnings.push {
+    @infos.push {
       title: 'Material maps not used!'
       body: 'It looks like you haven\'t used any material maps in your voxel model. If you arent yet familiar with them, check out the
              <a href="http://trove.wikia.com/wiki/Material_Map_Guide" class="alert-link" target="_blank">Material Map Guide</a> for more informations

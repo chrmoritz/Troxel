@@ -465,6 +465,7 @@ $('#TroveCreationsLint').click ->
   $('#TroveCreationsLintingResults').empty()
   $('#TroveCreationsLintingResults').append("<div class=\"alert alert-danger\"><h4>#{e.title}</h4>#{e.body}</div>") for e in tcl.errors
   $('#TroveCreationsLintingResults').append("<div class=\"alert alert-warning\"><h4>#{w.title}</h4>#{w.body}</div>") for w in tcl.warnings
+  $('#TroveCreationsLintingResults').append("<div class=\"alert alert-info\"><h4>#{i.title}</h4>#{i.body}</div>") for i in tcl.infos
   $('#TroveCreationsLintingResults').append("<div class=\"alert alert-success\"><h4>All test passed!</h4>There is nothing to complain about your
                                              model. Thats great, go submitting it!</div>") if tcl.warnings.length == tcl.errors.length == 0
   $('#TroveCreationsLintingCount').text("Warning: You have #{tcl.errors.length} errors and #{tcl.warnings.length} warnings for your voxel model.
