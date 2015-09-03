@@ -310,6 +310,13 @@ class TroveCreationsLint
                  the <a href=\"http://trove.wikia.com/wiki/Spear_Creation_Guide#Weapon_Dimensions\" class=\"alert-link\" target=\"_blank\">spear
                  weapon creation guide</a> for more informations!"
         }
+    if @io.z < 45
+      @errors.push {
+        title: 'Incorrect spear weapon model length!'
+        body: "A spear weapon model should be exactly 45 voxels long, but yours is only #{@io.z} voxel long. Check out
+               the <a href=\"http://trove.wikia.com/wiki/Spear_Creation_Guide#Weapon_Dimensions\" class=\"alert-link\" target=\"_blank\">spear
+               weapon creation guide</a> for more informations!"
+      }
     return unless @correctAttachmentPoint
     [ax, ay, az] = @io.getAttachmentPoint() # attachment point position
     if az < 8 or az > 12
@@ -329,14 +336,15 @@ class TroveCreationsLint
                    <a href=\"http://trove.wikia.com/wiki/Spear_Creation_Guide#Weapon_Dimensions\" class=\"alert-link\" target=\"_blank\">spear
                    creation guide</a> for more informations!"
           }
-    for z in [3...@io.z - 15] by 1 when @io.voxels[z]? # check shaft
+    for z in [3...30] by 1 when @io.voxels[z]? # check shaft
       for y in [0...@io.y] by 1 when @io.voxels[z][y]?
         for x in [0...@io.x] by 1 when @io.voxels[z][y][x]? and (x != ax or y != ay)
           return @errors.push {
-            title: 'Incorrect spear shaft or head!'
-            body: "The spear shaft should only be 1 voxel thick and connect the base with the maximal 15 voxel long spear head. Check out the
+            title: 'Incorrect spear shaft or too long spear head/base!'
+            body: "The spear shaft should only be 1 voxel thick and 27 voxels long and connect the (3 voxel long) spear base with the 15 voxel long
+                   spear head. But your spear head is either #{@io.z - z} voxel long or your spear shaft is too thick. Check out the
                    <a href=\"http://trove.wikia.com/wiki/Spear_Creation_Guide#Weapon_Dimensions\" class=\"alert-link\" target=\"_blank\">spear
-                   creation guide</a> for more informations! (your spear head is #{@io.z - z} voxel long or the shaft too thick)"
+                   creation guide</a> for more informations!"
           }
 
   validateMask: ->
