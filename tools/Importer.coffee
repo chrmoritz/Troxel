@@ -35,10 +35,22 @@ failedBlueprints = []
 jsonPath = "#{process.cwd()}/tools/Trove.json"
 logDir = "#{process.cwd()}/tools/TroveChangelog"
 logPath = "#{logDir}/#{new Date().toISOString().split('T')[0]}.md"
-process.chdir(process.argv[2] || 'C:/Program Files/Trove/')
-exec 'del /q qbexport\\* & del /q bpexport\\* & del /q %appdata%\\Trove\\DevTool.log', {timeout: 60000}, (err, stdout, stderr) ->
+
+if process.platform == 'darwin'
+  trovedir = '/Applications/Trion\ Games/Trove-Live.app/Contents/Resources/Trove.app/Contents/Resources/'
+  delcmd = 'rm -rf qbexport bpexport; mkdir qbexport bpexport'
+  devtool = '../MacOS/Trove -tool'
+  slash = '/'
+else
+  trovedir = 'C:/Program Files/Trove/'
+  delcmd = 'del /q qbexport\\* bpexport\\* %appdata%\\Trove\\DevTool.log'
+  devtool = 'Trove.exe -tool'
+  slash = '\\'
+
+process.chdir(process.argv[2] || trovedir)
+exec delcmd, {timeout: 60000}, (err, stdout, stderr) ->
   throw err if err?
-  exec 'Trove.exe -tool extractarchive blueprints bpexport & Trove.exe -tool extractarchive blueprints\equipment\ring bpexport', {timeout: 60000}, (err, stdout, stderr) ->
+  exec "#{devtool} extractarchive blueprints bpexport & #{devtool} extractarchive blueprints/equipment/ring bpexport", {timeout: 60000}, (err, stdout, stderr) ->
     throw err if err? and (err.killed or err.signal? or err.code != 1) # ignore devtool error code 1
     fs.readdir 'bpexport', (err, files) ->
       throw err if err?
@@ -59,9 +71,9 @@ exec 'del /q qbexport\\* & del /q bpexport\\* & del /q %appdata%\\Trove\\DevTool
         f = files.pop()
         return unless f? # all files processed
         if f.length > 10 and f.indexOf('.blueprint') == f.length - 10
-          exp = f.split('\\').pop()
+          exp = f.split(slash).pop()
           exp = exp.substring(0, exp.length - 10)
-          exec "Trove.exe -tool copyblueprint -generatemaps 1 bpexport\\#{f} qbexport\\#{exp}.qb", {timeout: 15000}, (err, stdout, stderr) ->
+          exec "#{devtool} copyblueprint -generatemaps 1 bpexport/#{f} qbexport/#{exp}.qb", {timeout: 15000}, (err, stdout, stderr) ->
             if err? and (err.killed or err.signal? or err.code != 1) # ignore devtool error code 1
               failedBlueprints.push(f)
               processedOne()
