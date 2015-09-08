@@ -63,7 +63,7 @@ exec delcmd, {timeout: 60000}, (err, stdout, stderr) ->
           process.stdout.write "\nbase64 data of #{count} blueprints successfully written to #{jsonPath}\nskipped #{failedBlueprints.length} broken blueprints:\n\n"
           process.stdout.write " * #{bp}\n" for bp in failedBlueprints
           process.stdout.write "\ncleaning up (could take a minute)...\n"
-          exec 'del /q qbexport\\* & del /q bpexport\\*', {timeout: 180000}, (err, stdout, stderr) ->
+          exec delcmd, {timeout: 180000}, (err, stdout, stderr) ->
             throw err if err?
             process.stdout.write "finished cleaning up qbexport and bpexport\n"
           generateChangelog oldModels, models, logPath
