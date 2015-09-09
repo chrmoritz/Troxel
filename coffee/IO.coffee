@@ -29,7 +29,7 @@ class IO
           else
             return false unless typeof x.a == 'number' and x.a in [16, 48, 80, 112, 144, 176, 208, 240, 255]
             return false unless typeof x.t == 'number' and 0 <= x.t <= 4
-            return false unless typeof x.s == 'number' and 0 <= x.s <= 3
+            return false unless typeof x.s == 'number' and 0 <= x.s <= 4
     return true
 
   rotateX: (d) ->

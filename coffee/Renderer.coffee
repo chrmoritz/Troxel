@@ -34,7 +34,7 @@ class Renderer
       when 0, 1 then break
       when 2 then color = {250:0xff00ff, 16:0x101010, 48:0x303030, 80:0x505050, 12:0x707070, 144:0x909090, 176:0xb0b0b0, 208:0xd0d0d0, 240:0xf0f0f0, 255:0xffffff}[a]
       when 3 then color = [0xffffff, 0x808080, 0x404040, 0xff0000, 0xffff00, null, null, 0xff00ff][t]
-      when 4 then color = [0x800000, 0x008000, 0x000080, 0x808000, null, null, null, 0xff00ff][s]
+      when 4 then color = [0x800000, 0x008000, 0x000080, 0x808000, 0x800080, null, null, 0xff00ff][s]
     material = new THREE.MeshPhongMaterial color: color, ambient: color
     if @renderMode == 0
       if t in [3, 4] # glowing solid, glowing glass
@@ -118,7 +118,7 @@ class Renderer
               when 3 then new THREE.Color {250: 0xff00ff,  16: 0x101010,  48: 0x303030,  80: 0x505050, 12: 0x707070, 144: 0x909090
                                          , 176: 0xb0b0b0, 208: 0xd0d0d0, 240: 0xf0f0f0, 255: 0xffffff}[vox.a]
               when 4 then new THREE.Color [0xffffff, 0x808080, 0x404040, 0xff0000, 0xffff00, null, null, 0xff00ff][vox.t]
-              when 5 then new THREE.Color [0x800000, 0x008000, 0x000080, 0x808000, null, null, null, 0xff00ff][vox.s]
+              when 5 then new THREE.Color [0x800000, 0x008000, 0x000080, 0x808000, 0x800080, null, null, 0xff00ff][vox.s]
               else new THREE.Color 0x333333 # grey
             if !@voxels[z+1]?[y]?[x]?
               wireGeo.vertices.push new THREE.Vector3(50 * z + 50, 50 * y     , 50 * x     ), new THREE.Vector3(50 * z + 50, 50 * y     , 50 * x + 50),

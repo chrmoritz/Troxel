@@ -112,6 +112,10 @@ describe 'QubicleIO', ->
         io.addColorValues 0, 0, 0, 32, 64, 128
         io.addSpecularValues 0, 0, 0, 128, 128, 0
         io.voxels.should.have.propertyByPath(0, 0, 0).with.properties({r: 32, g: 64, b: 128, a: 255, t: 0, s: 3})
+      it 'should add specular values correctly: waxy', ->
+        io.addColorValues 0, 0, 0, 32, 64, 128
+        io.addSpecularValues 0, 0, 0, 128, 0, 128
+        io.voxels.should.have.propertyByPath(0, 0, 0).with.properties({r: 32, g: 64, b: 128, a: 255, t: 0, s: 4})
       it 'should add specular values correctly: attachment point', ->
         io.addColorValues 0, 0, 0, 32, 64, 128
         io.addSpecularValues 0, 0, 0, 255, 0, 255

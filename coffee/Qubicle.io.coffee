@@ -189,6 +189,7 @@ class QubicleIO extends IO
     return @voxels[z][y][x].s = 1 if r ==   0 and g == 128 and b ==   0 # metal
     return @voxels[z][y][x].s = 2 if r ==   0 and g ==   0 and b == 128 # water
     return @voxels[z][y][x].s = 3 if r == 128 and g == 128 and b ==   0 # iridescent
+    return @voxels[z][y][x].s = 4 if r == 128 and g ==   0 and b == 128 # waxy
     return @voxels[z][y][x].s = 7 if r == 255 and g ==   0 and b == 255 # attachment point
     console.warn "invalid specular value (r: #{r}, g: #{g}, b: #{b}), falling back to rough" unless r == g == b == 255 # Trove relies on this fallback often
     @warn = true
@@ -241,6 +242,7 @@ class QubicleIO extends IO
           when 1 then data_s.push   0, 128,   0, 255 # metal
           when 2 then data_s.push   0,   0, 128, 255 # water
           when 3 then data_s.push 128, 128,   0, 255 # iridescent
+          when 4 then data_s.push 128,   0, 128, 255 # waxy
           when 7 then data_s.push 255,   0, 255, 255 # attachment point
           else        data_s.push 128,   0,   0, 255 # fallback to rough (default)
       else
