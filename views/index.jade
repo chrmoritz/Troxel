@@ -439,6 +439,10 @@ html(manifest=dev?null:'troxel.appcache')
               .col-sm-7
                 input#renderAutoRotateSpeed(type='range', min=-10, max=10, step=1, value=0, style='margin-top: 5px;')
             .form-group(style='margin-bottom: 10px;')
+              label.col-sm-7.control-label(for='backgroundColor', style='padding-right: 5px;') Background:
+              .col-sm-5
+                input#backgroundColor.form-control.input-sm(type='color', value='#888888', style='padding: 5px;')
+            .form-group(style='margin-bottom: 10px;')
               label.col-sm-7.control-label(for='ambLightColor', style='padding-right: 5px;') Ambient light:
               .col-sm-5
                 input#ambLightColor.form-control.input-sm(type='color', value='#606060', style='padding: 5px;')

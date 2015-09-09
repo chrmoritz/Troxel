@@ -344,6 +344,10 @@ $('.panel-heading').click ->
   else
     span.removeClass('glyphicon-plus').addClass('glyphicon-minus')
   $(@).next().toggle()
+$('#backgroundColor').val('#888888').change ->
+  return unless editor?
+  editor.renderer.setClearColor new THREE.Color($(@).val()).getHex()
+  editor.controls.needsRender = true
 $('#ambLightColor').val('#606060').change ->
   return unless editor?
   editor.ambientLight.color = new THREE.Color($(@).val())
