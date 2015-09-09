@@ -348,6 +348,7 @@ $('#backgroundColor').val('#888888').change ->
   return unless editor?
   editor.renderer.setClearColor new THREE.Color($(@).val()).getHex()
   editor.controls.needsRender = true
+  $('body').css 'background-color', $(@).val()
 $('#ambLightColor').val('#606060').change ->
   return unless editor?
   editor.ambientLight.color = new THREE.Color($(@).val())
