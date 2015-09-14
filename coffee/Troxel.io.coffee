@@ -94,7 +94,7 @@ class Base64IO extends IO
           data.push 16 * v.t + v.s, v.r, v.g, v.b, v.a
           rcolors[hex][mat] = (data.length - 7) / 5
           throw new Error "To many colors for Troxel2 palette" unless (data.length - 7) / 5 < 32768
-      data[5] = (data.length - 7) // 1280
+      data[5] = Math.floor (data.length - 7) / 1280
       data[6] = (data.length - 7) / 5 % 256
       short = data[5] == 0 and data[6] < 128
       while i < vox.length
@@ -106,7 +106,7 @@ class Base64IO extends IO
           if short
             data.push index
           else
-            data.push index // 256, index % 256
+            data.push Math.floor(index / 256), index % 256
         else
           if short
             data.push 0 # empty

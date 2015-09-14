@@ -123,7 +123,7 @@ class QubicleIO extends IO
               if data[ia+7] > 0 # if vox exists
                 for j in [0...count] by 1
                   ix = index % x
-                  iy = index // x
+                  iy = Math.floor index / x
                   index++
                   @addValues type, ix + dx, iy + dy, iz + dz, data[ia+4], data[ia+5], data[ia+6], colorFormat
               else
@@ -131,7 +131,7 @@ class QubicleIO extends IO
               ia += 8
             else
               ix = index % x
-              iy = index // x
+              iy = Math.floor index / x
               index++
               @addValues type, ix + dx, iy + dy, iz + dz, data[ia-4], data[ia-3], data[ia-2], colorFormat if data[ia-1] > 0
         matrixBegin += 25 + nameLen + ia
