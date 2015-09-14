@@ -130,19 +130,9 @@ module.exports = (grunt) ->
     notify_hooks: options: success: true
   }
 
-  grunt.loadNpmTasks 'grunt-continue'
-  grunt.loadNpmTasks 'grunt-mocha-test'
-  grunt.loadNpmTasks 'grunt-coffeelint'
-  grunt.loadNpmTasks 'grunt-contrib-clean'
-  grunt.loadNpmTasks 'grunt-bower-task'
-  grunt.loadNpmTasks 'grunt-contrib-coffee'
-  grunt.loadNpmTasks 'grunt-contrib-uglify'
-  grunt.loadNpmTasks 'grunt-contrib-jade'
-  grunt.loadNpmTasks 'grunt-contrib-concat'
-  grunt.loadNpmTasks 'grunt-contrib-copy'
-  grunt.loadNpmTasks 'grunt-jekyll-pages'
-  grunt.loadNpmTasks 'grunt-contrib-watch'
-  grunt.loadNpmTasks 'grunt-concurrent'
+  npmTasks = ['grunt-continue', 'grunt-mocha-test', 'grunt-coffeelint', 'grunt-contrib-clean', 'grunt-bower-task', 'grunt-contrib-coffee', 'grunt-contrib-uglify',
+              'grunt-contrib-jade', 'grunt-contrib-concat', 'grunt-contrib-copy', 'grunt-jekyll-pages', 'grunt-contrib-watch', 'grunt-concurrent']
+  grunt.loadNpmTasks t for t in npmTasks
   unless process.env.CI
     grunt.loadNpmTasks 'grunt-notify'
     grunt.task.run 'notify_hooks'
