@@ -336,11 +336,11 @@ class TroveCreationsLint
       }
     return unless @correctAttachmentPoint
     [ax, ay, az] = @io.getAttachmentPoint() # attachment point position
-    if az < 5 or az > 9
+    if az < 8 or az > 12
       @errors.push {
         title: 'Incorrect attachment point position!'
-        body: "The attachment point in the shaft of the spear should be between 2 and 6 voxel away (not including the attachment point)
-               from the base of the spear, but yours is #{az - 3} voxel away. Check out the
+        body: "The attachment point in the shaft of the spear should be between 9 and 13 voxel away (including the attachment point)
+               from the bottom of the spear (or 6 to 10 from the 3x3 base), but yours is #{az + 1} (or #{az - 2}) voxel away. Check out the
                <a href=\"http://trove.wikia.com/wiki/Spear_Creation_Guide#Weapon_Dimensions\" class=\"alert-link\" target=\"_blank\">spear
                creation guide</a> for more informations!"
       }
