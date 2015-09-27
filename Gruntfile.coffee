@@ -1,6 +1,6 @@
 module.exports = (grunt) ->
   fs = require 'fs'
-  exec = require('child_process').exec
+  execFile = require('child_process').execFile
   stringify = require 'json-stable-stringify'
   require('time-grunt')(grunt)
 
@@ -156,10 +156,10 @@ module.exports = (grunt) ->
     require './test/TestUtils.coffee'
     if process.platform == 'darwin'
       trovedir = '/Applications/Trion Games/Trove-Live.app/Contents/Resources/Trove.app/Contents/Resources'
-      devtool = '../MacOS/Trove -tool'
+      devtool = '../MacOS/Trove'
     else
       trovedir = 'C:\\Program Files (x86)\\Glyph\\Games\\Trove\\Live'
-      devtool = 'Trove.exe -tool'
+      devtool = 'Trove.exe'
     models = {}
     failedBlueprints = []
     repo = process.cwd()
@@ -168,7 +168,7 @@ module.exports = (grunt) ->
     readline = require 'readline'
     join = require('path').join
     testAndChdirTrovedir = (cb) ->
-      fs.access join(trovedir, devtool.split(' ')[0]), fs.R_OK, (err) ->
+      fs.access join(trovedir, devtool), fs.R_OK, (err) ->
         if err?
           rl = readline.createInterface input: process.stdin, output: process.stdout
           grunt.log.errorlns "\nWarning: Can't find the Trove executable. Please enter the path to Trove's 'Live' directory " +
@@ -208,57 +208,59 @@ module.exports = (grunt) ->
     testAndChdirTrovedir ->
       process.chdir trovedir
       cleanup true, ->
-        exec "#{devtool} extractarchive blueprints bpexport & #{devtool} extractarchive blueprints/equipment/ring bpexport", {timeout: 60000}, (err, stdout, stderr) ->
+        execFile devtool, ['-tool', 'extractarchive', 'blueprints' ,'bpexport'], {timeout: 60000}, (err, stdout, stderr) ->
           throw err if err? and (err.killed or err.signal? or err.code != 1) # ignore devtool error code 1
-          fs.readdir 'bpexport', (err, files) ->
-            throw err if err?
-            toProcess = files.length
-            processedOne = ->
-              if --toProcess == 0
-                grunt.config.set 'changelog.oldModels', require(jsonPath)
-                grunt.config.set 'changelog.newModels', models
-                fs.writeFile jsonPath, stringify(models, space: '  '), (err) ->
-                  throw err if err?
-                  count = Object.keys(models).length
-                  grunt.log.ok "base64 data of #{count} blueprints successfully written to #{jsonPath}"
-                  grunt.log.subhead "skipped #{failedBlueprints.length} broken blueprints:"
-                  grunt.log.writeln " * #{bp}" for bp in failedBlueprints
-                  grunt.log.writeln "cleaning up (could take a minute)..."
-                cleanup false, ->
-                  grunt.log.ok "finished cleaning up bpexport and qbexport"
-                  process.chdir repo
-                  done()
-            processSny = ->
-              f = files.pop()
-              return unless f? # all files processed
-              if f.length > 10 and f.indexOf('.blueprint') == f.length - 10
-                exp = f.split(/\/|\\/).pop() # support both unix and windows style paths
-                exp = exp.substring(0, exp.length - 10)
-                exec "#{devtool} copyblueprint -generatemaps 1 bpexport/#{f} qbexport/#{exp}.qb", {timeout: 15000}, (err, stdout, stderr) ->
-                  if err? and (err.killed or err.signal? or err.code != 1) # ignore devtool error code 1
-                    failedBlueprints.push(f)
-                    processedOne()
-                    grunt.log.errorlns "#{toProcess} bp left: skipped #{f} because of trove devtool not responding"
-                    return setImmediate processSny
-                  qbf = 'qbexport/' + exp
-                  io = new QubicleIO m: qbf + '.qb', a: qbf + '_a.qb', t: qbf + '_t.qb', s: qbf + '_s.qb', ->
-                    [x, y, z, ox, oy, oz] = io.computeBoundingBox()
-                    io.resize x, y, z, ox, oy, oz
-                    models[exp] = new Base64IO(io).export(true, 2)
-                    grunt.log.writelns  "#{toProcess} bp left: #{f} done"
-                    processedOne()
+          execFile devtool, ['-tool', 'extractarchive', 'blueprints/equipment/ring' ,'bpexport'], {timeout: 60000}, (err, stdout, stderr) ->
+            throw err if err? and (err.killed or err.signal? or err.code != 1) # ignore devtool error code 1
+            fs.readdir 'bpexport', (err, files) ->
+              throw err if err?
+              toProcess = files.length
+              processedOne = ->
+                if --toProcess == 0
+                  grunt.config.set 'changelog.oldModels', require(jsonPath)
+                  grunt.config.set 'changelog.newModels', models
+                  fs.writeFile jsonPath, stringify(models, space: '  '), (err) ->
+                    throw err if err?
+                    count = Object.keys(models).length
+                    grunt.log.ok "base64 data of #{count} blueprints successfully written to #{jsonPath}"
+                    grunt.log.subhead "skipped #{failedBlueprints.length} broken blueprints:"
+                    grunt.log.writeln " * #{bp}" for bp in failedBlueprints
+                    grunt.log.writeln "cleaning up (could take a minute)..."
+                  cleanup false, ->
+                    grunt.log.ok "finished cleaning up bpexport and qbexport"
+                    process.chdir repo
+                    done()
+              processSny = ->
+                f = files.pop()
+                return unless f? # all files processed
+                if f.length > 10 and f.indexOf('.blueprint') == f.length - 10
+                  exp = f.split(/\/|\\/).pop() # support both unix and windows style paths
+                  exp = exp.substring(0, exp.length - 10)
+                  execFile devtool, ['-tool', 'copyblueprint', '-generatemaps', '1', "bpexport/#{f}", "qbexport/#{exp}.qb"], {timeout: 15000}, (err, stdout, stderr) ->
+                    if err? and (err.killed or err.signal? or err.code != 1) # ignore devtool error code 1
+                      failedBlueprints.push(f)
+                      processedOne()
+                      grunt.log.errorlns "#{toProcess} bp left: skipped #{f} because of trove devtool not responding"
+                      return setImmediate processSny
+                    qbf = 'qbexport/' + exp
+                    io = new QubicleIO m: qbf + '.qb', a: qbf + '_a.qb', t: qbf + '_t.qb', s: qbf + '_s.qb', ->
+                      [x, y, z, ox, oy, oz] = io.computeBoundingBox()
+                      io.resize x, y, z, ox, oy, oz
+                      models[exp] = new Base64IO(io).export(true, 2)
+                      grunt.log.writelns  "#{toProcess} bp left: #{f} done"
+                      processedOne()
+                    setImmediate processSny
+                else
+                  processedOne()
+                  grunt.log.errorlns "#{toProcess} bp left: skipped #{f} because not a blueprint\n"
                   setImmediate processSny
-              else
-                processedOne()
-                grunt.log.errorlns "#{toProcess} bp left: skipped #{f} because not a blueprint\n"
-                setImmediate processSny
-            processSny() for i in [0...parseInt(jobs) || 2 * require('os').cpus().length] by 1
+              processSny() for i in [0...parseInt(jobs) || 2 * require('os').cpus().length] by 1
 
   grunt.registerTask 'loadGitChangelogData', 'usage: loadGitChangelogData:oldsha[:newsha] (newsha defaults to HEAD)', (oldsha, newsha) ->
     done = @async()
     t = false
     grunt.fail.warn 'now gitsha passed: usage: loadGitChangelogData:oldsha[:newsha] (newsha defaults to HEAD)' unless oldsha?
-    exec "git show #{oldsha}:tools/Trove.json", {timeout: 10000, maxBuffer: 104857600}, (err, stdout, stderr) ->
+    execFile 'git', ['show', "#{oldsha}:tools/Trove.json"], {timeout: 10000, maxBuffer: 104857600}, (err, stdout, stderr) ->
       throw err if err?
       grunt.config.set 'changelog.oldModels', JSON.parse stdout.toString()
       done() if t
@@ -267,7 +269,7 @@ module.exports = (grunt) ->
       grunt.config.set 'changelog.newModels', require('./tools/Trove.json')
       t = true
     else
-      exec "git show #{newsha}:tools/Trove.json", {timeout: 10000, maxBuffer: 104857600}, (err, stdout, stderr) ->
+      execFile 'git', ['show', "#{newsha}:tools/Trove.json"], {timeout: 10000, maxBuffer: 104857600}, (err, stdout, stderr) ->
         throw err if err?
         grunt.config.set 'changelog.newModels', JSON.parse stdout.toString()
         done() if t
