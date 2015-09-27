@@ -49,6 +49,7 @@
     "json-stable-stringify": "^1.0.0",
     "jstransformer-markdown": "^1.1.0",
     "mocha": "^2.2.0",
+    "rimraf": "^2.4.3",
     "should": "^7.0.0",
     "time-grunt": "^1.1.1"
   }
