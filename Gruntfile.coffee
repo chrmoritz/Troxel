@@ -148,7 +148,7 @@ module.exports = (grunt) ->
   grunt.registerTask 'mocha', 'mochaTest'
   grunt.registerTask 'serve', ['build', 'concurrent:serve']
 
-  grunt.registerTask 'import', 'imports Trove blueprints', () ->
+  grunt.registerTask 'import', 'imports Trove blueprints', (jobs) ->
     done = @async()
     global.IO = require './coffee/IO.coffee'
     QubicleIO = require './coffee/Qubicle.io.coffee'
@@ -166,9 +166,9 @@ module.exports = (grunt) ->
     jsonPath = "#{repo}/tools/Trove.json"
 
     readline = require 'readline'
-    path = require 'path'
+    join = require('path').join
     testAndChdirTrovedir = (cb) ->
-      fs.access path.join(trovedir, devtool.split(' ')[0]), fs.R_OK, (err) ->
+      fs.access join(trovedir, devtool.split(' ')[0]), fs.R_OK, (err) ->
         if err?
           rl = readline.createInterface input: process.stdin, output: process.stdout
           grunt.log.errorlns "\nWarning: Can't find the Trove executable. Please enter the path to Trove's 'Live' directory " +
@@ -185,15 +185,25 @@ module.exports = (grunt) ->
           cb()
 
     rimraf = require 'rimraf'
-    cleanup = (cleanLog, cb) ->
-      cleanLog = false if process.platform == 'darwin'
-      i = if cleanLog then 3 else 2
+    cleanup = (setup, cb) ->
+      i = if setup then 4 else 2
       rimrafCb = (err) ->
         throw err if err?
         cb() if --i == 0
       rimraf 'bpexport/*', rimrafCb
       rimraf 'qbexport/*', rimrafCb
-      rimraf '%appdata%\\Trove\\DevTool.log', rimrafCb if cleanLog
+      if setup
+        if process.platform == 'darwin' # OS X: fix Trove executable permissions + delete DevTool.log
+          i++
+          fs.chmod '../MacOS/Trove', 0o744, rimrafCb
+          rimraf join(process.env.HOME, 'Documents/Trion Worlds/Trove/DevTool.log'), rimrafCb
+        else # Windows: delete DevTool.log
+          rimraf '%appdata%\\Trove\\DevTool.log', rimrafCb
+        fs.stat 'qbexport', (err, stats) -> # create qbexport directory
+          if err? || !stats.isDirectory()
+            fs.mkdir 'qbexport', 0o755, rimrafCb
+          else
+            rimrafCb()
 
     testAndChdirTrovedir ->
       process.chdir trovedir
@@ -242,7 +252,7 @@ module.exports = (grunt) ->
                 processedOne()
                 grunt.log.errorlns "#{toProcess} bp left: skipped #{f} because not a blueprint\n"
                 setImmediate processSny
-            processSny() for i in [0...2*require('os').cpus().length] by 1
+            processSny() for i in [0...parseInt(jobs) || 2 * require('os').cpus().length] by 1
 
   grunt.registerTask 'loadGitChangelogData', 'usage: loadGitChangelogData:oldsha[:newsha] (newsha defaults to HEAD)', (oldsha, newsha) ->
     done = @async()

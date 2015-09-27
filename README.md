@@ -26,7 +26,7 @@ cd troxel
 npm install
 ```
 ##### Dependencies:
-* [Node.js](https://nodejs.org/) 0.12 or [io.js](https://iojs.org/)
+* [Node.js](https://nodejs.org/) 4+ (or [io.js](https://iojs.org/) or Node.js 0.12)
 * for hosting static page locally (optionally): [ruby](https://www.ruby-lang.org/) with jekyll gem (`gem install jekyll`)
 
 #### Running dev server
@@ -57,9 +57,9 @@ npm run serve
 
 #### Importing Trove's blueprints
 ```
-npm run grunt -- import:TrovePath
+npm run import
 ```
-**Note:** *The TrovePath parameter should point to the Trove directory containing the blueprint folder and should have all spaces and `:` excaped like in `npm run grunt -- import:C\:\Program\ Files\Trove`.*
+**Note:** *If Trove is not installed in the default location you will prompted to enter the correct path to the `Live` folder containing the blueprints directory. By default the importer spawns 2 times your cpu count of Trove devtool child processes. You can customize this behavior by running the importer like `npm run grunt -- import:1` with the parallel jobs count as an optional parameter after the colon `:`.*
 
 libTroxel
 ======
