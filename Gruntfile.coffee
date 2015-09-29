@@ -224,23 +224,27 @@ module.exports = (grunt) ->
                   execFile devtool, ['-tool', 'copyblueprint', '-generatemaps', '1', "bpexport/#{f}", "qbexport/#{exp}.qb"], {timeout: 15000}, (err, stdout, stderr) ->
                     if err? and (err.killed or err.signal? or err.code != 1) # ignore devtool error code 1
                       failedBlueprints.push(f)
-                      grunt.log.errorlns "#{--toProcess} bp left: skipped #{f} because of trove devtool not responding"
+                      grunt.log.errorlns "#{--toProcess} bp left | skipped (devtool not responding): #{f}"
                       return cb()
                     qbf = 'qbexport/' + exp
                     io = new QubicleIO m: qbf + '.qb', a: qbf + '_a.qb', t: qbf + '_t.qb', s: qbf + '_s.qb', ->
                       [x, y, z, ox, oy, oz] = io.computeBoundingBox()
                       io.resize x, y, z, ox, oy, oz
                       models[exp] = new Base64IO(io).export(true, 2)
-                      grunt.log.writelns  "#{--toProcess} bp left: #{f} done"
+                      grunt.log.writelns  "#{--toProcess} bp left | imported: #{f}"
+                      queue.drain() if toProcess == 0
                     cb() # opening qb files can run concurrent to devtool tasks
                 else
-                  grunt.log.errorlns "#{--toProcess} bp left: skipped #{f} because not a blueprint\n"
+                  grunt.log.errorlns "#{--toProcess} bp left | skipped (not a blueprint): #{f}"
                   cb()
               ), parseInt(jobs) || 2 * require('os').cpus().length)
               queue.drain = ->
+                return unless toProcess == 0
                 if failedBlueprints.length > 0 and retry # retry failedBlueprints once with concurrency 1
                   retry = false
                   grunt.log.errorlns "retrying #{failedBlueprints.length} broken blueprints with concurrency 1"
+                  toProcess = failedBlueprints.length
+                  failedBlueprints = []
                   queue.concurrency = 1
                   return queue.push failedBlueprints
                 grunt.config.set 'changelog.oldModels', require(jsonPath)
