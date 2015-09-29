@@ -160,8 +160,6 @@ module.exports = (grunt) ->
     else
       trovedir = 'C:\\Program Files (x86)\\Glyph\\Games\\Trove\\Live'
       devtool = 'Trove.exe'
-    models = {}
-    failedBlueprints = []
     repo = process.cwd()
     jsonPath = "#{repo}/tools/Trove.json"
 
@@ -205,6 +203,7 @@ module.exports = (grunt) ->
           else
             rimrafCb()
 
+    async = require 'async'
     testAndChdirTrovedir ->
       process.chdir trovedir
       cleanup true, ->
@@ -215,46 +214,49 @@ module.exports = (grunt) ->
             fs.readdir 'bpexport', (err, files) ->
               throw err if err?
               toProcess = files.length
-              processedOne = ->
-                if --toProcess == 0
-                  grunt.config.set 'changelog.oldModels', require(jsonPath)
-                  grunt.config.set 'changelog.newModels', models
-                  fs.writeFile jsonPath, stringify(models, space: '  '), (err) ->
-                    throw err if err?
-                    count = Object.keys(models).length
-                    grunt.log.ok "base64 data of #{count} blueprints successfully written to #{jsonPath}"
-                    grunt.log.subhead "skipped #{failedBlueprints.length} broken blueprints:"
-                    grunt.log.writeln " * #{bp}" for bp in failedBlueprints
-                    grunt.log.writeln "cleaning up (could take a minute)..."
-                  cleanup false, ->
-                    grunt.log.ok "finished cleaning up bpexport and qbexport"
-                    process.chdir repo
-                    done()
-              processSny = ->
-                f = files.pop()
-                return unless f? # all files processed
+              models = {}
+              failedBlueprints = []
+              retry = true
+              queue = async.queue(((f, cb) ->
                 if f.length > 10 and f.indexOf('.blueprint') == f.length - 10
                   exp = f.split(/\/|\\/).pop() # support both unix and windows style paths
                   exp = exp.substring(0, exp.length - 10)
                   execFile devtool, ['-tool', 'copyblueprint', '-generatemaps', '1', "bpexport/#{f}", "qbexport/#{exp}.qb"], {timeout: 15000}, (err, stdout, stderr) ->
                     if err? and (err.killed or err.signal? or err.code != 1) # ignore devtool error code 1
                       failedBlueprints.push(f)
-                      processedOne()
-                      grunt.log.errorlns "#{toProcess} bp left: skipped #{f} because of trove devtool not responding"
-                      return setImmediate processSny
+                      grunt.log.errorlns "#{--toProcess} bp left: skipped #{f} because of trove devtool not responding"
+                      return cb()
                     qbf = 'qbexport/' + exp
                     io = new QubicleIO m: qbf + '.qb', a: qbf + '_a.qb', t: qbf + '_t.qb', s: qbf + '_s.qb', ->
                       [x, y, z, ox, oy, oz] = io.computeBoundingBox()
                       io.resize x, y, z, ox, oy, oz
                       models[exp] = new Base64IO(io).export(true, 2)
-                      grunt.log.writelns  "#{toProcess} bp left: #{f} done"
-                      processedOne()
-                    setImmediate processSny
+                      grunt.log.writelns  "#{--toProcess} bp left: #{f} done"
+                    cb() # opening qb files can run concurrent to devtool tasks
                 else
-                  processedOne()
-                  grunt.log.errorlns "#{toProcess} bp left: skipped #{f} because not a blueprint\n"
-                  setImmediate processSny
-              processSny() for i in [0...parseInt(jobs) || 2 * require('os').cpus().length] by 1
+                  grunt.log.errorlns "#{--toProcess} bp left: skipped #{f} because not a blueprint\n"
+                  cb()
+              ), parseInt(jobs) || 2 * require('os').cpus().length)
+              queue.drain = ->
+                if failedBlueprints.length > 0 and retry # retry failedBlueprints once with concurrency 1
+                  retry = false
+                  grunt.log.errorlns "retrying #{failedBlueprints.length} broken blueprints with concurrency 1"
+                  queue.concurrency = 1
+                  return queue.push failedBlueprints
+                grunt.config.set 'changelog.oldModels', require(jsonPath)
+                grunt.config.set 'changelog.newModels', models
+                fs.writeFile jsonPath, stringify(models, space: '  '), (err) ->
+                  throw err if err?
+                  count = Object.keys(models).length
+                  grunt.log.ok "base64 data of #{count} blueprints successfully written to #{jsonPath}"
+                  grunt.log.errorlns "skipped #{failedBlueprints.length} broken blueprints:" if failedBlueprints.length > 0
+                  grunt.log.writeln " * #{bp}" for bp in failedBlueprints
+                  grunt.log.writeln "cleaning up (could take a minute)..."
+                cleanup false, ->
+                  grunt.log.ok "finished cleaning up bpexport and qbexport"
+                  process.chdir repo
+                  done()
+              queue.push files
 
   grunt.registerTask 'loadGitChangelogData', 'usage: loadGitChangelogData:oldsha[:newsha] (newsha defaults to HEAD)', (oldsha, newsha) ->
     done = @async()
