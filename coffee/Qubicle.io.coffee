@@ -5,6 +5,7 @@ class QubicleIO extends IO
     return if super(files)
     @voxels = []
     @x = @y = @z = -1
+    @warn = false
     @loadingState = 0
     fr = new FileReader()
     fr.onloadend = =>
@@ -191,8 +192,9 @@ class QubicleIO extends IO
     return @voxels[z][y][x].s = 3 if r == 128 and g == 128 and b ==   0 # iridescent
     return @voxels[z][y][x].s = 4 if r == 128 and g ==   0 and b == 128 # waxy
     return @voxels[z][y][x].s = 7 if r == 255 and g ==   0 and b == 255 # attachment point
-    console.warn "invalid specular value (r: #{r}, g: #{g}, b: #{b}), falling back to rough" unless r == g == b == 255 # Trove relies on this fallback often
-    @warn = true
+    unless r == g == b == 255 # Trove relies on this fallback often
+      console.warn "invalid specular value (r: #{r}, g: #{g}, b: #{b}), falling back to rough"
+      @warn = true
     @voxels[z][y][x].s = 0
 
   export: (comp) ->

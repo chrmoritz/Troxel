@@ -204,6 +204,12 @@ module.exports = (grunt) ->
             rimrafCb()
 
     async = require 'async'
+    isTTY = process.stdout.isTTY
+    barWidth = process.stdout.getWindowSize()[0] - 16
+    if isTTY
+      cursor = require('ansi')(process.stdout)
+      cursor.write '\n'
+
     testAndChdirTrovedir ->
       process.chdir trovedir
       cleanup true, ->
@@ -213,7 +219,7 @@ module.exports = (grunt) ->
             throw err if err? and (err.killed or err.signal? or err.code != 1) # ignore devtool error code 1
             fs.readdir 'bpexport', (err, files) ->
               throw err if err?
-              toProcess = files.length
+              toProcess = totalBps = files.length
               models = {}
               failedBlueprints = []
               retry = true
@@ -224,26 +230,32 @@ module.exports = (grunt) ->
                   execFile devtool, ['-tool', 'copyblueprint', '-generatemaps', '1', "bpexport/#{f}", "qbexport/#{exp}.qb"], {timeout: 15000}, (err, stdout, stderr) ->
                     if err? and (err.killed or err.signal? or err.code != 1) # ignore devtool error code 1
                       failedBlueprints.push(f)
-                      grunt.log.errorlns "#{--toProcess} bp left | skipped (devtool not responding): #{f}"
+                      processedOne "skipped (devtool not responding): #{f}", true, false
                       return cb()
                     qbf = 'qbexport/' + exp
                     io = new QubicleIO m: qbf + '.qb', a: qbf + '_a.qb', t: qbf + '_t.qb', s: qbf + '_s.qb', ->
                       [x, y, z, ox, oy, oz] = io.computeBoundingBox()
                       io.resize x, y, z, ox, oy, oz
                       models[exp] = new Base64IO(io).export(true, 2)
-                      grunt.log.writelns  "#{--toProcess} bp left | imported: #{f}"
+                      processedOne "imported: #{f}", false, io.warn
                       queue.drain() if toProcess == 0
                     cb() # opening qb files can run concurrent to devtool tasks
                 else
-                  grunt.log.errorlns "#{--toProcess} bp left | skipped (not a blueprint): #{f}"
+                  processedOne "skipped (not a blueprint): #{f}", true, false
                   cb()
               ), parseInt(jobs) || 2 * require('os').cpus().length)
+              processedOne = (msg, err, warn) ->
+                toProcess--
+                cursor.up(1).horizontalAbsolute(0).eraseLine() if isTTY and not warn
+                grunt.log[if err then 'errorlns' else 'writelns'] msg
+                s = Math.round toProcess/totalBps * barWidth
+                cursor.write "╢#{Array(barWidth - s).join('█')}#{Array(s).join('░')}╟ #{toProcess} bp left\n" if isTTY
               queue.drain = ->
                 return unless toProcess == 0
                 if failedBlueprints.length > 0 and retry # retry failedBlueprints once with concurrency 1
                   retry = false
-                  grunt.log.errorlns "retrying #{failedBlueprints.length} broken blueprints with concurrency 1"
-                  toProcess = failedBlueprints.length
+                  grunt.log.errorlns "retrying #{failedBlueprints.length} broken blueprints with concurrency 1\n"
+                  toProcess = totalBps = failedBlueprints.length
                   failedBlueprints = []
                   queue.concurrency = 1
                   return queue.push failedBlueprints
