@@ -162,6 +162,8 @@ module.exports = (grunt) ->
       devtool = 'Trove.exe'
     repo = process.cwd()
     jsonPath = "#{repo}/tools/Trove.json"
+    models = {}
+    oldModels = require(jsonPath)
 
     readline = require 'readline'
     join = require('path').join
@@ -204,10 +206,38 @@ module.exports = (grunt) ->
             rimrafCb()
 
     async = require 'async'
+    crypto = require 'crypto'
+    getChangedBlueprints = (cb) ->
+      fs.readdir 'bpexport', (err, files) ->
+        return cb(err) if err?
+        oldSha256 = require "#{repo}/tools/Trove_sha256.json"
+        newSha256 = {}
+        changedFiles = []
+        async.each files, ((f, cb2) ->
+          shasum = crypto.createHash 'sha256'
+          s = fs.ReadStream "bpexport/#{f}"
+          s.on 'data', (d) ->
+            shasum.update d
+          s.on 'error', (err) ->
+            cb2(err)
+          s.on 'end', ->
+            newSha256[f] = shasum.digest 'hex'
+            exp = f.substring(0, f.length - 10)
+            if oldSha256[f]? and oldSha256[f] == newSha256[f] and oldModels[exp]?
+              models[exp] = oldModels[exp]
+            else
+              changedFiles.push(f)
+            cb2()
+        ), (err2) ->
+          return cb(err2) if err2?
+          fs.writeFile "#{repo}/tools/Trove_sha256.json", stringify(newSha256, space: '  '), (err3) ->
+            throw err3 if err3?
+          cb(null, changedFiles)
+
     isTTY = process.stdout.isTTY
     if isTTY
       cursor = require('ansi')(process.stdout)
-      cursor.write '\n'
+      cursor.write 'preparing blueprint import (could take a minute)...\n\n'
       barWidth = process.stdout.getWindowSize()[0] - 16
 
     testAndChdirTrovedir ->
@@ -217,10 +247,9 @@ module.exports = (grunt) ->
           throw err if err? and (err.killed or err.signal? or err.code != 1) # ignore devtool error code 1
           execFile devtool, ['-tool', 'extractarchive', 'blueprints' ,'bpexport'], {timeout: 60000}, (err, stdout, stderr) ->
             throw err if err? and (err.killed or err.signal? or err.code != 1) # ignore devtool error code 1
-            fs.readdir 'bpexport', (err, files) ->
+            getChangedBlueprints (err, files) ->
               throw err if err?
               toProcess = totalBps = files.length
-              models = {}
               failedBlueprints = []
               retry = true
               queue = async.queue(((f, cb) ->
