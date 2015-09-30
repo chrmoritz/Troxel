@@ -205,17 +205,17 @@ module.exports = (grunt) ->
 
     async = require 'async'
     isTTY = process.stdout.isTTY
-    barWidth = process.stdout.getWindowSize()[0] - 16
     if isTTY
       cursor = require('ansi')(process.stdout)
       cursor.write '\n'
+      barWidth = process.stdout.getWindowSize()[0] - 16
 
     testAndChdirTrovedir ->
       process.chdir trovedir
       cleanup true, ->
-        execFile devtool, ['-tool', 'extractarchive', 'blueprints' ,'bpexport'], {timeout: 60000}, (err, stdout, stderr) ->
+        execFile devtool, ['-tool', 'extractarchive', 'blueprints/equipment/ring' ,'bpexport'], {timeout: 60000}, (err, stdout, stderr) ->
           throw err if err? and (err.killed or err.signal? or err.code != 1) # ignore devtool error code 1
-          execFile devtool, ['-tool', 'extractarchive', 'blueprints/equipment/ring' ,'bpexport'], {timeout: 60000}, (err, stdout, stderr) ->
+          execFile devtool, ['-tool', 'extractarchive', 'blueprints' ,'bpexport'], {timeout: 60000}, (err, stdout, stderr) ->
             throw err if err? and (err.killed or err.signal? or err.code != 1) # ignore devtool error code 1
             fs.readdir 'bpexport', (err, files) ->
               throw err if err?
@@ -225,8 +225,7 @@ module.exports = (grunt) ->
               retry = true
               queue = async.queue(((f, cb) ->
                 if f.length > 10 and f.indexOf('.blueprint') == f.length - 10
-                  exp = f.split(/\/|\\/).pop() # support both unix and windows style paths
-                  exp = exp.substring(0, exp.length - 10)
+                  exp = f.substring(0, f.length - 10)
                   execFile devtool, ['-tool', 'copyblueprint', '-generatemaps', '1', "bpexport/#{f}", "qbexport/#{exp}.qb"], {timeout: 15000}, (err, stdout, stderr) ->
                     if err? and (err.killed or err.signal? or err.code != 1) # ignore devtool error code 1
                       failedBlueprints.push(f)
@@ -248,8 +247,9 @@ module.exports = (grunt) ->
                 toProcess--
                 cursor.up(1).horizontalAbsolute(0).eraseLine() if isTTY and not warn
                 grunt.log[if err then 'errorlns' else 'writelns'] msg
-                s = Math.round toProcess/totalBps * barWidth
-                cursor.write "╢#{Array(barWidth - s).join('█')}#{Array(s).join('░')}╟ #{toProcess} bp left\n" if isTTY
+                if isTTY
+                  s = Math.round toProcess/totalBps * barWidth
+                  cursor.write "╢#{Array(barWidth - s).join('█')}#{Array(s).join('░')}╟ #{toProcess} bp left\n"
               queue.drain = ->
                 return unless toProcess == 0
                 if failedBlueprints.length > 0 and retry # retry failedBlueprints once with concurrency 1
