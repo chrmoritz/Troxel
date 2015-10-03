@@ -5,7 +5,7 @@ class QubicleIO extends IO
     return if super(files)
     @voxels = []
     @x = @y = @z = -1
-    @warn = false
+    @warn = []
     @loadingState = 0
     fr = new FileReader()
     fr.onloadend = =>
@@ -138,7 +138,7 @@ class QubicleIO extends IO
         matrixBegin += 25 + nameLen + ia
     console.log "voxels:"
     console.log @voxels
-    console.warn console.log "There shouldn't be any bytes left" unless matrixBegin == ab.byteLength
+    console.warn "There shouldn't be any bytes left" unless matrixBegin == ab.byteLength
 
   addValues: (type, x, y, z, r, g, b, colorFormat) ->
     [r, b] = [b, r] if colorFormat == 1
@@ -156,36 +156,36 @@ class QubicleIO extends IO
 
   addAlphaValues: (x, y, z, r, g, b) ->
     unless @voxels[z]?[y]?[x]?
-      @warn = true
-      return console.warn "Ignoring alpha voxel because of non existing color voxel at the same position"
+      @warn.push "(x: #{x}, y: #{y}, z: #{z}): Ignoring alpha voxel because of non existing color voxel at the same position"
+      return console.warn "(x: #{x}, y: #{y}, z: #{z}): Ignoring alpha voxel because of non existing color voxel at the same position"
     if r == g and g == b
       return @voxels[z][y][x].a = r if r in [16, 48, 80, 112, 144, 176, 208, 240, 255]
-      console.warn "invalid alpha value #{r}: falling back to 122"
-      @warn = true
+      console.warn "(x: #{x}, y: #{y}, z: #{z}): Invalid alpha value #{r}: falling back to 122"
+      @warn.push "(x: #{x}, y: #{y}, z: #{z}): Invalid alpha value #{r}: falling back to 122"
       return @voxels[z][y][x].a = 112
     return @voxels[z][y][x].a = 250 if r == b == 255 and g == 0 # attachment point
-    console.warn "invalid alpha value: r, g and b are not equal, falling back to 112"
-    @warn = true
+    console.warn "(x: #{x}, y: #{y}, z: #{z}): Invalid alpha value (#{r}, #{g}, #{b}): r, g and b are not equal, falling back to 112"
+    @warn.push "(x: #{x}, y: #{y}, z: #{z}): Invalid alpha value (#{r}, #{g}, #{b}): r, g and b are not equal, falling back to 112"
     @voxels[z][y][x].a = 112
 
   addTypeValues: (x, y, z, r, g, b) ->
     unless @voxels[z]?[y]?[x]?
-      @warn = true
-      return console.warn "Ignoring type voxel because of non existing color voxel at the same position"
+      @warn.push "(x: #{x}, y: #{y}, z: #{z}): Ignoring type voxel because of non existing color voxel at the same position"
+      return console.warn "(x: #{x}, y: #{y}, z: #{z}): Ignoring type voxel because of non existing color voxel at the same position"
     return @voxels[z][y][x].t = 0 if r == 255 and g == 255 and b == 255 # solid
     return @voxels[z][y][x].t = 1 if r == 128 and g == 128 and b == 128 # glass
     return @voxels[z][y][x].t = 2 if r ==  64 and g ==  64 and b ==  64 # tiled glass
     return @voxels[z][y][x].t = 3 if r == 255 and g ==   0 and b ==   0 # glowing solid
     return @voxels[z][y][x].t = 4 if r == 255 and g == 255 and b ==   0 # glowing glass
     return @voxels[z][y][x].t = 7 if r == 255 and g ==   0 and b == 255 # attachment point
-    console.warn "invalid type value (r: #{r}, g: #{g}, b: #{b}), falling back to solid"
-    @warn = true
+    console.warn "(x: #{x}, y: #{y}, z: #{z}): Invalid type value (#{r}, #{g}, #{b}), falling back to solid"
+    @warn.push "(x: #{x}, y: #{y}, z: #{z}): Invalid type value (#{r}, #{g}, #{b}), falling back to solid"
     @voxels[z][y][x].t = 0
 
   addSpecularValues: (x, y, z, r, g, b) ->
     unless @voxels[z]?[y]?[x]?
-      @warn = true
-      return console.warn "Ignoring specular voxel because of non existing color voxel at the same position"
+      @warn.push "(x: #{x}, y: #{y}, z: #{z}): Ignoring specular voxel because of non existing color voxel at the same position"
+      return console.warn "(x: #{x}, y: #{y}, z: #{z}): Ignoring specular voxel because of non existing color voxel at the same position"
     return @voxels[z][y][x].s = 0 if r == 128 and g ==   0 and b ==   0 # rough
     return @voxels[z][y][x].s = 1 if r ==   0 and g == 128 and b ==   0 # metal
     return @voxels[z][y][x].s = 2 if r ==   0 and g ==   0 and b == 128 # water
@@ -193,8 +193,8 @@ class QubicleIO extends IO
     return @voxels[z][y][x].s = 4 if r == 128 and g ==   0 and b == 128 # waxy
     return @voxels[z][y][x].s = 7 if r == 255 and g ==   0 and b == 255 # attachment point
     unless r == g == b == 255 # Trove relies on this fallback often
-      console.warn "invalid specular value (r: #{r}, g: #{g}, b: #{b}), falling back to rough"
-      @warn = true
+      console.warn "(x: #{x}, y: #{y}, z: #{z}): Invalid specular value (#{r}, #{g}, #{b}), falling back to rough"
+      @warn.push "(x: #{x}, y: #{y}, z: #{z}): Invalid specular value (#{r}, #{g}, #{b}), falling back to rough"
     @voxels[z][y][x].s = 0
 
   export: (comp) ->

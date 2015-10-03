@@ -469,12 +469,21 @@ $('#TroveCreationsLint').click ->
     history.pushState null, 'Troxel', '#m=' + base64
   $('#TroveCreationsLintingResults').empty()
   $('#TroveCreationsLintingResults').append("<div class=\"alert alert-danger\"><h4>#{e.title}</h4>#{e.body}</div>") for e in tcl.errors
+  if io.warn?.length > 0
+    $('#TroveCreationsLintingResults').append("<div class=\"alert alert-warning\"><h4>Troxel had to fix issues in your material maps for you!</h4>
+                There were issues in your material maps like invalid color values in the type / alpha / specular map or having a voxel in one map
+                but not in another. These were fixed automatically on import by Troxel for you. It\'s recommended that you either fix these isues
+                by yourself in your source .qb files or use the .qb files exported by Troxel for creating your .blueprint for submission.
+                <textarea class=\"form-control\" style=\"resize: none\">#{io.warn.join('\n')}</textarea></div>")
   $('#TroveCreationsLintingResults').append("<div class=\"alert alert-warning\"><h4>#{w.title}</h4>#{w.body}</div>") for w in tcl.warnings
   $('#TroveCreationsLintingResults').append("<div class=\"alert alert-info\"><h4>#{i.title}</h4>#{i.body}</div>") for i in tcl.infos
-  $('#TroveCreationsLintingResults').append("<div class=\"alert alert-success\"><h4>All test passed!</h4>There is nothing to complain about your
-                                             model. Thats great, go submitting it!</div>") if tcl.warnings.length == tcl.errors.length == 0
-  $('#TroveCreationsLintingCount').text("Warning: You have #{tcl.errors.length} errors and #{tcl.warnings.length} warnings for your voxel model.
-              Please try to fix them for submitting it to the Trove Creation Reddit!") unless tcl.warnings.length == tcl.errors.length == 0
+  if tcl.warnings.length == tcl.errors.length == 0
+    $('#TroveCreationsLintingResults').append("<div class=\"alert alert-success\"><h4>All test passed!</h4>There is nothing to complain about your
+                                               model. Thats great, go submitting it!</div>")
+  else
+    warnC = tcl.warnings.length + if io.warn?.length > 0 then 1 else 0
+    $('#TroveCreationsLintingCount').text("Warning: You have #{tcl.errors.length} errors and #{warnC} warnings for your voxel model.
+                                           Please try to fix them for submitting it to the Trove Creation Reddit!")
   text = switch type
     when 'melee' then 'melee weapon creation check out the
       <a href="http://trove.wikia.com/wiki/Melee_weapon_creation" class="alert-link" target="_blank">melee weapon creation guide</a>'

@@ -273,7 +273,7 @@ module.exports = (grunt) ->
                     [x, y, z, ox, oy, oz] = io.computeBoundingBox()
                     io.resize x, y, z, ox, oy, oz
                     models[exp] = new Base64IO(io).export(true, 2)
-                    processedOne "imported: #{f}", false, io.warn
+                    processedOne "imported: #{f}", false, io.warn.length > 0
                     queue.drain() if toProcess == 0
                   cb() # opening qb files can run concurrent to devtool tasks
               else
@@ -291,7 +291,7 @@ module.exports = (grunt) ->
               return unless toProcess == 0
               if failedBlueprints.length > 0 and retry # retry failedBlueprints in series
                 retry = false
-                grunt.log.errorlns "retrying #{failedBlueprints.length} broken blueprints in series\n"
+                grunt.log.errorlns "\nretrying #{failedBlueprints.length} broken blueprints in series\n\n"
                 toProcess = totalBps = failedBlueprints.length
                 failedBlueprints = []
                 queue.concurrency = 1
