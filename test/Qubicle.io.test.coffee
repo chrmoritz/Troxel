@@ -48,6 +48,7 @@ describe 'QubicleIO', ->
     io = null
     beforeEach ->
       io = new QubicleIO {x: 1, y: 1, z: 1, voxels: []}
+      io.warn = []
     describe 'addValues', ->
       it 'should handle color format correctly', ->
         io.addValues 0, 0, 0, 0, 32, 64, 128, 1
