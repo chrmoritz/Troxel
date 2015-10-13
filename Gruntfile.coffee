@@ -8,7 +8,7 @@ module.exports = (grunt) ->
     pkg: grunt.file.readJSON('package.json'),
     coffeelint: {
       options: {
-        configFile: 'tools/coffeelint.json'
+        configFile: 'coffeelint.json'
       },
       unix: ['coffee/*.coffee', 'test/*.coffee', 'tools/*.coffee'],
       win: {

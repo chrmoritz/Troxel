@@ -1,0 +1,9 @@
+engines:
+  coffeelint :
+    enabled: true
+ratings:
+   paths:
+   - coffee/*.coffee
+exclude_paths:
+- test/models/*
+- tools/*.json
