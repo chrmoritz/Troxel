@@ -10,10 +10,10 @@ module.exports = (grunt) ->
       options: {
         configFile: 'coffeelint.json'
       },
-      unix: ['coffee/*.coffee', 'test/*.coffee', 'tools/*.coffee'],
+      unix: ['coffee/*.coffee', 'test/*.coffee', 'tools/*.coffee', 'Gruntfile.coffee'],
       win: {
         files: {
-          src: ['coffee/*.coffee', 'test/*.coffee', 'tools/*.coffee']
+          src: ['coffee/*.coffee', 'test/*.coffee', 'tools/*.coffee', 'Gruntfile.coffee']
         },
         options: {
           'line_endings': {
@@ -84,7 +84,7 @@ module.exports = (grunt) ->
       options: {
         banner: 'callback(',
         footer: ');',
-        process: (c, s) -> c.replace(/\s/g,'')
+        process: (c, s) -> c.replace(/\s/g, '')
       },
       jsonp: {
         src: 'tools/Trove.json',
@@ -92,7 +92,7 @@ module.exports = (grunt) ->
       }
     },
     copy: {
-      json: {src: 'tools/Trove.json', dest: 'dist/static/Trove.json', options: process: (c, s) -> c.replace(/\s/g,'')}
+      json: {src: 'tools/Trove.json', dest: 'dist/static/Trove.json', options: process: (c, s) -> c.replace(/\s/g, '')}
       appcache: {src: 'tools/troxel.appcache', dest: 'dist/troxel.appcache'},
       typeahead: {src: 'bower_components/typehead.js/dist/typeahead.bundle.min.js', dest: 'dist/static/js/typeahead.min.js'},
       example: {src: 'test/libTroxelTest.html', dest: 'dist/static/libTroxelTest.html'}
@@ -208,7 +208,7 @@ module.exports = (grunt) ->
     async = require 'async'
     extractBlueprintArchives = (cb) ->
       async.each ['blueprints/equipment/ring', 'blueprints'], ((archive, cb2) ->
-        execFile devtool, ['-tool', 'extractarchive', archive ,'bpexport'], {timeout: 60000}, (err, stdout, stderr) ->
+        execFile devtool, ['-tool', 'extractarchive', archive, 'bpexport'], {timeout: 60000}, (err, stdout, stderr) ->
           return cb2(err) if err? and (err.killed or err.signal? or err.code != 1) # ignore devtool error code 1
           cb2()
       ), (err) -> cb(err)
@@ -332,7 +332,7 @@ module.exports = (grunt) ->
         t = true
 
   grunt.registerTask 'generateTroveChangelogJSON', 'usage: generateTroveChangelogJSON[:dateString]
-                      (requires either import or loadGitChangelogData to be run beforehand)', (date)->
+                      (requires either import or loadGitChangelogData to be run beforehand)', (date) ->
     done = @async()
     grunt.config.requires 'changelog.oldModels', 'changelog.newModels'
     newObj = grunt.config.get 'changelog.newModels'
