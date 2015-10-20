@@ -3,9 +3,9 @@ engines:
     enabled: true
 ratings:
    paths:
-   - **.coffee
+   - "**.coffee"
 exclude_paths:
-- test/models/*
-- **.json
-- **.txt
-- **.yml
+- "test/models/*"
+- "tools/*.json"
+- "**.txt"
+- "**.yml"
