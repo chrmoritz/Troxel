@@ -1,3 +1,4 @@
+'use strict'
 should = require 'should'
 global.IO = require '../coffee/IO.coffee'
 MagicaIO = require '../coffee/Magica.io.coffee'

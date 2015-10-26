@@ -188,7 +188,7 @@ $('#open').click ->
         if ax < x && ay < y and az < z
           voxels[az] = []
           voxels[az][ay] = []
-          voxels[az][ay][ax] = {r: 255, g: 0, b: 255, a: 250, t: 7, s: 7} # ToDo: correct alpha value for attachment point?
+          voxels[az][ay][ax] = {r: 255, g: 0, b: 255, a: 250, t: 7, s: 7}
       mio = new IO x: x, y: y, z: z, voxels: voxels
       cb()
       $('#modeEdit').click()

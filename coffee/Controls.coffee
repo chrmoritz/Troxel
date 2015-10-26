@@ -1,3 +1,4 @@
+'use strict'
 class THREE.TroxelControls extends THREE.EventDispatcher
   constructor: (@object, @domElement) ->
     # API

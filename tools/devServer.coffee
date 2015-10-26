@@ -1,3 +1,4 @@
+'use strict'
 express = require 'express'
 app     = express()
 

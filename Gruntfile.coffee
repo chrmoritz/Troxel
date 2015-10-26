@@ -1,3 +1,4 @@
+'use strict'
 module.exports = (grunt) ->
   fs = require 'fs'
   execFile = require('child_process').execFile

@@ -1,3 +1,4 @@
+'use strict'
 should = require 'should'
 global.IO = require '../coffee/IO.coffee'
 {Base64IO, JsonIO} = require '../coffee/Troxel.io.coffee'

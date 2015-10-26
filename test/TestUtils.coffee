@@ -1,3 +1,4 @@
+'use strict'
 fs = require 'fs'
 
 # ToDo: output console.log only in debug mode
