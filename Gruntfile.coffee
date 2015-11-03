@@ -303,7 +303,7 @@ module.exports = (grunt) ->
                 throw err if err?
                 count = Object.keys(models).length
                 grunt.log.writeln ''
-                grunt.log.ok "base64 data of #{count} blueprints successfully written to #{jsonPath}"
+                grunt.log.ok "base64 data of #{count} (#{totalBps} new) blueprints successfully written to #{jsonPath}"
                 grunt.log.errorlns "skipped #{failedBlueprints.length} broken blueprints:" if failedBlueprints.length > 0
                 grunt.log.writeln " * #{bp}" for bp in failedBlueprints
                 grunt.log.writeln "cleaning up (could take a minute)..."
