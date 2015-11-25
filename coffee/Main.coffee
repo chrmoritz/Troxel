@@ -3,6 +3,7 @@ io = null
 dragFiles = null
 editor = null
 appCacheDownloadCount = 0
+window.location.protocol = "https" if window.location.origin == "http://chrmoritz.github.io"
 window.applicationCache.addEventListener 'downloading', ->
   appCacheDownloadCount = 0
   $('#AppCacheProgressFileCount').text(0)
