@@ -12,9 +12,9 @@ window.applicationCache.addEventListener 'progress', ->
   $('#AppCacheProgressFileCount').text(++appCacheDownloadCount)
   $('#AppCacheProgress').children().width("#{appCacheDownloadCount*100/15}%")
 window.applicationCache.addEventListener 'updateready', ->
-  $('#AppCacheProgress').fadeOut()
   $.ajax({url: 'static/Recent_Changes.html', cache: false}).done (html) -> $('#recentChangesDiv').html(html)
   $('#updateModal').modal 'show'
+  $('#AppCacheProgress').fadeOut()
   clearInterval updatechecker
 updatechecker = setInterval (-> window.applicationCache.update()), 300000
 $('#updateLater').click ->
