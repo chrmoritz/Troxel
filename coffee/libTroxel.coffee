@@ -31,7 +31,7 @@ window.Troxel =
     catch
       console.warn "passed String is not a valid base64 encoded voxel model"
       return {error: new Error "passed String is not a valid base64 encoded voxel model"}
-    renderer = new Renderer io, true, domElement, options.renderMode || 0, options.renderWireframes || 0, options.rendererAntialias || true
+    renderer = new Renderer io, true, domElement, options.renderMode || 0, options.renderWireframes || 0, options.rendererAntialias || true, options.rendererSSAO || false
     # Options
     renderer.renderer.setClearColor options.rendererClearColor if options.rendererClearColor?
     renderer.ambientLight.color = new THREE.Color options.ambientLightColor if options.ambientLightColor?

@@ -136,31 +136,32 @@ If you can't use Java Script to call the Java Script API (for example in wiki te
 
 `options` is a JavaScript Object with these optional keys:
 
-Options                    | Description                                                                           | Default
----------------------------|---------------------------------------------------------------------------------------|-----------
-`autoRotate`               | set it to `true` to automatically rotate around the voxel model                       | `true`
-`autoRotateSpeed`          | the rotation speed in full rotation per minute at 60 fps (set to positive values to change the auto rotate direction, defaults to 15 sec / rotation)                                                              | `-4.0`
-`renderMode`               | set the render mode (affect color in which each voxel is rendered) as an integer with one of these values: <table><thead><tr><th>value</th><th>description</th></tr></thead><tbody><tr><td>`0`</td><td>**pretty** (default): renderer uses all material maps</td></tr><tr><td>`1`</td><td>renders only the **color** of voxels (no material maps)</td></tr><tr><td>`2`</td><td>renders voxels in the color used in the **alpha** map</td></tr><tr><td>`3`</td><td>renders voxels in the color used in the **type** map</td></tr><tr><td>`4`</td><td>renders voxels in the color used in the **specular** map</td></tr></tbody></table>                                                                                      | `0`
-`renderWireframes`         | set the way wireframes are rendererd as an integer with one of these values: <table><thead><tr><th>value</th><th>description</th></tr></thead><tbody><tr><td>`0`</td><td>**Off** (default): no wireframes are rendered</td></tr><tr><td>`1`</td><td>renders all wireframes in a **darkgrey** color</td></tr><tr><td>`2`</td><td>renders wireframes as defined in the **color** map</td></tr><tr><td>`3`</td><td>renders wireframes as defined in the **alpha** map</td></tr><tr><td>`4`</td><td>renders wireframes as defined in the **type** map</td></tr><tr><td>`4`</td><td>renders wireframes as defined in the **specular** map</td></tr></tbody></table> | `0`
-`rendererAntialias`        | disables the antialiasing of the renderer if set to (only available at initialisation)| `true`
-`rendererClearColor`       | the color of the background behind the voxel model                                    | `0x888888`
-`ambientLightColor`        | the color of the ambient light                                                        | `0x606060`
-`directionalLightColor`    | the color of the directional light                                                    | `0xffffff`
-`directionalLightIntensity`| the intensity of the direction light as a Float                                       | `0.3`
-`directionalLightVector`   | the vector direction of the directional light as an Object (don't need to be a normal vector)                                                                                                        | `{x: -0.5, y: -0.5, z: 1}`
-`pointLightColor`          | the color of the point light following the camera                                     | `0xffffff`
-`pointLightIntensity`      | the intensity of the point light following the camera as a Float                      | `0.7`
-`controls`                 | set to `true` for Orbital controls or to `false` for Fly controls                     | `true`
-`noRotate`                 | disables the rotate controls if set to `true`                                         | `false`
-`noPan`                    | disables the pan controls if set to `true`                                            | `false`
-`noZoom`                   | disables the zoom controls if set to `true`                                           | `false`
-`showInfoLabel`            | set to `false`, if you want to hide the 'Open this model in Troxel' link (I would appreciate it if you would link somewhere else to Troxel in this case, this option is only available at initialisation)             | `true`
+Options                    | Description                                                                                        | Default
+---------------------------|----------------------------------------------------------------------------------------------------|-------------
+`autoRotate`               | set it to `true` to automatically rotate around the voxel model                                    | `true`
+`autoRotateSpeed`          | the rotation speed in full rotation per minute at 60 fps (set to positive values to change the auto rotate direction, defaults to 15 sec / rotation)                                                                                       | `-4.0`
+`renderMode`               | set the render mode (affect color in which each voxel is rendered) as an integer with one of these values: <table><thead><tr><th>value</th><th>description</th></tr></thead><tbody><tr><td>`0`</td><td>**pretty** (default): renderer uses all material maps</td></tr><tr><td>`1`</td><td>renders only the **color** of voxels (no material maps)</td></tr><tr><td>`2`</td><td>renders voxels in the color used in the **alpha** map</td></tr><tr><td>`3`</td><td>renders voxels in the color used in the **type** map</td></tr><tr><td>`4`</td><td>renders voxels in the color used in the **specular** map</td></tr></tbody></table>             | `0`
+`renderWireframes`         | set the way wireframes are rendererd as an integer with one of these values: <table><thead><tr><th>value</th><th>description</th></tr></thead><tbody><tr><td>`0`</td><td>**Off** (default): no wireframes are rendered</td></tr><tr><td>`1`</td><td>renders all wireframes in a **darkgrey** color</td></tr><tr><td>`2`</td><td>renders wireframes as defined in the **color** map</td></tr><tr><td>`3`</td><td>renders wireframes as defined in the **alpha** map</td></tr><tr><td>`4`</td><td>renders wireframes as defined in the **type** map</td></tr><tr><td>`4`</td><td>renders wireframes as defined in the **specular** map</td></tr></tbody></table>                                                                               | `0`
+`rendererAntialias`        | disables the antialiasing of the renderer if set to `false` *(only available at initialisation)*   | `true`
+`rendererSSAO`             | enables the SSAO post effect of the renderer if set to `true` *(only available at initialisation)* | `false`
+`rendererClearColor`       | the color of the background behind the voxel model                                                 | `0x888888`
+`ambientLightColor`        | the color of the ambient light                                                                     | `0x606060`
+`directionalLightColor`    | the color of the directional light                                                                 | `0xffffff`
+`directionalLightIntensity`| the intensity of the direction light as a Float                                                    | `0.3`
+`directionalLightVector`   | the vector direction of the directional light as an Object *(don't need to be a normal vector)*    | `{x: -0.5, y: -0.5, z: 1}`
+`pointLightColor`          | the color of the point light following the camera                                                  | `0xffffff`
+`pointLightIntensity`      | the intensity of the point light following the camera as a Float                                   | `0.7`
+`controls`                 | set to `true` for Orbital controls or to `false` for Fly controls                                  | `true`
+`noRotate`                 | disables the rotate controls if set to `true`                                                      | `false`
+`noPan`                    | disables the pan controls if set to `true`                                                         | `false`
+`noZoom`                   | disables the zoom controls if set to `true`                                                        | `false`
+`showInfoLabel`            | set to `false`, if you want to hide the 'Open this model in Troxel' link *(I would appreciate it if you would link somewhere else to Troxel in this case, this option is only available at initialisation)*                                   | `true`
 
 *Note: for performance reasons you should prefere passing colors as a Javascript hexadecimal Numbers instead of hex strings like in css*
 
 In addition to this there are 2 more options available in the `options` Object returned from `Troxel.renderBase64` or passed in the callback by `Troxel.renderBlueprint` to change the rendered model while reusing the canvas and WebGLContext.
 
 Options     | Description
-------------|------------------------------------------------------------------------------------------------------------------
+------------|---------------------------------------------------------------------------------------------------------------------------------
 `blueprint` | set it to the id of a valid blueprint (the filename without the `.blueprint` file extension) to render it in the current canvas / WebGLContext (this will only work from a `options` Object passed in the callback of `Troxel.renderBlueprint`)
 `base64`    | set it to a valid Base64 encoded String containing the voxel data of your model to render it in the current canvas / WebGLContext (you can also use it to read the `base64` represantation of a voxel model opend with `Troxel.renderBlueprint`)
