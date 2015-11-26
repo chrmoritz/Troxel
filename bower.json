@@ -21,6 +21,7 @@
     "jquery": "~2.1",
     "stats.js": "r14",
     "threejs": "r71",
+    "threejs-examples": "r71",
     "typehead.js": "~0.10"
   },
   "exportsOverride": {
@@ -40,6 +41,7 @@
     "threejs": {
       "js": "build/three.min.js"
     },
+    "threejs-examples": {},
     "typehead.js": {}
   }
 }

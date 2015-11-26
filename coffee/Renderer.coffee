@@ -1,6 +1,6 @@
 'use strict'
 class Renderer
-  constructor: (io, @embedded = false, @domContainer = $('#WebGlContainer'), @renderMode = 0, @renderWireframes = 0, antialias = true, renderControls = true) ->
+  constructor: (io, @embedded = false, @domContainer = $('#WebGlContainer'), @renderMode = 0, @renderWireframes = 0, antialias = true, @ssao = false, renderControls = true) ->
     @width = @domContainer.width()
     @height = @domContainer.height()
     @scene = new THREE.Scene()
@@ -25,6 +25,24 @@ class Renderer
     @renderer.setPixelRatio window.devicePixelRatio
     @renderer.setSize @width, @height
     @domContainer.empty().append @renderer.domElement
+    # postprocessing effects
+    if @ssao
+      @composer = new THREE.EffectComposer @renderer
+      @composer.addPass new THREE.RenderPass @scene, @camera
+      @ssaoPass = new THREE.ShaderPass THREE.SSAOShader
+      @ssaoPass.renderToScreen = true
+      @depthRenderTarget = new THREE.WebGLRenderTarget @width, @height, {minFilter: THREE.LinearFilter, magFilter: THREE.LinearFilter}
+      @ssaoPass.uniforms['tDepth'].value = @depthRenderTarget
+      @ssaoPass.uniforms['size'].value.set @width, @height
+      @ssaoPass.uniforms['cameraNear'].value = @camera.near
+      @ssaoPass.uniforms['cameraFar'].value = @camera.far
+      @ssaoPass.uniforms['onlyAO'].value = false
+      @ssaoPass.uniforms['aoClamp'].value = 0.5
+      @ssaoPass.uniforms['lumInfluence'].value = 0.25
+      @composer.addPass @ssaoPass
+      ds = THREE.ShaderLib['depthRGBA']
+      du = THREE.UniformsUtils.clone ds.uniforms
+      @depthMaterial = new THREE.ShaderMaterial {fragmentShader: ds.fragmentShader, vertexShader: ds.vertexShader, uniforms: du, blending: THREE.NoBlending}
     # Event handlers
     window.addEventListener 'resize', (e) => @onWindowResize(e)
     @animate() if @embedded
@@ -170,7 +188,13 @@ class Renderer
     @controls.update @stats
 
   render: (exportPng) ->
-    @renderer.render @scene, @camera
+    if @ssao
+      @scene.overrideMaterial = @depthMaterial
+      @renderer.render @scene, @camera, @depthRenderTarget, true
+      @scene.overrideMaterial = null
+      @composer.render()
+    else
+      @renderer.render @scene, @camera
     @stats.end() unless @embedded
     window.open @renderer.domElement.toDataURL(), 'Exported png' if exportPng
 
@@ -180,6 +204,10 @@ class Renderer
     @camera.aspect = @width / @height
     @camera.updateProjectionMatrix()
     @renderer.setSize @width, @height
+    if @ssao
+      depthRenderTarget = new THREE.WebGLRenderTarget @width, @height, {minFilter: THREE.LinearFilter, magFilter: THREE.LinearFilter}
+      @ssaoPass.uniforms['tDepth'].value = depthRenderTarget
+      @ssaoPass.uniforms['size'].value.set @width, @height
     @controls.needsRender = true
 
 if typeof module == 'object' then module.exports = Renderer else window.Renderer = Renderer

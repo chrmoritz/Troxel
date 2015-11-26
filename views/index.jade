@@ -405,7 +405,7 @@ html(manifest=dev?null:'troxel.appcache')
         .panel-body(style='padding: 5px 15px 0px;')
           .form-horizontal
             .form-group(style='margin-bottom: 5px;')
-              label.col-sm-5.control-label(for='renderMode') Rend.mode:
+              label.col-sm-5.control-label(for='renderMode', style='padding-left: 10px') Rend.mode:
               .col-sm-7(style='padding-right: 5px;')
                 select#renderMode.form-control.input-sm
                   option(value=0, selected) pretty (default)
@@ -414,7 +414,7 @@ html(manifest=dev?null:'troxel.appcache')
                   option(value=3) Type map
                   option(value=4) Specular map
             .form-group(style='margin-bottom: 5px;')
-              label.col-sm-5.control-label(for='renderWireframes') Wireframes:
+              label.col-sm-5.control-label(for='renderWireframes', style='padding-left: 10px') Wireframes:
               .col-sm-7(style='padding-right: 5px;')
                 select#renderWireframes.form-control.input-sm
                   option(value=0, selected) Off (default)
@@ -424,11 +424,12 @@ html(manifest=dev?null:'troxel.appcache')
                   option(value=4) Type
                   option(value=5) Specular
             .form-group(style='margin-bottom: 5px;')
-              label.col-sm-5.control-label(for='rendererAntialias') Antialias:
+              label.col-sm-5.control-label(for='rendererPostEffect', style='padding-left: 10px') Post-effect:
               .col-sm-7(style='padding-right: 5px;')
-                select#rendererAntialias.form-control.input-sm
-                  option(value=1, selected) On (default)
-                  option(value=0) Off
+                select#rendererPostEffect.form-control.input-sm
+                  option(value=0) None
+                  option(value=1, selected) Antialias (default)
+                  option(value=2) SSAO (experimental)
             .form-group(style='margin-bottom: 5px;')
               label.col-sm-5.control-label(for='renderControls') Controls:
               .col-sm-7(style='padding-right: 5px;')
@@ -564,6 +565,7 @@ html(manifest=dev?null:'troxel.appcache')
     script(src='static/js/jquery.min.js', type='text/javascript')
     script(src='static/js/bootstrap.min.js', type='text/javascript')
     script(src='static/js/three.min.js', type='text/javascript')
+    script(src='static/js/threePost.min.js', type='text/javascript')
     script(src='static/js/stats.min.js', type='text/javascript')
     script(src='static/js/typeahead.min.js', type='text/javascript')
     script(src='static/Trove.json', type='application/json')

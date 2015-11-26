@@ -11,8 +11,8 @@ window.applicationCache.addEventListener 'downloading', ->
 window.applicationCache.addEventListener 'progress', ->
   $('#AppCacheProgressFileCount').text(++appCacheDownloadCount)
   $('#AppCacheProgress').children().width("#{appCacheDownloadCount*100/15}%")
-  $('#AppCacheProgress').fadeOut() if appCacheDownloadCount >= 15
 window.applicationCache.addEventListener 'updateready', ->
+  $('#AppCacheProgress').fadeOut()
   $.ajax({url: 'static/Recent_Changes.html', cache: false}).done (html) -> $('#recentChangesDiv').html(html)
   $('#updateModal').modal 'show'
   clearInterval updatechecker
@@ -431,7 +431,7 @@ $('.editTool').change ->
     when 1 then $('#fillSameColorDiv').show()
     else $('#fillSameColorDiv').hide()
 $('[data-toggle="tooltip"]').tooltip()
-$('#rendererAntialias').change ->
+$('#rendererPostEffect').val(1).change ->
   editor = new Editor io if editor?
 $('#renderMode').change ->
   return unless editor?

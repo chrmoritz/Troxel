@@ -64,13 +64,21 @@ module.exports = (grunt) ->
         files: {'dist/static/troxel.min.js': ['js/IO.js', 'js/Qubicle.io.js', 'js/Magica.io.js', 'js/Zoxel.io.js', 'js/Troxel.io.js',
                                               'js/Renderer.js', 'js/Editor.js', 'js/Controls.js', 'js/TroveCreationsLint.js', 'js/Main.js']}
       },
+      postEffects: {
+        files: {'dist/static/js/threePost.min.js': ['bower_components/threejs-examples/examples/js/shaders/SSAOShader.js',
+                                                    'bower_components/threejs-examples/examples/js/shaders/CopyShader.js',
+                                                    'bower_components/threejs-examples/examples/js/postprocessing/EffectComposer.js',
+                                                    'bower_components/threejs-examples/examples/js/postprocessing/ShaderPass.js'
+                                                    'bower_components/threejs-examples/examples/js/postprocessing/RenderPass.js'
+                                                    'bower_components/threejs-examples/examples/js/postprocessing/MaskPass.js']}
+      },
       lib: {
         options: {
           banner: '/*!\n * libTroxel (https://github.com/chrmoritz/Troxel)\n * Copyright 2014 Christian Moritz\n * ' +
                   'Licensed under GNU LGPL v3.0 (https://github.com/chrmoritz/Troxel/blob/master/LICENSE.txt)\n */\n'
         },
         files: {'dist/static/libTroxel.min.js': ['js/IO.js', 'js/Troxel.io.js', 'js/Renderer.js', 'js/libTroxel.js',
-                          'bower_components/threejs/build/three.min.js', 'js/Controls.js']}
+                                                 'bower_components/threejs/build/three.min.js', 'js/Controls.js']}
       }
     },
     jade: {

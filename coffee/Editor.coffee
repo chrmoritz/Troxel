@@ -2,8 +2,8 @@
 class Editor extends Renderer
   constructor: (io, @embedded = false, @domContainer = $('#WebGlContainer')) ->
     @objects = []
-    super io, @embedded, @domContainer, parseInt($('#renderMode').val()), parseInt($('#renderWireframes').val()), $('#rendererAntialias').val() == "1",
-          $('#renderControls').val() == "0"
+    super io, @embedded, @domContainer, parseInt($('#renderMode').val()), parseInt($('#renderWireframes').val()), $('#rendererPostEffect').val() == '1',
+          $('#rendererPostEffect').val() == '2', $('#renderControls').val() == '0'
     # roll-over helpers
     @rollOverMesh = new THREE.Mesh new THREE.BoxGeometry(48, 48, 48), new THREE.MeshBasicMaterial wireframe: true, color: 0x000000
     @scene.add @rollOverMesh

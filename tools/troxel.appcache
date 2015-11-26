@@ -9,6 +9,7 @@ CACHE MANIFEST
 ./
 static/js/stats.min.js
 static/js/three.min.js
+static/js/threePost.min.js
 static/css/bootstrap-theme.min.css
 static/css/bootstrap.min.css
 static/js/bootstrap.min.js
