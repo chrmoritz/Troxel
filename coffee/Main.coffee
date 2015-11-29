@@ -10,7 +10,7 @@ window.applicationCache.addEventListener 'downloading', ->
   $('#AppCacheProgress').show().children().width('0%')
 window.applicationCache.addEventListener 'progress', ->
   $('#AppCacheProgressFileCount').text(++appCacheDownloadCount)
-  $('#AppCacheProgress').children().width("#{appCacheDownloadCount*100/15}%")
+  $('#AppCacheProgress').children().width("#{appCacheDownloadCount*100/16}%")
 window.applicationCache.addEventListener 'updateready', ->
   $.ajax({url: 'static/Recent_Changes.html', cache: false}).done (html) -> $('#recentChangesDiv').html(html)
   $('#updateModal').modal 'show'
