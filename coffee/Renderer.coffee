@@ -30,7 +30,6 @@ class Renderer
       @composer = new THREE.EffectComposer @renderer
       @composer.addPass new THREE.RenderPass @scene, @camera
       @ssaoPass = new THREE.ShaderPass THREE.SSAOShader
-      @ssaoPass.renderToScreen = true
       @depthRenderTarget = new THREE.WebGLRenderTarget @width, @height, {minFilter: THREE.LinearFilter, magFilter: THREE.LinearFilter}
       @ssaoPass.uniforms['tDepth'].value = @depthRenderTarget
       @ssaoPass.uniforms['size'].value.set @width, @height
@@ -40,6 +39,10 @@ class Renderer
       @ssaoPass.uniforms['aoClamp'].value = 0.5
       @ssaoPass.uniforms['lumInfluence'].value = 0.25
       @composer.addPass @ssaoPass
+      @fxaaPass = new THREE.ShaderPass THREE.FXAAShader
+      @fxaaPass.uniforms['resolution'].value.set 1 / @width, 1 / @height
+      @fxaaPass.renderToScreen = true
+      @composer.addPass @fxaaPass
       ds = THREE.ShaderLib['depthRGBA']
       du = THREE.UniformsUtils.clone ds.uniforms
       @depthMaterial = new THREE.ShaderMaterial {fragmentShader: ds.fragmentShader, vertexShader: ds.vertexShader, uniforms: du, blending: THREE.NoBlending}

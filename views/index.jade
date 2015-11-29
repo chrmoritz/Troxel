@@ -428,8 +428,8 @@ html(manifest=dev?null:'troxel.appcache')
               .col-sm-7(style='padding-right: 5px;')
                 select#rendererPostEffect.form-control.input-sm
                   option(value=0) None
-                  option(value=1, selected) Antialias (default)
-                  option(value=2) SSAO (experimental)
+                  option(value=1, selected) MSAA (antialias, default)
+                  option(value=2) SSAO + FXAA (experimental)
             .form-group(style='margin-bottom: 5px;')
               label.col-sm-5.control-label(for='renderControls') Controls:
               .col-sm-7(style='padding-right: 5px;')

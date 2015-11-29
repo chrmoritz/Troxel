@@ -66,6 +66,7 @@ module.exports = (grunt) ->
       },
       postEffects: {
         files: {'dist/static/js/threePost.min.js': ['bower_components/threejs-examples/examples/js/shaders/SSAOShader.js',
+                                                    'bower_components/threejs-examples/examples/js/shaders/FXAAShader.js',
                                                     'bower_components/threejs-examples/examples/js/shaders/CopyShader.js',
                                                     'bower_components/threejs-examples/examples/js/postprocessing/EffectComposer.js',
                                                     'bower_components/threejs-examples/examples/js/postprocessing/ShaderPass.js'
