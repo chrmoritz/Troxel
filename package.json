@@ -52,7 +52,7 @@
     "jstransformer-markdown": "^1.1.0",
     "mocha": "^2.3.0",
     "rimraf": "^2.4.3",
-    "should": "^7.1.0",
+    "should": "^8.0.0",
     "time-grunt": "^1.2.0"
   }
 }

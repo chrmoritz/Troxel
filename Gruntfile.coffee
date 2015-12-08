@@ -97,12 +97,12 @@ module.exports = (grunt) ->
         process: (c, s) -> c.replace(/\s/g, '')
       },
       jsonp: {
-        src: 'tools/Trove.json',
+        src: 'tools/TroveBlueprints/Trove.json',
         dest: 'dist/static/Trove.json.js'
       }
     },
     copy: {
-      json: {src: 'tools/Trove.json', dest: 'dist/static/Trove.json', options: process: (c, s) -> c.replace(/\s/g, '')}
+      json: {src: 'tools/TroveBlueprints/Trove.json', dest: 'dist/static/Trove.json', options: process: (c, s) -> c.replace(/\s/g, '')}
       appcache: {src: 'tools/troxel.appcache', dest: 'dist/troxel.appcache'},
       typeahead: {src: 'bower_components/typehead.js/dist/typeahead.bundle.min.js', dest: 'dist/static/js/typeahead.min.js'},
       example: {src: 'test/libTroxelTest.html', dest: 'dist/static/libTroxelTest.html'}
@@ -171,7 +171,7 @@ module.exports = (grunt) ->
       trovedir = 'C:\\Program Files (x86)\\Glyph\\Games\\Trove\\Live'
       devtool = 'Trove.exe'
     repo = process.cwd()
-    jsonPath = "#{repo}/tools/Trove.json"
+    jsonPath = "#{repo}/tools/TroveBlueprints/Trove.json"
     models = {}
     oldModels = require(jsonPath)
 
@@ -228,7 +228,7 @@ module.exports = (grunt) ->
       fs.readdir 'bpexport', (err, files) ->
         return cb(err) if err?
         grunt.log.writeln "comparing sha256 hashes of #{files.length} blueprints to determine changed ones..."
-        oldSha256 = require "#{repo}/tools/Trove_sha256.json"
+        oldSha256 = require "#{repo}/tools/TroveBlueprints/Trove_sha256.json"
         newSha256 = {}
         changedFiles = []
         async.each files, ((f, cb2) ->
@@ -248,7 +248,7 @@ module.exports = (grunt) ->
             cb2()
         ), (err2) ->
           return cb(err2) if err2?
-          fs.writeFile "#{repo}/tools/Trove_sha256.json", stringify(newSha256, space: '  '), (err3) ->
+          fs.writeFile "#{repo}/tools/TroveBlueprints/Trove_sha256.json", stringify(newSha256, space: '  '), (err3) ->
             throw err3 if err3?
           cb(null, changedFiles)
 
@@ -306,8 +306,6 @@ module.exports = (grunt) ->
                 failedBlueprints = []
                 queue.concurrency = 1
                 return queue.push failedBlueprints
-              grunt.config.set 'changelog.oldModels', require(jsonPath)
-              grunt.config.set 'changelog.newModels', models
               fs.writeFile jsonPath, stringify(models, space: '  '), (err) ->
                 throw err if err?
                 count = Object.keys(models).length
@@ -321,63 +319,3 @@ module.exports = (grunt) ->
                 process.chdir repo
                 done()
             queue.push files
-
-  grunt.registerTask 'loadGitChangelogData', 'usage: loadGitChangelogData:oldsha[:newsha] (newsha defaults to HEAD)', (oldsha, newsha) ->
-    done = @async()
-    t = false
-    grunt.fail.warn 'now gitsha passed: usage: loadGitChangelogData:oldsha[:newsha] (newsha defaults to HEAD)' unless oldsha?
-    execFile 'git', ['show', "#{oldsha}:tools/Trove.json"], {timeout: 10000, maxBuffer: 104857600}, (err, stdout, stderr) ->
-      throw err if err?
-      grunt.config.set 'changelog.oldModels', JSON.parse stdout.toString()
-      done() if t
-      t = true
-    unless newsha?
-      grunt.config.set 'changelog.newModels', require('./tools/Trove.json')
-      t = true
-    else
-      execFile 'git', ['show', "#{newsha}:tools/Trove.json"], {timeout: 10000, maxBuffer: 104857600}, (err, stdout, stderr) ->
-        throw err if err?
-        grunt.config.set 'changelog.newModels', JSON.parse stdout.toString()
-        done() if t
-        t = true
-
-  grunt.registerTask 'generateTroveChangelogJSON', 'usage: generateTroveChangelogJSON[:dateString]
-                      (requires either import or loadGitChangelogData to be run beforehand)', (date) ->
-    done = @async()
-    grunt.config.requires 'changelog.oldModels', 'changelog.newModels'
-    newObj = grunt.config.get 'changelog.newModels'
-    oldObj = grunt.config.get 'changelog.oldModels'
-    logDir = "#{process.cwd()}/tools/TroveChangelog"
-    logPath = "#{logDir}/#{date || new Date().toISOString().split('T')[0]}.json"
-    log = added: [], changed: [], renamed: [], removed: [], removedOrRenamed: (oldName, oldData) ->
-      for addName, i in @added
-        if oldData == newObj[addName]
-          o = {}
-          o[oldName] = addName
-          @renamed.push o
-          return @added.splice i, 1
-      o = {}
-      o[oldName] = oldData
-      @removed.push o
-    for newName, newData of newObj
-      if oldObj[newName]?
-        if newData != oldObj[newName]
-          o = {}
-          o[newName] = oldObj[newName]
-          log.changed.push o
-        delete oldObj[newName]
-      else
-        log.added.push newName
-    for oldName, oldData of oldObj
-      log.removedOrRenamed oldName, oldData
-    delete log[e] for e in ['added', 'changed', 'renamed', 'removed'] when log[e].length == 0
-    fs.writeFile logPath, stringify(log), (err) ->
-      throw err if err?
-      grunt.log.oklns "Trove blueprints changelog successfully written to #{logPath}\n"
-      fs.readdir logDir, (err, files) ->
-        throw err if err?
-        files.splice files.indexOf('index.jsoun'), 1
-        fs.writeFile "#{logDir}/index.json", stringify(files), (err) ->
-          throw err if err?
-          grunt.log.oklns "Trove blueprints changelog index successfully written to #{logDir}/index.json\n"
-          done()
