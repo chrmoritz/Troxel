@@ -207,11 +207,22 @@ class QubicleIO extends IO
       1, 0, 0, 0 # matrix count: 1
       5          # name length: 5
       77, 111, 100, 101, 108 # name: Model
-      @x, 0, 0, 0 # width
-      @y, 0, 0, 0 # height
-      @z, 0, 0, 0 # depth
-      0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 # no position offsets
     ]
+
+    if @x < 256
+      data.push @x, 0, 0, 0 # width
+    else
+      Array::push.apply data, new Uint8Array(new Uint32Array([@x]).buffer)
+    if @y < 256
+      data.push @y, 0, 0, 0 # height
+    else
+      Array::push.apply data, new Uint8Array(new Uint32Array([@y]).buffer)
+    if @z < 256
+      data.push @z, 0, 0, 0 # depth
+    else
+      Array::push.apply data, new Uint8Array(new Uint32Array([@z]).buffer)
+    data.push 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 # no position offsets
+
     data_a = data.slice 0
     data_t = data.slice 0
     data_s = data.slice 0
