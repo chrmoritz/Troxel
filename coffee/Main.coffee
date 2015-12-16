@@ -89,7 +89,15 @@ document.addEventListener 'drop', (e) ->
     $('#tabdrag ul').empty()
     $('#tabdrag ul').append $ '<li>' + f.name + '</li>' for f in dragFiles
 $('#open').click ->
-  cb = ->
+  cb = (APpos) ->
+    if APpos? and $('#ImportRestorAP').prop('checked')
+      mio.voxels[APpos[2]] = [] unless mio.voxels[APpos[2]]?
+      mio.voxels[APpos[2]][APpos[1]] = [] unless mio.voxels[APpos[2]][APpos[1]]?
+      if mio.voxels[APpos[2]][APpos[1]][APpos[0]]?
+        unless mio.voxels[APpos[2]][APpos[1]][APpos[0]].t == 7
+          console.warn 'Skip importing AP because already existing voxel at some postion. Model most likely not exported from Trove.'
+      else
+        mio.voxels[APpos[2]][APpos[1]][APpos[0]] = r: 255, g: 0, b: 255, a: 250, t: 7, s: 7
     if io? and $('#ImportMerge').prop('checked')
       offsets = {x: parseInt($('#QbMergeOffX').val()), y: parseInt($('#QbMergeOffY').val()), z: parseInt($('#QbMergeOffZ').val())}
       io.merge mio, offsets, $('#ImportAPrelativeOffsets').prop('checked')

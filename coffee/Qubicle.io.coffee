@@ -9,14 +9,14 @@ class QubicleIO extends IO
     @loadingState = 0
     fr = new FileReader()
     fr.onloadend = =>
-      @readFile fr.result, 0
+      APpos = @readFile fr.result, 0
       if files.a?
         fra = new FileReader()
         fra.onloadend = =>
           @readFile fra.result, 1
           if @loadingState++ == 2
             @mirrorZ() if @zOriantation == 0
-            callback()
+            callback(APpos)
         console.log "reading alpha file with name: #{files.a.name}"
         fra.readAsArrayBuffer files.a
       else
@@ -27,7 +27,7 @@ class QubicleIO extends IO
           @readFile frt.result, 2
           if @loadingState++ == 2
             @mirrorZ() if @zOriantation == 0
-            callback()
+            callback(APpos)
         console.log "reading type file with name: #{files.t.name}"
         frt.readAsArrayBuffer files.t
       else
@@ -38,14 +38,14 @@ class QubicleIO extends IO
           @readFile frs.result, 3
           if @loadingState++ == 2
             @mirrorZ() if @zOriantation == 0
-            callback()
+            callback(APpos)
         console.log "reading specular file with name: #{files.s.name}"
         frs.readAsArrayBuffer files.s
       else
         @loadingState++
       if @loadingState == 3
         @mirrorZ() if @zOriantation == 0
-        callback()
+        callback(APpos)
     console.log "reading file with name: #{files.m.name}"
     fr.readAsArrayBuffer files.m
 
@@ -93,7 +93,10 @@ class QubicleIO extends IO
       console.log "dimensions: width: #{x} height: #{y} depth: #{z}"
       [dx, dy, dz] = new Int32Array ab.slice matrixBegin + 13 + nameLen, matrixBegin + 25 + nameLen
       console.log "position: dx : #{dx} dy: #{dy} dz: #{dz} (ignored if only 1 matrix)"
-      dx = dy = dz = 0 if matrixCount == 1
+      if matrixCount == 1
+        if type == 0 and dx <= 0 and dy <= 0 and dz <= 0 and (dx < 0 or dy < 0 or dz < 0)
+          APpos = [-dx, -dy, -dz]
+        dx = dy = dz = 0
       if matrixCount > 1
         dx -= dx_offset
         dy -= dy_offset
@@ -139,6 +142,7 @@ class QubicleIO extends IO
     console.log "voxels:"
     console.log @voxels
     console.warn "There shouldn't be any bytes left" unless matrixBegin == ab.byteLength
+    return APpos
 
   addValues: (type, x, y, z, r, g, b, colorFormat) ->
     [r, b] = [b, r] if colorFormat == 1

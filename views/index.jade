@@ -163,6 +163,9 @@ html(manifest=dev?null:'troxel.appcache')
                       input#snewApZ.snewApPos.form-control(type='number', value='10', disabled)
             .form-inline
               .checkbox: label
+                input#ImportRestorAP(type='checkbox', style='margin-bottom: 10px; margin-right: 5px;')
+                | try to restore the attachment point position from the qb's mete data for models exported from Trove
+              .checkbox: label
                 input#ImportMerge(type='checkbox', style='margin-right: 5px;')
                 | merge model into existing model with offset:
               .form-group(style='margin-left: 10px;'): .input-group
