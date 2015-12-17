@@ -3,7 +3,14 @@ class Base64IO extends IO
   constructor: (base64) ->
     return if super(base64)
     @voxels = []
-    [@x, @y, @z, @readonly, data...] = atob(base64).split('').map (c) -> c.charCodeAt 0
+    d = atob(base64).split('').map (c) -> c.charCodeAt 0
+    if d[0] == 0
+      [_, x1, x2, x3, x4, y1, y2, y3, y4, z1, z2, z3, z4, @readonly, data...] = d
+      @x = new Uint32Array(new Uint8Array([x1, x2, x3, x4]).buffer)[0]
+      @y = new Uint32Array(new Uint8Array([y1, y2, y3, y4]).buffer)[0]
+      @z = new Uint32Array(new Uint8Array([z1, z2, z3, z4]).buffer)[0]
+    else
+      [@x, @y, @z, @readonly, data...] = d
     i = r = 0 # i: pointer to position in data, r: repeat counter
     vox = {}
     if data[0] == 85
@@ -69,7 +76,13 @@ class Base64IO extends IO
       return false if !a? or !b?
       return false for i in ['r', 'g', 'b', 'a', 't', 's'] when a[i] != b[i]
       return true
-    data = [@x, @y, @z, if readonly then 1 else 0]
+    if @x > 255 or @y > 255 or @z > 255
+      [x1, x2, x3, x4] = new Uint8Array new Uint32Array([@x]).buffer
+      [y1, y2, y3, y4] = new Uint8Array new Uint32Array([@y]).buffer
+      [z1, z2, z3, z4] = new Uint8Array new Uint32Array([@z]).buffer
+      data = [0, x1, x2, x3, x4, y1, y2, y3, y4, z1, z2, z3, z4, if readonly then 1 else 0]
+    else
+      data = [@x, @y, @z, if readonly then 1 else 0]
     vox = []
     vox.push(@voxels[z]?[y]?[x]) for x in [0...@x] by 1 for y in [0...@y] by 1 for z in [0...@z] by 1 # 3d to 1d array
     i = 0
