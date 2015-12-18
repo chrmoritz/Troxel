@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+  <body>
+    <select id="blueprint">
+      <option value="deco_candy_torch_mallow[Laoge]" selected>deco_candy_torch_mallow[Laoge]</option>
+      <option value="deco_dragon_orb[Quote]">deco_dragon_orb[Quote]</option>
+      <option value="equipment_face_mask_starking[Mitchell]">equipment_face_mask_starking[Mitchell]</option>
+      <option value="equipment_weapon_bow_191[MrTuffnStuff]">equipment_weapon_bow_191[MrTuffnStuff]</option>
+    </select>
+    <div id="container" style="width: 300px; height: 300px;">
+      <!-- insert fallback content (like a static image of the rendered model) here -->
+    </div>
+    <select id="renderMode">
+      <option value="0" selected>Pretty</option>
+      <option value="1">Color only</option>
+      <option value="2">Alpha map</option>
+      <option value="3">Type map</option>
+      <option value="4">Specular map</option>
+    </select>
+    <select id="renderWireframes">
+      <option value="0" selected>no wireframes</option>
+      <option value="1">darkgrey</option>
+      <option value="2">Color map</option>
+      <option value="3">Alpha map</option>
+      <option value="4">Type map</option>
+      <option value="5">Specular map</option>
+    </select>
+    <button id="autoRotate">pause for fly mode / resume</button>
+    <script src="https://chrmoritz.github.io/Troxel/static/js/jquery.min.js" type="text/javascript"></script>
+    <script src="https://chrmoritz.github.io/Troxel/static/libTroxel.min.js" type="text/javascript"></script>
+    <script type="text/javascript">
+      var TroxelOptions;
+      Troxel.renderBlueprint('deco_candy_torch_mallow[Laoge]', $('#container'), {
+        autoRotate: true, // default to true (auto rotate enabled)
+        autoRotateSpeed: -4.0, // default to -4.0 (15 seconds per round when fps is 60 = Trove default)
+        rendererClearColor: 0x9c9c9c, // default to 0x888888
+        rendererAntialias: true, // default to true
+        ambientLightColor: 0x707070, // default to 0x606060
+        directionalLightColor: 0xeeeeee, // default to 0xffffff
+        directionalLightIntensity: 0.9, // default to 0.3
+        directionalLightVector: {x: -1, y: 0, z: 0}, // default to (-0.5, -0.5, 1) (don't need to be a normal vector)
+        pointLightColor: 0xffaaaa, // default to 0xffffff
+        pointLightIntensity: 1.0, // default to 0.7
+        controls: true, // default to true
+        noRotate: false, // default to false
+        noPan: false, // default to false
+        noZoom: false, // default to false
+        showInfoLabel: true // you can hide the 'Open this model in Troxel' link if you want to move it somewhere else in your layout
+      }, function(error, options){
+        if (error !== null){
+          throw error;
+        }
+        TroxelOptions = options; // store options Object somewhere out of the callback scope to use it later (for example to inplement a custom option GUI)
+        // Do some stuff here
+        console.log("Model loaded!");
+      });
+      // Custom option gui example:
+      $('#renderMode').change(function(){
+        TroxelOptions.renderMode = parseInt($(this).val());
+      });
+      $('#renderWireframes').change(function(){
+        TroxelOptions.renderWireframes = parseInt($(this).val());
+      });
+      $('#autoRotate').click(function(){
+        TroxelOptions.autoRotate = !TroxelOptions.autoRotate;
+        TroxelOptions.controls = TroxelOptions.autoRotate; // Fly mode
+      });
+      $('#blueprint').change(function(){
+        // there is also a TroxelOptions.base64 accepting a string with a base64 encoded voxel model
+        TroxelOptions.blueprint = $(this).val();
+      });
+    </script>
+  </body>
+</html>
