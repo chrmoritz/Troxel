@@ -95,7 +95,7 @@ class QubicleIO extends IO
       console.log "position: dx : #{dx} dy: #{dy} dz: #{dz} (ignored if only 1 matrix)"
       if matrixCount == 1
         if type == 0 and dx <= 0 and dy <= 0 and dz <= 0 and (dx < 0 or dy < 0 or dz < 0)
-          APpos = [-dx, -dy, -dz]
+          APpos = [-dx, -dy, -dz] if -dx < x and -dy < y and -dz < z
         dx = dy = dz = 0
       if matrixCount > 1
         dx -= dx_offset
