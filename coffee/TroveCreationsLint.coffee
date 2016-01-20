@@ -7,6 +7,8 @@ class TroveCreationsLint
     [x, y, z, ox, oy, oz] = @io.computeBoundingBox()
     @io.resize x, y, z, ox, oy, oz
     @hasExactlyOneAttachmentPoint() if @type not in ['deco', 'lair', 'dungeon']
+    @hasNoAlphaOnSolidVoxels()
+    @hasNoSpecularOnNonSolidVoxels()
     @hasNoBlackVoxels()
     @hasNoFloatingVoxels() if @type not in ['lair', 'dungeon']
     @usesMaterialMaps() if @type not in ['lair', 'dungeon']
@@ -53,6 +55,32 @@ class TroveCreationsLint
       body: "You have more the one attachment point in your model (#{i} found). Avoid the usage of excatly pink (255, 0, 255) voxels in your model
              except for the attachment point in EVERY material map."
     }
+
+  hasNoAlphaOnSolidVoxels: ->
+    for z in [0...@io.z] by 1 when @io.voxels[z]?
+      for y in [0...@io.y] by 1 when @io.voxels[z][y]?
+        for x in [0...@io.x] by 1 when @io.voxels[z][y][x]?
+          vox = @io.voxels[z][y][x]
+          if vox.t in [0, 3] and vox.a not in [112, 255]
+            return @warnings.push {
+              title: 'Alpha material map used on a solid voxel!'
+              body: "You have set a transparent alpha map value on a solid block (#{vox.r}, #{vox.g}, #{vox.b}), but transparency is only supported for all types
+                     of glass blocks. Consider checking your type map so that all voxel that should be transparent have a glass type set. Check out the
+                     <a href=\"http://trove.wikia.com/wiki/Material_Map_Guide\" class=\"alert-link\" target=\"_blank\">Material Map Guide</a> for more informations!"
+            }
+
+  hasNoSpecularOnNonSolidVoxels: ->
+    for z in [0...@io.z] by 1 when @io.voxels[z]?
+      for y in [0...@io.y] by 1 when @io.voxels[z][y]?
+        for x in [0...@io.x] by 1 when @io.voxels[z][y][x]?
+          vox = @io.voxels[z][y][x]
+          unless vox.t == 0 or vox.s == 0
+            return @warnings.push {
+              title: 'Specular material map used on non solid voxel!'
+              body: "You have changed the specular map value on a non solid block (#{vox.r}, #{vox.g}, #{vox.b}), but specular values are only supported for solid
+                     (and not glowing) voxels. Consider checking your type map so that all voxel that should have a specular map set are (glowing) solid. Check out the
+                     <a href=\"http://trove.wikia.com/wiki/Material_Map_Guide\" class=\"alert-link\" target=\"_blank\">Material Map Guide</a> for more informations!"
+            }
 
   hasNoBlackVoxels: ->
     for z in [0...@io.z] by 1 when @io.voxels[z]?
