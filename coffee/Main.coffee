@@ -16,6 +16,8 @@ window.applicationCache.addEventListener 'updateready', ->
   $('#updateModal').modal 'show'
   $('#AppCacheProgress').fadeOut()
   clearInterval updatechecker
+window.applicationCache.addEventListener 'cached', -> # first download
+  $('#AppCacheProgress').fadeOut()
 updatechecker = setInterval (-> window.applicationCache.update()), 300000
 $('#updateLater').click ->
   updatechecker = setInterval (-> window.applicationCache.update(); $('#updateModal').modal 'show'), parseInt($('#remindUpdateTime').val())
