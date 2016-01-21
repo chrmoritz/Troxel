@@ -64,8 +64,8 @@ class TroveCreationsLint
           if vox.t in [0, 3] and vox.a not in [112, 255]
             return @warnings.push {
               title: 'Alpha material map used on a solid voxel!'
-              body: "You have set a transparent alpha map value on a solid block (#{vox.r}, #{vox.g}, #{vox.b}), but transparency is only supported for all types
-                     of glass blocks. Consider checking your type map so that all voxel that should be transparent have a glass type set. Check out the
+              body: "You have set a transparent alpha map value on a solid voxel, but transparency is only supported for all types of glass blocks. Consider checking
+                    your type map so that all voxel that should be transparent have a glass type set (or unset the alpha value from all solid voxels). Check out the
                      <a href=\"http://trove.wikia.com/wiki/Material_Map_Guide\" class=\"alert-link\" target=\"_blank\">Material Map Guide</a> for more informations!"
             }
 
@@ -74,11 +74,12 @@ class TroveCreationsLint
       for y in [0...@io.y] by 1 when @io.voxels[z][y]?
         for x in [0...@io.x] by 1 when @io.voxels[z][y][x]?
           vox = @io.voxels[z][y][x]
-          unless vox.t == 0 or vox.s == 0
+          unless vox.t == 0 or vox.s == 0 or vox.t == 7 or vox.s == 7
             return @warnings.push {
               title: 'Specular material map used on non solid voxel!'
-              body: "You have changed the specular map value on a non solid block (#{vox.r}, #{vox.g}, #{vox.b}), but specular values are only supported for solid
-                     (and not glowing) voxels. Consider checking your type map so that all voxel that should have a specular map set are (glowing) solid. Check out the
+              body: "You have changed the specular map value on a non solid voxel, but specular values are only supported for solid (and not glowing) voxels.
+                     Consider checking your type map so that all voxel that should have a specular value are set to (not glowing) solid
+                     OR change the specular map value of all non solid voxels to rough. Check out the
                      <a href=\"http://trove.wikia.com/wiki/Material_Map_Guide\" class=\"alert-link\" target=\"_blank\">Material Map Guide</a> for more informations!"
             }
 
