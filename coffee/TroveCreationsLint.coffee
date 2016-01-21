@@ -6,12 +6,17 @@ class TroveCreationsLint
     @infos = []
     [x, y, z, ox, oy, oz] = @io.computeBoundingBox()
     @io.resize x, y, z, ox, oy, oz
-    @hasExactlyOneAttachmentPoint() if @type not in ['deco', 'lair', 'dungeon']
+    for z in [0...@io.z] by 1 when @io.voxels[z]?
+      for y in [0...@io.y] by 1 when @io.voxels[z][y]?
+        for x in [0...@io.x] by 1 when @io.voxels[z][y][x]?
+          if @io.voxels[z][y][x].linter?
+            delete @io.voxels[z][y][x].linter
     @hasNoAlphaOnSolidVoxels()
     @hasNoSpecularOnNonSolidVoxels()
     @hasNoBlackVoxels()
     @hasNoFloatingVoxels() if @type not in ['lair', 'dungeon']
     @usesMaterialMaps() if @type not in ['lair', 'dungeon']
+    @hasExactlyOneAttachmentPoint() if @type not in ['deco', 'lair', 'dungeon']
     switch @type
       when 'melee' then @validateMelee()
       when 'gun'   then @validateGun()
@@ -29,6 +34,7 @@ class TroveCreationsLint
 
   hasExactlyOneAttachmentPoint: ->
     i = 0
+    t = false
     for z in [0...@io.z] by 1 when @io.voxels[z]?
       for y in [0...@io.y] by 1 when @io.voxels[z][y]?
         for x in [0...@io.x] by 1 when @io.voxels[z][y][x]?
@@ -36,12 +42,18 @@ class TroveCreationsLint
           if vox.t == 7 or vox.s == 7 or vox.a == 250 or (vox.r == vox.b == 255 and vox.g == 0)
             i++
             t = vox.t == vox.s == 7 and vox.a == 250 and vox.r == vox.b == 255 and vox.g == 0
+            @io.voxels[z][y][x].linter = 0x0000ff
     if i == 1
-      @errors.push {
-        title: 'Attachment point not in all material maps found!'
-        body: 'Your attachment point is only marked in some but not all material maps as a pink voxel.
-               You need to change the voxel to a pink (255, 0, 255) voxel in all material maps!'
-      } unless t
+      if t
+        [x, y, z] = @io.getAttachmentPoint()
+        delete @io.voxels[z][y][x].linter
+      else
+        @errors.push {
+          title: 'Attachment point not in all material maps found!'
+          body: 'Your attachment point is only marked in some but not all material maps as a pink voxel.
+                 You need to change the voxel to a pink (255, 0, 255) voxel in all material maps!'
+          footer: 'You have to mark the attachment point with the blue wireframe in every material map as a a pink (255, 0, 255) voxel!'
+        }
       return @correctAttachmentPoint = true
     @correctAttachmentPoint = false
     if i == 0
@@ -54,48 +66,64 @@ class TroveCreationsLint
       title: 'Multiple attachment points found!'
       body: "You have more the one attachment point in your model (#{i} found). Avoid the usage of excatly pink (255, 0, 255) voxels in your model
              except for the attachment point in EVERY material map."
+      footer: 'All voxels considers as an attachment point are now marked with a blue wireframe. Check all marked voxels
+               you don\'t want as an attachment point for pink colors in any of the material map and recolor them accordingly!'
     }
 
   hasNoAlphaOnSolidVoxels: ->
+    t = false
     for z in [0...@io.z] by 1 when @io.voxels[z]?
       for y in [0...@io.y] by 1 when @io.voxels[z][y]?
         for x in [0...@io.x] by 1 when @io.voxels[z][y][x]?
           vox = @io.voxels[z][y][x]
           if vox.t in [0, 3] and vox.a not in [112, 255]
-            return @warnings.push {
-              title: 'Alpha material map used on a solid voxel!'
-              body: "You have set a transparent alpha map value on a solid voxel, but transparency is only supported for all types of glass blocks. Consider checking
-                    your type map so that all voxel that should be transparent have a glass type set (or unset the alpha value from all solid voxels). Check out the
-                     <a href=\"http://trove.wikia.com/wiki/Material_Map_Guide\" class=\"alert-link\" target=\"_blank\">Material Map Guide</a> for more informations!"
-            }
+            t = true
+            @io.voxels[z][y][x].linter = 0xff7f00
+    if t
+      @warnings.push {
+        title: 'Alpha material map used on a solid voxel!'
+        body: "You have set a transparent alpha map value on a solid voxel, but transparency is only supported for all types of glass blocks. Consider checking
+              your type map so that all voxel that should be transparent have a glass type set (or unset the alpha value from all solid voxels). Check out the
+               <a href=\"http://trove.wikia.com/wiki/Material_Map_Guide\" class=\"alert-link\" target=\"_blank\">Material Map Guide</a> for more informations!"
+        footer: 'Recheck the material map of all voxels now marked with an orange wireframe!'
+      }
 
   hasNoSpecularOnNonSolidVoxels: ->
+    t = false
     for z in [0...@io.z] by 1 when @io.voxels[z]?
       for y in [0...@io.y] by 1 when @io.voxels[z][y]?
         for x in [0...@io.x] by 1 when @io.voxels[z][y][x]?
           vox = @io.voxels[z][y][x]
           unless vox.t == 0 or vox.s == 0 or vox.t == 7 or vox.s == 7
-            return @warnings.push {
-              title: 'Specular material map used on non solid voxel!'
-              body: "You have changed the specular map value on a non solid voxel, but specular values are only supported for solid (and not glowing) voxels.
-                     Consider checking your type map so that all voxel that should have a specular value are set to (not glowing) solid
-                     OR change the specular map value of all non solid voxels to rough. Check out the
-                     <a href=\"http://trove.wikia.com/wiki/Material_Map_Guide\" class=\"alert-link\" target=\"_blank\">Material Map Guide</a> for more informations!"
-            }
+            t = true
+            @io.voxels[z][y][x].linter = 0xffff00
+    if t
+      @warnings.push {
+        title: 'Specular material map used on non solid voxel!'
+        body: "You have changed the specular map value on a non solid voxel, but specular values are only supported for solid (and not glowing) voxels.
+               Consider checking your type map so that all voxel that should have a specular value are set to (not glowing) solid
+               OR change the specular map value of all non solid voxels to rough. Check out the
+               <a href=\"http://trove.wikia.com/wiki/Material_Map_Guide\" class=\"alert-link\" target=\"_blank\">Material Map Guide</a> for more informations!"
+        footer: 'Recheck the material map of all voxels now marked with an yellow wireframe!'
+      }
 
   hasNoBlackVoxels: ->
+    t = false
     for z in [0...@io.z] by 1 when @io.voxels[z]?
       for y in [0...@io.y] by 1 when @io.voxels[z][y]?
         for x in [0...@io.x] by 1 when @io.voxels[z][y][x]?
           vox = @io.voxels[z][y][x]
           if Math.min(vox.r, vox.g, vox.b) + Math.max(vox.r, vox.g, vox.b) < 20
-            return @errors.push {
-              title: 'Too dark voxel found!'
-              body: "There shouldn't be voxels darker than (10, 10, 10) in your voxel model, but we found a voxel with (#{vox.r}, #{vox.g}, #{vox.b}).
-                     Try to use a (brighter) dark grey voxel instead. Check out the
-                     <a href=\"http://trove.wikia.com/wiki/Style_guidelines#Full_Black\" class=\"alert-link\" target=\"_blank\">style guide</a>
-                     for more informations!"
-            }
+            t = true
+            @io.voxels[z][y][x].linter = 0xffffff
+    if t
+      @errors.push {
+        title: 'Too dark voxel found!'
+        body: "There shouldn't be voxels darker than (10, 10, 10) in your voxel model, but we found a voxel with (#{vox.r}, #{vox.g}, #{vox.b}).
+               Try to use a (brighter) dark grey voxel instead. Check out the
+               <a href=\"http://trove.wikia.com/wiki/Style_guidelines#Full_Black\" class=\"alert-link\" target=\"_blank\">style guide</a> for more informations!"
+        footer: 'Increase the brightness of all voxels now marked with an white wireframe!'
+      }
 
   hasNoFloatingVoxels: ->
     toCheck = @getStartingVoxel()
@@ -115,16 +143,19 @@ class TroveCreationsLint
         for x in [0...@io.x] by 1 when @io.voxels[z][y][x]?
           if @io.voxels[z][y][x].checked
             delete @io.voxels[z][y][x].checked
-          else
-            t = true unless @io.voxels[z][y][x].t == 7 and @type in ['hair', 'hat', 'mask'] # attachment point have to float
+          else unless @io.voxels[z][y][x].t == 7 and @type in ['hair', 'hat', 'mask'] # attachment point have to float
+            t = true
+            @io.voxels[z][y][x].linter = 0x00ffff
     if t
-      @warnings.push { # ToDo: mark them with wireframes?
+      @warnings.push {
         title: 'Your model has floating/corner-connected voxels!'
         body: 'There are voxels in your model, which are not directly connected to other voxels (in some cases caused by a unnecessary hole).
                Read more about voxel placements in
                the <a href="http://trove.wikia.com/wiki/Style_guidelines#Voxel_Placement" class="alert-link" target="_blank">sytle guides</a>.
                There will be only a few exceptions where models with floating/corner-connected  voxels will be accepted. Try to avoid them!
                You will get feedback if this is the case for you in the submission process on the Trove Creations subreddit.'
+        footer: 'All voxels marked with an cyan wireframe are not connected to the unmarked voxels.
+                 Try to connect them together (adding very transparent voxels doesn\'t count)!'
       }
 
   getStartingVoxel: ->
@@ -137,13 +168,12 @@ class TroveCreationsLint
     for z in [0...@io.z] by 1 when @io.voxels[z]?
       for y in [0...@io.y] by 1 when @io.voxels[z][y]?
         for x in [0...@io.x] by 1 when @io.voxels[z][y][x]? and (@io.voxels[z][y][x].t > 0 or @io.voxels[z][y][x].s > 0) and @io.voxels[z][y][x].t != 7
-          return
-    @infos.push {
-      title: 'Material maps not used!'
-      body: 'It looks like you haven\'t used any material maps in your voxel model. If you arent yet familiar with them, check out the
-             <a href="http://trove.wikia.com/wiki/Material_Map_Guide" class="alert-link" target="_blank">Material Map Guide</a> for more informations
-             on how you could make voxel look more metallic or like transparent glass for example. You should use them where suitable in your model!'
-    }
+          return @infos.push {
+            title: 'Material maps not used!'
+            body: 'It looks like you haven\'t used any material maps in your voxel model. If you arent yet familiar with them, check out the
+                   <a href="http://trove.wikia.com/wiki/Material_Map_Guide" class="alert-link" target="_blank">Material Map Guide</a> for more informations
+                   on how you could make voxel look more metallic or like transparent glass for example. You should use them where suitable in your model!'
+          }
 
   validateMelee: ->
     if @io.x > 10 or @io.y > 10 or @io.z > 35 # oriantation and dimension
@@ -166,7 +196,7 @@ class TroveCreationsLint
     if ay > 4 or @io.y - ay > 6
       @warnings.push {
         title: 'Incorrect attachment point height!'
-        body: "There shouldn't be voxels heigher than 5 voxel above or lower than 4 voxels below the attachment point!
+        body: "There shouldn't be voxels higher than 5 voxel above or lower than 4 voxels below the attachment point!
                But in your melee weapon model there are up to #{@io.y - ay - 1} voxel above and #{ay} voxels below the attachment point. Check out the
                <a href=\"http://trove.wikia.com/wiki/Melee_weapon_creation#Handle_size_and_attachment\" class=\"alert-link\" target=\"_blank\">melee
                weapon creation guide</a> for more informations!"
@@ -177,8 +207,9 @@ class TroveCreationsLint
         for x in [ax-1..ax+1] by 1
           if x == ax and y == ay
             t = true unless @io.voxels[z]?[y]?[x]?
-          else
-            t = true if @io.voxels[z]?[y]?[x]?
+          else if @io.voxels[z]?[y]?[x]?
+            t = true
+            @io.voxels[z][y][x].linter = 0xff0000
     if t
       @warnings.push {
         title: 'Incorrect attachment point surrounding / handle!'
@@ -186,6 +217,7 @@ class TroveCreationsLint
                and nothing else in a 3x3x3 cube around the attachment point. Check out the
                <a href="http://trove.wikia.com/wiki/Melee_weapon_creation#Handle_size_and_attachment" class="alert-link" target="_blank">melee
                weapon creation guide</a> for more informations!'
+        footer: 'You have to remove all overlaying voxels now marked with a red wireframe!'
       }
 
   validateGun: ->
@@ -221,8 +253,9 @@ class TroveCreationsLint
         for x in [ax-1..ax+1] by 1
           if x == ax and y == ay and z >= az
             t = true unless @io.voxels[z]?[y]?[x]?
-          else
-            t = true if @io.voxels[z]?[y]?[x]?
+          else if @io.voxels[z]?[y]?[x]?
+            t = true
+            @io.voxels[z][y][x].linter = 0xff0000
     if t
       @warnings.push {
         title: 'Incorrect attachment point surrounding / handle!'
@@ -230,6 +263,7 @@ class TroveCreationsLint
                and nothing else in a 3x3x3 cube around the attachment point. Check out the
                <a href="http://trove.wikia.com/wiki/Gun_Weapon_Creation#Handle_size_and_attachment" class="alert-link" target="_blank">gun
                weapon creation guide</a> for more informations! Exceptions may be made for guns which are designed to be worn like a glove.'
+        footer: 'You have to remove all overlaying voxels now marked with a red wireframe!'
       }
 
   validateStaff: ->
@@ -270,8 +304,10 @@ class TroveCreationsLint
         for x in [ax-1..ax+1] by 1
           if x == ax and y == ay
             t = true unless @io.voxels[z]?[y]?[x]?
-          else
-            t = true if @io.voxels[z]?[y]?[x]?
+          else if @io.voxels[z]?[y]?[x]?
+            t = true
+            @io.voxels[z][y][x].linter = 0xff0000
+
     if t
       @warnings.push {
         title: 'Incorrect attachment point surrounding / handle!'
@@ -279,6 +315,7 @@ class TroveCreationsLint
                and nothing else in a 3x3x3 cube around the attachment point. Check out the
                <a href="http://trove.wikia.com/wiki/Staff_Creation_Guide#Handle_size_and_attachment" class="alert-link" target="_blank">staff
                weapon creation guide</a> for more informations!'
+        footer: 'You have to remove all overlaying voxels now marked with a red wireframe!'
       }
 
   validateBow: ->
@@ -310,7 +347,7 @@ class TroveCreationsLint
     if ay > 3 or @io.y - ay > 6
       @warnings.push {
         title: 'Incorrect attachment point height!'
-        body: "There shouldn\'t be voxels heigher than 5 voxel above or lower than 3 voxels below the attachment point.
+        body: "There shouldn\'t be voxels higher than 5 voxel above or lower than 3 voxels below the attachment point.
                But in your bow model there are up to #{@io.y - ay - 1} voxel above and #{ay} voxels below the attachment point. Check out
                the <a href=\"http://trove.wikia.com/wiki/Bow_Creation_Guide#Basic_Dimensions\" class=\"alert-link\" target=\"_blank\">bow
                weapon creation guide</a> for more informations!"
@@ -321,8 +358,9 @@ class TroveCreationsLint
         for x in [ax-1..ax+1] by 1
           if x == ax and y == ay
             t = true unless @io.voxels[z]?[y]?[x]?
-          else
-            t = true if @io.voxels[z]?[y]?[x]?
+          else if @io.voxels[z]?[y]?[x]?
+            t = true
+            @io.voxels[z][y][x].linter = 0xff0000
     if t
       @warnings.push {
         title: 'Incorrect attachment point surrounding / handle!'
@@ -330,6 +368,7 @@ class TroveCreationsLint
                and nothing else in a 3x3x3 cube around the attachment point. Check out
                the <a href="http://trove.wikia.com/wiki/Bow_Creation_Guide#Other_details" class="alert-link" target="_blank">bow
                weapon creation guide</a> for more informations!'
+        footer: 'You have to remove all overlaying voxels now marked with a red wireframe!'
       }
 
   validateSpear: ->
@@ -365,25 +404,37 @@ class TroveCreationsLint
                <a href=\"http://trove.wikia.com/wiki/Spear_Creation_Guide#Weapon_Dimensions\" class=\"alert-link\" target=\"_blank\">spear
                creation guide</a> for more informations!"
       }
+    t = false
     for z in [0...2] by 1 when @io.voxels[z]? # check base
       for y in [0...@io.y] by 1 when @io.voxels[z][y]?
         for x in [0...@io.x] by 1 when @io.voxels[z][y][x]? and (x > ax + 1 or x < ax - 1 or y > ay + 1 or y < ay - 1)
-          return @errors.push {
-            title: 'Incorrect spear base!'
-            body: "The spear base should fit in a 3x3x3 area with the shaft connected in the center of the base. Check out the
-                   <a href=\"http://trove.wikia.com/wiki/Spear_Creation_Guide#Weapon_Dimensions\" class=\"alert-link\" target=\"_blank\">spear
-                   creation guide</a> for more informations!"
-          }
+          t = true
+          @io.voxels[z][y][x].linter = 0xff0000
+    if t
+      @errors.push {
+        title: 'Incorrect spear base!'
+        body: 'The spear base should fit in a 3x3x3 area with the shaft connected in the center of the base. Check out the
+               <a href="http://trove.wikia.com/wiki/Spear_Creation_Guide#Weapon_Dimensions" class="alert-link" target="_blank">spear
+               creation guide</a> for more informations!'
+        footer: 'You have to remove all overlaying voxels now marked with a red wireframe!'
+      }
+    t = false
+    zmin = 31
     for z in [3...30] by 1 when @io.voxels[z]? # check shaft
       for y in [0...@io.y] by 1 when @io.voxels[z][y]?
         for x in [0...@io.x] by 1 when @io.voxels[z][y][x]? and (x != ax or y != ay)
-          return @errors.push {
-            title: 'Incorrect spear shaft or too long spear head/base!'
-            body: "The spear shaft should only be 1 voxel thick and 27 voxels long and connect the (3 voxel long) spear base with the 15 voxel long
-                   spear head. But your spear head is either #{@io.z - z} voxel long or your spear shaft is too thick. Check out the
-                   <a href=\"http://trove.wikia.com/wiki/Spear_Creation_Guide#Weapon_Dimensions\" class=\"alert-link\" target=\"_blank\">spear
-                   creation guide</a> for more informations!"
-          }
+          t = true
+          zmin = Math.min zmin, z
+          @io.voxels[z][y][x].linter = 0xff0000
+    if t
+      @errors.push {
+        title: 'Incorrect spear shaft or too long spear head/base!'
+        body: "The spear shaft should only be 1 voxel thick and 27 voxels long and connect the (3 voxel long) spear base with the 15 voxel long
+               spear head. But your spear head is either #{@io.z - zmin} voxel long or your spear shaft is too thick. Check out the
+               <a href=\"http://trove.wikia.com/wiki/Spear_Creation_Guide#Weapon_Dimensions\" class=\"alert-link\" target=\"_blank\">spear
+               creation guide</a> for more informations!"
+        footer: 'You have to either fix your spear shaft/base length or remove all overlaying voxels now marked with a red wireframe!'
+      }
 
   validateMask: ->
     if @io.x > 10 or @io.y > 10 # dimension
@@ -418,15 +469,20 @@ class TroveCreationsLint
                <a href=\"http://trove.wikia.com/wiki/Mask_creation#Head_attachment\" class=\"alert-link\" target=\"_blank\">mask creation guide</a>
                on the wiki for are more in depth attachment point position guide."
       }
+    zmin = 6
     for z in [0..5] by 1 when @io.voxels[z]?
       for y in [0...@io.y] by 1 when @io.voxels[z][y]?
         for x in [0...@io.x] by 1 when @io.voxels[z][y][x]? and @io.voxels[z][y][x].t != 7
-          return @errors.push {
-            title: 'Incorrect attachment point position!'
-            body: "The attachment point should be 6 voxels behind the mask and there shouldn't be any voxels behind this distance. Check out the
-                   <a href=\"http://trove.wikia.com/wiki/Mask_creation#Head_attachment\" class=\"alert-link\" target=\"_blank\">mask creation guide</a>
-                   for more informations! (minimal distance to the mask was #{z} instead of 6 voxels)"
-          }
+          zmin = Math.min zmin, z
+          @io.voxels[z][y][x].linter = 0xff0000
+    if zmin < 6
+      @errors.push {
+        title: 'Incorrect attachment point position!'
+        body: "The attachment point should be 6 voxels behind the mask and there shouldn't be any voxels behind this distance. Check out the
+               <a href=\"http://trove.wikia.com/wiki/Mask_creation#Head_attachment\" class=\"alert-link\" target=\"_blank\">mask creation guide</a>
+               for more informations! (minimal distance to the mask was #{zmin} instead of 6 voxels)"
+        footer: 'You have to either reposition your attachment point or remove all overlaying voxels now marked with a red wireframe!'
+      }
 
   validateHat: ->
     if @io.x > 20 or @io.y > 20 or @io.z > 20 # dimension
@@ -453,15 +509,20 @@ class TroveCreationsLint
                <a href=\"http://trove.wikia.com/wiki/Hat_creation#Head_attachment\" class=\"alert-link\" target=\"_blank\">hat creation guide</a>
                on the wiki for are more in depth attachment point position guide."
       }
+    ymin = 6
     for z in [0...@io.z] by 1 when @io.voxels[z]?
       for y in [0..5] by 1 when @io.voxels[z][y]?
         for x in [0...@io.x] by 1 when @io.voxels[z][y][x]? and @io.voxels[z][y][x].t != 7
-          return @errors.push {
-            title: 'Incorrect attachment point position!'
-            body: "The attachment point should be 6 voxels below the hat and there shouldn't be any voxels below this distance. Check out the
-                   <a href=\"http://trove.wikia.com/wiki/Hat_creation#Head_attachment\" class=\"alert-link\" target=\"_blank\">hat creation guide</a>
-                   for more informations! (minimal distance to the hat was #{y} instead of 6 voxels)"
-          }
+          ymin = Math.min ymin, y
+          @io.voxels[z][y][x].linter = 0xff0000
+    if ymin < 6
+      @errors.push {
+        title: 'Incorrect attachment point position!'
+        body: "The attachment point should be 6 voxels below the hat and there shouldn't be any voxels below this distance. Check out the
+               <a href=\"http://trove.wikia.com/wiki/Hat_creation#Head_attachment\" class=\"alert-link\" target=\"_blank\">hat creation guide</a>
+               for more informations! (minimal distance to the hat was #{ymin} instead of 6 voxels)"
+        footer: 'You have to either reposition your attachment point or remove all overlaying voxels now marked with a red wireframe!'
+      }
 
   validateHair: ->
     if @io.x > 20 or @io.y > 20 or @io.z > 20 # dimension

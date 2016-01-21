@@ -140,38 +140,43 @@ class Renderer
                                          , 176: 0xb0b0b0, 208: 0xd0d0d0, 240: 0xf0f0f0, 255: 0xffffff}[vox.a]
               when 4 then new THREE.Color [0xffffff, 0x808080, 0x404040, 0xff0000, 0xffff00, null, null, 0xff00ff][vox.t]
               when 5 then new THREE.Color [0x800000, 0x008000, 0x000080, 0x808000, 0x800080, null, null, 0xff00ff][vox.s]
+              when 6
+                if vox.linter?
+                  new THREE.Color vox.linter
+                else
+                  false
               else new THREE.Color 0x333333 # grey
-            if !@voxels[z+1]?[y]?[x]?
+            if !@voxels[z+1]?[y]?[x]? and wcolor
               wireGeo.vertices.push new THREE.Vector3(50 * z + 50, 50 * y     , 50 * x     ), new THREE.Vector3(50 * z + 50, 50 * y     , 50 * x + 50),
                                     new THREE.Vector3(50 * z + 50, 50 * y     , 50 * x + 50), new THREE.Vector3(50 * z + 50, 50 * y + 50, 50 * x + 50),
                                     new THREE.Vector3(50 * z + 50, 50 * y + 50, 50 * x + 50), new THREE.Vector3(50 * z + 50, 50 * y + 50, 50 * x     ),
                                     new THREE.Vector3(50 * z + 50, 50 * y + 50, 50 * x     ), new THREE.Vector3(50 * z + 50, 50 * y     , 50 * x     )
               wireGeo.colors.push wcolor, wcolor, wcolor, wcolor, wcolor, wcolor, wcolor, wcolor
-            if !@voxels[z-1]?[y]?[x]?
+            if !@voxels[z-1]?[y]?[x]? and wcolor
               wireGeo.vertices.push new THREE.Vector3(50 * z, 50 * y     , 50 * x     ), new THREE.Vector3( 50 * z, 50 * y     , 50 * x + 50),
                                     new THREE.Vector3(50 * z, 50 * y     , 50 * x + 50), new THREE.Vector3( 50 * z, 50 * y + 50, 50 * x + 50),
                                     new THREE.Vector3(50 * z, 50 * y + 50, 50 * x + 50), new THREE.Vector3( 50 * z, 50 * y + 50, 50 * x     ),
                                     new THREE.Vector3(50 * z, 50 * y + 50, 50 * x     ), new THREE.Vector3( 50 * z, 50 * y     , 50 * x     )
               wireGeo.colors.push wcolor, wcolor, wcolor, wcolor, wcolor, wcolor, wcolor, wcolor
-            if !@voxels[z]?[y+1]?[x]?
+            if !@voxels[z]?[y+1]?[x]? and wcolor
               wireGeo.vertices.push new THREE.Vector3(50 * z     , 50 * y + 50, 50 * x     ), new THREE.Vector3(50 * z     , 50 * y + 50, 50 * x + 50),
                                     new THREE.Vector3(50 * z     , 50 * y + 50, 50 * x + 50), new THREE.Vector3(50 * z + 50, 50 * y + 50, 50 * x + 50),
                                     new THREE.Vector3(50 * z + 50, 50 * y + 50, 50 * x + 50), new THREE.Vector3(50 * z + 50, 50 * y + 50, 50 * x     ),
                                     new THREE.Vector3(50 * z + 50, 50 * y + 50, 50 * x     ), new THREE.Vector3(50 * z     , 50 * y + 50, 50 * x     )
               wireGeo.colors.push wcolor, wcolor, wcolor, wcolor, wcolor, wcolor, wcolor, wcolor
-            if !@voxels[z]?[y-1]?[x]?
+            if !@voxels[z]?[y-1]?[x]? and wcolor
               wireGeo.vertices.push new THREE.Vector3(50 * z     , 50 * y, 50 * x     ), new THREE.Vector3(50 * z     , 50 * y, 50 * x + 50),
                                     new THREE.Vector3(50 * z     , 50 * y, 50 * x + 50), new THREE.Vector3(50 * z + 50, 50 * y, 50 * x + 50),
                                     new THREE.Vector3(50 * z + 50, 50 * y, 50 * x + 50), new THREE.Vector3(50 * z + 50, 50 * y, 50 * x     ),
                                     new THREE.Vector3(50 * z + 50, 50 * y, 50 * x     ), new THREE.Vector3(50 * z     , 50 * y, 50 * x     )
               wireGeo.colors.push wcolor, wcolor, wcolor, wcolor, wcolor, wcolor, wcolor, wcolor
-            if !@voxels[z]?[y]?[x+1]?
+            if !@voxels[z]?[y]?[x+1]? and wcolor
               wireGeo.vertices.push new THREE.Vector3(50 * z     , 50 * y     , 50 * x + 50), new THREE.Vector3(50 * z + 50, 50 * y     , 50 * x + 50),
                                     new THREE.Vector3(50 * z + 50, 50 * y     , 50 * x + 50), new THREE.Vector3(50 * z + 50, 50 * y + 50, 50 * x + 50),
                                     new THREE.Vector3(50 * z + 50, 50 * y + 50, 50 * x + 50), new THREE.Vector3(50 * z     , 50 * y + 50, 50 * x + 50),
                                     new THREE.Vector3(50 * z     , 50 * y + 50, 50 * x + 50), new THREE.Vector3(50 * z     , 50 * y     , 50 * x + 50)
               wireGeo.colors.push wcolor, wcolor, wcolor, wcolor, wcolor, wcolor, wcolor, wcolor
-            if !@voxels[z]?[y]?[x-1]?
+            if !@voxels[z]?[y]?[x-1]? and wcolor
               wireGeo.vertices.push new THREE.Vector3(50 * z     , 50 * y     , 50 * x), new THREE.Vector3(50 * z + 50, 50 * y     , 50 * x),
                                     new THREE.Vector3(50 * z + 50, 50 * y     , 50 * x), new THREE.Vector3(50 * z + 50, 50 * y + 50, 50 * x),
                                     new THREE.Vector3(50 * z + 50, 50 * y + 50, 50 * x), new THREE.Vector3(50 * z     , 50 * y + 50, 50 * x),

@@ -475,6 +475,8 @@ $('#TroveCreationsLint').click ->
     $('#TroveCreationsExportDiv').show()
   type = $('#TroveCreationsType').val()
   tcl = new TroveCreationsLint io, type
+  editor.renderWireframes = 6
+  $('#renderWireframes').val('6')
   editor.reload io.voxels, io.x, io.y, io.z, true, false
   ioo = {voxels: io.voxels, x: io.x, y: io.y, z: io.z, readonly: io.readonly}
   base64 = new Base64IO(ioo).export false
@@ -483,15 +485,20 @@ $('#TroveCreationsLint').click ->
   catch # reached the quota limit of the state object (640k on firefox)
     history.pushState null, 'Troxel', '#m=' + base64
   $('#TroveCreationsLintingResults').empty()
-  $('#TroveCreationsLintingResults').append("<div class=\"alert alert-danger\"><h4>#{e.title}</h4>#{e.body}</div>") for e in tcl.errors
+  for e in tcl.errors
+    footer = if e.footer? then "<hr style=\"margin-top: 5px; margin-bottom: 5px;\"><p><b>Hot to fix it?: </b><i>#{e.footer}</i></p>" else ''
+    $('#TroveCreationsLintingResults').append("<div class=\"alert alert-danger\"><h4>#{e.title}</h4>#{e.body}#{footer}</div>")
   if io.warn?.length > 0
     $('#TroveCreationsLintingResults').append("<div class=\"alert alert-warning\"><h4>Troxel had to fix issues in your material maps for you!</h4>
                 There were issues in your material maps like invalid color values in the type / alpha / specular map or having a voxel in one map
                 but not in another. These were fixed automatically on import by Troxel for you. It\'s recommended that you either fix these isues
                 by yourself in your source .qb files or use the .qb files exported by Troxel for creating your .blueprint for submission.
                 <textarea class=\"form-control\" style=\"resize: none\">#{io.warn.join('\n')}</textarea></div>")
-  $('#TroveCreationsLintingResults').append("<div class=\"alert alert-warning\"><h4>#{w.title}</h4>#{w.body}</div>") for w in tcl.warnings
-  $('#TroveCreationsLintingResults').append("<div class=\"alert alert-info\"><h4>#{i.title}</h4>#{i.body}</div>") for i in tcl.infos
+  for w in tcl.warnings
+    footer = if w.footer? then "<hr style=\"margin-top: 5px; margin-bottom: 5px;\"><p><b>Hot to fix it?: </b><i>#{w.footer}</i></p>" else ''
+    $('#TroveCreationsLintingResults').append("<div class=\"alert alert-warning\"><h4>#{w.title}</h4>#{w.body}#{footer}</div>")
+  for i in tcl.infos
+    $('#TroveCreationsLintingResults').append("<div class=\"alert alert-info\"><h4>#{i.title}</h4>#{i.body}</div>")
   if tcl.warnings.length == tcl.errors.length == 0
     $('#TroveCreationsLintingResults').append("<div class=\"alert alert-success\"><h4>All test passed!</h4>There is nothing to complain about your
                                                model. Thats great, go submitting it!</div>")
