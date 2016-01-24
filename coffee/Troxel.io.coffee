@@ -1,4 +1,6 @@
 'use strict'
+IO = require('./IO') if typeof module == 'object'
+
 class Base64IO extends IO
   constructor: (base64) ->
     return if super(base64)

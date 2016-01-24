@@ -10,3 +10,4 @@ node_js:
 cache:
   directories:
     - bower_components
+    - node_modules

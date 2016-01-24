@@ -1,5 +1,7 @@
 # http://www.minddesk.com/wiki/index.php?title=Qubicle_Constructor_1:Data_Exchange_With_Qubicle_Binary
 'use strict'
+IO = require('./IO') if typeof module == 'object'
+
 class QubicleIO extends IO
   constructor: (files, callback) ->
     return if super(files)

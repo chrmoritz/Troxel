@@ -318,7 +318,7 @@ html(manifest=dev?null:'troxel.appcache')
               option(value=1800000) 30 minutes
               option(value=3600000) 1 hour
               option(value=7200000) 2 hours
-            button(onclick="javascript:location.reload();").btn.btn-primary Update now
+            button(onclick="javascript:window.location.href=window.location.href.split('#')[0];").btn.btn-primary Update now
       
     #TroveCreationLinterModal.modal.fade(tabindex='-1', role='dialog')
       .modal-dialog.modal-lg

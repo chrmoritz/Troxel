@@ -1,5 +1,7 @@
 # http://voxel.codeplex.com/wikipage?title=VOX%20Format&referringTitle=MagicaVoxel%20Editor
 'use strict'
+IO = require('./IO') if typeof module == 'object'
+
 class MagicaIO extends IO
   constructor: (file, callback) ->
     return if super(file)
