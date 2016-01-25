@@ -398,12 +398,12 @@ $('#addVoxColor').change ->
       $('#addVoxType').change()
 $('#addVoxType').change ->
   switch parseInt($(@).val())
-    when 1, 2, 4 then $('#addVoxAlpha').prop('disabled', false)
-    when 0, 3 then $('#addVoxAlpha').prop('disabled', true)
-  if parseInt($(@).val()) == 0
-    $('#addVoxSpecular').prop('disabled', false)
-  else
-    $('#addVoxSpecular').prop('disabled', true)
+    when 1, 2, 4
+      $('#addVoxAlpha').prop('disabled', false)
+      $('#addVoxSpecular').prop('disabled', true)
+    when 0, 3
+      $('#addVoxAlpha').prop('disabled', true)
+      $('#addVoxSpecular').prop('disabled', false)
 $('#addVoxAlpha').val(112)
 $('#editVoxNoiseBright').val(0)
 $('#editVoxNoiseHSL').val(0)

@@ -76,7 +76,7 @@ class TroveCreationsLint
       for y in [0...@io.y] by 1 when @io.voxels[z][y]?
         for x in [0...@io.x] by 1 when @io.voxels[z][y][x]?
           vox = @io.voxels[z][y][x]
-          if vox.t in [0, 3] and vox.a not in [112, 255]
+          if vox.t in [0, 3] and vox.a not in [16, 255]
             t = true
             @io.voxels[z][y][x].linter = 0xff7f00
     if t
@@ -90,22 +90,32 @@ class TroveCreationsLint
 
   hasNoSpecularOnNonSolidVoxels: ->
     t = false
+    i = false
     for z in [0...@io.z] by 1 when @io.voxels[z]?
       for y in [0...@io.y] by 1 when @io.voxels[z][y]?
         for x in [0...@io.x] by 1 when @io.voxels[z][y][x]?
           vox = @io.voxels[z][y][x]
-          unless vox.t == 0 or vox.s == 0 or vox.t == 7 or vox.s == 7
+          if vox.t in [1, 2, 4] and vox.s != 0
             t = true
             @io.voxels[z][y][x].linter = 0xffff00
+          else if vox.t == 3 and vox.s != 0
+            i = true
     if t
       @warnings.push {
         title: 'Specular material map used on non solid voxel!'
-        body: "You have changed the specular map value on a non solid voxel, but specular values are only supported for solid (and not glowing) voxels.
-               Consider checking your type map so that all voxel that should have a specular value are set to (not glowing) solid
-               OR change the specular map value of all non solid voxels to rough. Check out the
+        body: "You have changed the specular map value on a non solid voxel, but specular values are only supported for solid voxels. Consider checking your type map
+               so that all voxel that should have a specular value are set to solid OR change the specular map value of all non solid voxels to rough. Check out the
                <a href=\"http://trove.wikia.com/wiki/Material_Map_Guide\" class=\"alert-link\" target=\"_blank\">Material Map Guide</a> for more informations!"
         footer: 'Recheck the material map of all voxels now marked with an yellow wireframe!'
       }
+    else if i
+      @infos.push {
+        title: 'Specular material map usage is bugged on glowing solid voxel!'
+        body: 'Rendering specular map effects on glowing solid voxel is bugged in the current game engine. Don\'t rely on your specular map values other than rough
+               having any visual effect ingame. For now using anything other than rought on glowing solid voxel is not recommended!'
+      }
+
+
 
   hasNoBlackVoxels: ->
     t = false
@@ -168,12 +178,13 @@ class TroveCreationsLint
     for z in [0...@io.z] by 1 when @io.voxels[z]?
       for y in [0...@io.y] by 1 when @io.voxels[z][y]?
         for x in [0...@io.x] by 1 when @io.voxels[z][y][x]? and (@io.voxels[z][y][x].t > 0 or @io.voxels[z][y][x].s > 0) and @io.voxels[z][y][x].t != 7
-          return @infos.push {
-            title: 'Material maps not used!'
-            body: 'It looks like you haven\'t used any material maps in your voxel model. If you arent yet familiar with them, check out the
-                   <a href="http://trove.wikia.com/wiki/Material_Map_Guide" class="alert-link" target="_blank">Material Map Guide</a> for more informations
-                   on how you could make voxel look more metallic or like transparent glass for example. You should use them where suitable in your model!'
-          }
+          return
+    @infos.push {
+      title: 'Material maps not used!'
+      body: 'It looks like you haven\'t used any material maps in your voxel model. If you arent yet familiar with them, check out the
+             <a href="http://trove.wikia.com/wiki/Material_Map_Guide" class="alert-link" target="_blank">Material Map Guide</a> for more informations
+             on how you could make voxel look more metallic or like transparent glass for example. You should use them where suitable in your model!'
+    }
 
   validateMelee: ->
     if @io.x > 10 or @io.y > 10 or @io.z > 35 # oriantation and dimension

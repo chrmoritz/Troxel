@@ -143,7 +143,7 @@ class Editor extends Renderer
               t = parseInt($('#addVoxType').val())
               s = parseInt($('#addVoxSpecular').val())
               a = 255 if t in [0, 3] # no alpha on solid
-              s = 0 unless t == 0 # no specualr on non solid
+              s = 0 unless t in [0, 3] # no specualr on non solid
               if $('#addVoxColor').val() == '#ff00ff'
                 a = 250
                 t = s = 7
@@ -166,7 +166,7 @@ class Editor extends Renderer
               t = parseInt($('#addVoxType').val())
               s = parseInt($('#addVoxSpecular').val())
               a = 255 if t in [0, 3] # no alpha on solid
-              s = 0 unless t == 0 # no specualr on non solid
+              s = 0 unless t in [0, 3] # no specualr on non solid
               if color.r == 1 and color.g == 0 and color.b == 1
                 a = 250
                 t = s = 7
@@ -198,7 +198,7 @@ class Editor extends Renderer
               t = parseInt($('#addVoxType').val())
               s = parseInt($('#addVoxSpecular').val())
               a = 255 if t in [0, 3] # no alpha on solid
-              s = 0 unless t == 0 # no specualr on non solid
+              s = 0 unless t in [0, 3] # no specualr on non solid
               return if baseColor.getHex() == 0xff00ff # no fill for attachment points
               toFill = [[z, y, x]]
               @voxels[z][y][x].filled = true

@@ -238,15 +238,15 @@ class QubicleIO extends IO
         data.push vox.r, vox.g, vox.b, 255
         switch vox.a
           when 250 then data_a.push 255,   0, 255, 255 # attachment point
-          when 255 then data_a.push 255, 255, 255, 255 # solid (type map set to non transparent type)
+          when 255 then data_a.push 255, 255, 255, 255 # solid (type map set to non transparent type, game default for solid voxels)
           when 240 then data_a.push 240, 240, 240, 255 # Nearly Solid
           when 208 then data_a.push 208, 208, 208, 255 #      |
           when 176 then data_a.push 176, 176, 176, 255 #      |
           when 144 then data_a.push 144, 144, 144, 255 #      |
-          when 112 then data_a.push 112, 112, 112, 255 #      |
+          when 112 then data_a.push 112, 112, 112, 255 #      | (Troxel and previous game default)
           when  80 then data_a.push  80,  80,  80, 255 #      |
           when  48 then data_a.push  48,  48,  48, 255 #      V
-          when  16 then data_a.push  16,  16,  16, 255 # Very Transparent
+          when  16 then data_a.push  16,  16,  16, 255 # Very Transparent (game default for glass voxels)
           else          data_a.push 112, 112, 112, 255 # fallback
         switch vox.t
           when 0 then data_t.push 255, 255, 255, 255 # solid (default)
