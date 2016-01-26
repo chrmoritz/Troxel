@@ -5,6 +5,9 @@ js
 # Jekyll cache
 .jekyll
 
+# JSPM
+jspm_packages
+
 # Bower
 bower_components
 
