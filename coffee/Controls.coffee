@@ -1,5 +1,7 @@
 'use strict'
-class THREE.TroxelControls extends THREE.EventDispatcher
+THREE = require('three')
+
+class TroxelControls extends THREE.EventDispatcher
   constructor: (@object, @domElement) ->
     # API
     @enabled = true
@@ -342,3 +344,5 @@ class THREE.TroxelControls extends THREE.EventDispatcher
     return unless @enabled and @mode
     @dispatchEvent type: 'end'
     @state = @STATE.NONE
+
+module.exports = TroxelControls

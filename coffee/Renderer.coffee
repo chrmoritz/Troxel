@@ -1,4 +1,8 @@
 'use strict'
+THREE = require('three')
+TroxelControls = require('./Controls.coffee!')
+$ = require('jquery')
+
 class Renderer
   constructor: (io, @embedded = false, @domContainer = $('#WebGlContainer'), @renderMode = 0, @renderWireframes = 0, antialias = true, @ssao = false, renderControls = true) ->
     @width = @domContainer.width()
@@ -6,7 +10,7 @@ class Renderer
     @scene = new THREE.Scene()
     # Camera and Controls
     @camera = new THREE.PerspectiveCamera 45, @width / @height, 1, 100000
-    @controls = new THREE.TroxelControls @camera, @domContainer[0]
+    @controls = new TroxelControls @camera, @domContainer[0]
     @controls.mode = renderControls
     @controls.addEventListener 'change', => @render()
     @reload io.voxels, io.x, io.y, io.z, false, true
@@ -218,4 +222,4 @@ class Renderer
       @ssaoPass.uniforms['size'].value.set @width, @height
     @controls.needsRender = true
 
-if typeof module == 'object' then module.exports = Renderer else window.Renderer = Renderer
+module.exports = Renderer

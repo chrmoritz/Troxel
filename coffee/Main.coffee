@@ -1,4 +1,15 @@
 'use strict'
+IO = require('./IO.coffee!')
+{Base64IO, JsonIO} = require('./Troxel.io.coffee!')
+QubicleIO = require('./Qubicle.io.coffee!')
+MagicaIO = require('./Magica.io.coffee!')
+ZoxelIO = require('./Zoxel.io.coffee!')
+Editor = require('./Editor.coffee!')
+TroveCreationsLint = require('./TroveCreationsLint.coffee!')
+THREE = require('three')
+Bloodhound = require('typeahead')
+$ = require('bootstrap')
+
 io = null
 dragFiles = null
 editor = null
@@ -50,7 +61,7 @@ window.onpopstate = (e) ->
         editor = new Editor io
       break
     if param == 'b' # load Trove model from blueprint id
-      $.getJSON 'static/Trove.json', (data) ->
+      $.getJSON 'https://troxeljs.github.io/trove-blueprints/2016-02-02.json', (data) ->
         model = data[value.toLowerCase()]
         unless model?
           # ToDo: improve this
@@ -165,7 +176,7 @@ $('#open').click ->
       mio = new JsonIO $('#sjson').val()
       cb()
     when '#tabtrove'
-      $.getJSON 'static/Trove.json', (data) ->
+      $.getJSON 'https://troxeljs.github.io/trove-blueprints/2016-02-02.json', (data) ->
         model = data[$('#sbtrove').val().toLowerCase()]
         return unless model?
         if io? and $('#ImportMerge').prop('checked')
@@ -211,7 +222,7 @@ $('#openTroveTab').click ->
     queryTokenizer: (bp) -> bp.split(/[\s,_]/i),
     limit: 10000,
     prefetch: {
-      url: 'static/Trove.json',
+      url: 'https://troxeljs.github.io/trove-blueprints/2016-02-02.json',
       cacheKey: 'TroveBlueprintCache'
       filter: (bps) -> $.map(bps, (base64, bp) ->
         return {value: bp}

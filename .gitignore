@@ -1,6 +1,6 @@
 # Compiled assets
 dist
-js
+index.html
 
 # Jekyll cache
 .jekyll

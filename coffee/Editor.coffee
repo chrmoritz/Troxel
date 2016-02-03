@@ -1,5 +1,10 @@
 'use strict'
-class Editor extends Renderer
+THREE = require('three')
+Stats = require('stats')
+{Base64IO} = require('./Troxel.io.coffee!')
+$ = require('jquery')
+
+class Editor extends require('./Renderer.coffee!')
   constructor: (io, @embedded = false, @domContainer = $('#WebGlContainer')) ->
     @objects = []
     super io, @embedded, @domContainer, parseInt($('#renderMode').val()), parseInt($('#renderWireframes').val()), $('#rendererPostEffect').val() == '1',
@@ -260,4 +265,4 @@ class Editor extends Renderer
         @controls.enabled = false
         @editMode = true
 
-if typeof module == 'object' then module.exports = Editor else window.Editor = Editor
+module.exports = Editor

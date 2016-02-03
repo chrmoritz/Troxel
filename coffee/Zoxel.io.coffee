@@ -1,8 +1,6 @@
 # https://github.com/grking/zoxel/blob/develop/src/plugins/io_zoxel.py
 'use strict'
-IO = require('./IO') if typeof module == 'object'
-
-class ZoxelIO extends IO
+class ZoxelIO extends require('./IO.coffee!')
   constructor: (file, callback) ->
     return if super(file)
     @voxels = []
@@ -39,4 +37,4 @@ class ZoxelIO extends IO
     console.log json
     'data:application/octet-binary;base64,' + btoa JSON.stringify json
 
-if typeof module == 'object' then module.exports = ZoxelIO else window.ZoxelIO = ZoxelIO
+module.exports = ZoxelIO

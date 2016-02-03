@@ -1,8 +1,6 @@
 # http://voxel.codeplex.com/wikipage?title=VOX%20Format&referringTitle=MagicaVoxel%20Editor
 'use strict'
-IO = require('./IO') if typeof module == 'object'
-
-class MagicaIO extends IO
+class MagicaIO extends require('./IO.coffee!')
   constructor: (file, callback) ->
     return if super(file)
     fr = new FileReader()
@@ -216,4 +214,4 @@ class MagicaIO extends IO
     console.log data
     URL.createObjectURL new Blob [new Uint8Array data], type: 'application/octet-binary'
 
-if typeof module == 'object' then module.exports = MagicaIO else window.MagicaIO = MagicaIO
+module.exports = MagicaIO

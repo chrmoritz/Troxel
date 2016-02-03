@@ -561,4 +561,4 @@ class TroveCreationsLint
                creation guide</a> for more informations!"
       }
 
-if typeof module == 'object' then module.exports = TroveCreationsLint else window.TroveCreationsLint = TroveCreationsLint
+module.exports = TroveCreationsLint

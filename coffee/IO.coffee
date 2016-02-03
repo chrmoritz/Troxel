@@ -204,4 +204,4 @@ class IO
           @voxels[z][y][x] = mio.voxels[z - offsets.z][y - offsets.y][x - offsets.x]
     return
 
-if typeof module == 'object' then module.exports = IO else window.IO = IO
+module.exports = IO
