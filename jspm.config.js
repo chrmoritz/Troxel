@@ -14,7 +14,7 @@ SystemJS.config({
     "buffer": "github:jspm/nodelibs-buffer@0.2.0-alpha",
     "child_process": "github:jspm/nodelibs-child_process@0.2.0-alpha",
     "clean-css": "npm:clean-css@3.4.9",
-    "coffee": "github:forresto/system-coffee@0.1.2",
+    "coffee": "github:chrmoritz/system-coffee@0.1.3",
     "css": "github:systemjs/plugin-css@0.1.20",
     "events": "github:jspm/nodelibs-events@0.2.0-alpha",
     "fs": "github:jspm/nodelibs-fs@0.2.0-alpha",

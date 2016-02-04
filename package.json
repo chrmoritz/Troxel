@@ -13,16 +13,16 @@
   "engines": {
     "node": ">=4.0.0"
   },
-  "main": "./tools/index.js",
+  "main": "./lib/index.js",
   "scripts": {
-    "start": "coffee tools/devServer.coffee",
+    "start": "serve --compress",
     "test": "concurrent -p command -l 20 \"npm run test:mocha\" \"npm run test:lint\" \"npm run build:jade\" \"npm run build:assets\"",
     "test:mocha": "mocha -t 5000 --compilers coffee:coffee-script/register",
-    "test:lint": "coffeelint coffee/*.coffee test/*.coffee tools/*.coffee",
+    "test:lint": "coffeelint coffee/*.coffee test/*.coffee",
     "build": "concurrent -p command -l 20 \"npm run build:jade\" \"npm run build:assets\"",
     "build:jade": "jade --obj '{deploy:true}' views/index.jade --out dist",
     "build:assets": "jspm build troxel/Main.coffee! dist/troxel.min.js --skip-source-maps --minify",
-    "watch": "jade views/index.jade --out . --watch",
+    "serve": "jekyll serve -I -s dist -d .jekyll",
     "prepublish": "jspm install"
   },
   "author": "Christian Moritz",
@@ -34,6 +34,7 @@
     "jade": "^1.11.0",
     "jspm": "^0.17.0-beta.5",
     "mocha": "^2.3.0",
+    "serve": "^1.4.0",
     "should": "^8.0.0"
   },
   "dependencies": {
@@ -45,7 +46,7 @@
     },
     "dependencies": {
       "bootstrap": "github:twbs/bootstrap@^3.3.6",
-      "coffee": "github:forresto/system-coffee@^0.1.2",
+      "coffee": "github:chrmoritz/system-coffee@^0.1.3",
       "css": "github:systemjs/plugin-css@^0.1.20",
       "jquery": "github:components/jquery@^2.2.0",
       "stats": "github:mrdoob/stats.js@r14",
