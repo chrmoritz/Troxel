@@ -3,6 +3,8 @@ html
   head
     title Troxel
     meta(name='viewport', content='width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0')
+    if deploy
+      link(rel='stylesheet', href='troxel.min.css')
     style.
       #dropZone {
         border: 2px dashed #bbbbbb;
@@ -564,18 +566,18 @@ html
         span#AppCacheProgressFileCount 0
         | /16
     
-    script(src='jspm_packages/system.js', type='text/javascript')
-    script(src='jspm.browser.js', type='text/javascript')
-    script(src='jspm.config.js', type='text/javascript')
-    script.
-      System.import('bootstrap/dist/css/bootstrap.css!');
-      System.import('bootstrap/dist/css/bootstrap-theme.css!');
-      
-      System.import('troxel/Main.coffee!').then(function(m){
-        console.log('Main.coffee loaded');
-      }).catch(function(e){
-        console.warn(e);
-      });
-    script(src='//www.google-analytics.com/analytics.js', type='text/javascript', async)
-    script.
-      window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;ga('create','UA-54717865-2','auto');ga('send','pageview');
+    if deploy
+      script(src='troxel.min.js', type='text/javascript')
+      script(src='//www.google-analytics.com/analytics.js', type='text/javascript', async)
+      script.
+        window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;ga('create','UA-54717865-2','auto');ga('send','pageview');
+    else
+      script(src='jspm_packages/system.js', type='text/javascript')
+      script(src='jspm.browser.js', type='text/javascript')
+      script(src='jspm.config.js', type='text/javascript')
+      script.
+        System.import('troxel/Main.coffee!').then(function(m){
+          console.log('Main.coffee loaded');
+        }).catch(function(e){
+          console.warn(e);
+        });

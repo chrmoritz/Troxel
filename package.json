@@ -16,14 +16,21 @@
   "main": "./tools/index.js",
   "scripts": {
     "start": "coffee tools/devServer.coffee",
-    "test": "mocha -t 5000 --compilers coffee:coffee-script/register",
-    "watch": "./node_modules/.bin/jade views/index.jade --out . --watch",
+    "test": "concurrent -p command -l 20 \"npm run test:mocha\" \"npm run test:lint\" \"npm run build:jade\" \"npm run build:assets\"",
+    "test:mocha": "mocha -t 5000 --compilers coffee:coffee-script/register",
+    "test:lint": "coffeelint coffee/*.coffee test/*.coffee tools/*.coffee",
+    "build": "concurrent -p command -l 20 \"npm run build:jade\" \"npm run build:assets\"",
+    "build:jade": "jade --obj '{deploy:true}' views/index.jade --out dist",
+    "build:assets": "jspm build troxel/Main.coffee! dist/troxel.min.js --skip-source-maps --minify",
+    "watch": "jade views/index.jade --out . --watch",
     "prepublish": "jspm install"
   },
   "author": "Christian Moritz",
   "license": "LGPL-3.0",
   "devDependencies": {
     "coffeelint": "^1.14.1",
+    "coffeelint-stylish": "^0.1.2",
+    "concurrently": "^1.0.0",
     "jade": "^1.11.0",
     "jspm": "^0.17.0-beta.5",
     "mocha": "^2.3.0",
@@ -33,6 +40,9 @@
     "coffee-script": "^1.10.0"
   },
   "jspm": {
+    "directories": {
+      "lib": "coffee"
+    },
     "dependencies": {
       "bootstrap": "github:twbs/bootstrap@^3.3.6",
       "coffee": "github:forresto/system-coffee@^0.1.2",
@@ -43,7 +53,24 @@
       "typeahead": "github:twitter/typeahead.js@0.10.5"
     },
     "devDependencies": {
+      "clean-css": "npm:clean-css@^3.4.9",
       "plugin-typescript": "github:frankwallis/plugin-typescript@^2.5.9"
+    },
+    "peerDependencies": {
+      "assert": "github:jspm/nodelibs-assert@^0.2.0-alpha",
+      "buffer": "github:jspm/nodelibs-buffer@^0.2.0-alpha",
+      "child_process": "github:jspm/nodelibs-child_process@^0.2.0-alpha",
+      "events": "github:jspm/nodelibs-events@^0.2.0-alpha",
+      "fs": "github:jspm/nodelibs-fs@^0.2.0-alpha",
+      "http": "github:jspm/nodelibs-http@^0.2.0-alpha",
+      "https": "github:jspm/nodelibs-https@^0.2.0-alpha",
+      "module": "github:jspm/nodelibs-module@^0.2.0-alpha",
+      "os": "github:jspm/nodelibs-os@^0.2.0-alpha",
+      "path": "github:jspm/nodelibs-path@^0.2.0-alpha",
+      "process": "github:jspm/nodelibs-process@^0.2.0-alpha",
+      "stream": "github:jspm/nodelibs-stream@^0.2.0-alpha",
+      "url": "github:jspm/nodelibs-url@^0.2.0-alpha",
+      "util": "github:jspm/nodelibs-util@^0.2.0-alpha"
     },
     "overrides": {
       "github:mrdoob/three.js@r71": {
@@ -150,6 +177,11 @@
             }
           }
         }
+      },
+      "npm:inherits@2.0.1": {
+        "ignore": [
+          "test.js"
+        ]
       },
       "npm:typescript@1.7.5": {
         "browser": {},
