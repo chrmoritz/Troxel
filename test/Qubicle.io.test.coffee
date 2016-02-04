@@ -1,11 +1,11 @@
 'use strict'
 should = require 'should'
-global.IO = require '../coffee/IO.coffee'
-QubicleIO = require '../coffee/Qubicle.io.coffee'
 {readFileAsUint8Array} = require './TestUtils.coffee'
+{QubicleIO} = require '../tools/index'
+
+model = require './models/chr_knight.json'
 
 describe 'QubicleIO', ->
-  model = require './models/chr_knight.json'
   describe 'import', ->
     it 'should be able to successfully import a .qb file', (done) ->
       io = new QubicleIO m: 'test/models/chr_knight.qb', ->

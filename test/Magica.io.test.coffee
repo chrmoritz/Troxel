@@ -1,11 +1,11 @@
 'use strict'
 should = require 'should'
-global.IO = require '../coffee/IO.coffee'
-MagicaIO = require '../coffee/Magica.io.coffee'
 {readFileAsUint8Array} = require './TestUtils.coffee'
+{MagicaIO} = require '../tools/index'
+
+model = require './models/chr_knight.json'
 
 describe 'MagicaIO', ->
-  model = require './models/chr_knight.json'
   describe 'import', ->
     it 'should be able to successfully import a .vox file', (done) ->
       io = new MagicaIO 'test/models/chr_knight.vox', ->

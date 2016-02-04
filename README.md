@@ -20,8 +20,8 @@ Troxel is a WebGL-based HTML5-WebApp for viewing and editing voxel models with s
 
 ## How to use
 #### Dependencies:
-* [Node.js](https://nodejs.org/) 4+ (or [io.js](https://iojs.org/) or Node.js 0.12)
-* for hosting static page locally (optionally): [ruby](https://www.ruby-lang.org/) with jekyll gem (`gem install jekyll`)
+* [Node.js](https://nodejs.org/) 4+
+* for hosting static page locally (optionally): [ruby](https://www.ruby-lang.org/) with github-pages gem (`gem install github-pages`)
 
 #### Installing
 ```

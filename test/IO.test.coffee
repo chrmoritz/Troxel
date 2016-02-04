@@ -1,7 +1,7 @@
 'use strict'
 should = require 'should'
-global.IO = require '../coffee/IO.coffee'
-{Base64IO} = require '../coffee/Troxel.io.coffee'
+require './TestUtils.coffee'
+{IO, Base64IO} = require '../tools/index'
 
 model = require './models/chr_knight.json'
 base64 = require './models/chr_knight.base64.json'

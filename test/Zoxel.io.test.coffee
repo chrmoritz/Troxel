@@ -1,11 +1,11 @@
 'use strict'
 should = require 'should'
-global.IO = require '../coffee/IO.coffee'
-ZoxelIO = require '../coffee/Zoxel.io.coffee'
 {readFileAsJSON} = require './TestUtils.coffee'
+{ZoxelIO} = require '../tools/index'
+
+model = require './models/chr_knight.json'
 
 describe 'ZoxelIO', ->
-  model = require './models/chr_knight.json'
   describe 'import', ->
     it 'should be able to successfully import a .zox file', (done) ->
       io = new ZoxelIO 'test/models/chr_knight.zox', ->
