@@ -1,7 +1,7 @@
 'use strict'
 should = require 'should'
 {readFileAsJSON} = require './TestUtils.coffee'
-{ZoxelIO} = require '../tools/index'
+{ZoxelIO} = require '../lib/index'
 
 model = require './models/chr_knight.json'
 

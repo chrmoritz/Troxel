@@ -1,7 +1,7 @@
 'use strict'
 should = require 'should'
 {readFileAsText} = require './TestUtils.coffee'
-{Base64IO, JsonIO} = require '../tools/index'
+{Base64IO, JsonIO} = require '../lib/index'
 
 model = require './models/chr_knight.json'
 base64 = require './models/chr_knight.base64.json'

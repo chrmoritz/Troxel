@@ -20,8 +20,8 @@
     "test:mocha": "mocha -t 5000 --compilers coffee:coffee-script/register",
     "test:lint": "coffeelint coffee/*.coffee test/*.coffee",
     "build": "concurrent -p command -l 20 \"npm run build:jade\" \"npm run build:assets\"",
-    "build:jade": "jade --obj '{deploy:true}' views/index.jade --out dist",
-    "build:assets": "jspm build troxel/Main.coffee! dist/troxel.min.js --skip-source-maps --minify",
+    "build:jade": "jade --obj '{deploy:true}' index.jade --out dist",
+    "build:assets": "mkdirp dist && jspm build troxel/Main.coffee! dist/troxel.min.js --skip-source-maps --minify",
     "serve": "jekyll serve -I -s dist -d .jekyll",
     "prepublish": "jspm install"
   },
@@ -33,6 +33,7 @@
     "concurrently": "^1.0.0",
     "jade": "^1.11.0",
     "jspm": "^0.17.0-beta.5",
+    "mkdirp": "^0.5.1",
     "mocha": "^2.3.0",
     "serve": "^1.4.0",
     "should": "^8.0.0"
