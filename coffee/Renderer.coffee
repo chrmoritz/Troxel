@@ -1,5 +1,12 @@
 'use strict'
 THREE = require('three')
+require('three/examples/js/shaders/SSAOShader')
+require('three/examples/js/shaders/FXAAShader')
+require('three/examples/js/shaders/CopyShader')
+require('three/examples/js/postprocessing/ShaderPass')
+require('three/examples/js/postprocessing/RenderPass')
+require('three/examples/js/postprocessing/MaskPass')
+require('three/examples/js/postprocessing/EffectComposer')
 TroxelControls = require('./Controls.coffee!')
 $ = require('jquery')
 
@@ -29,6 +36,7 @@ class Renderer
     @renderer.setPixelRatio window.devicePixelRatio
     @renderer.setSize @width, @height
     @domContainer.empty().append @renderer.domElement
+    window.test = @
     # postprocessing effects
     if @ssao
       @composer = new THREE.EffectComposer @renderer
@@ -217,9 +225,9 @@ class Renderer
     @camera.updateProjectionMatrix()
     @renderer.setSize @width, @height
     if @ssao
-      depthRenderTarget = new THREE.WebGLRenderTarget @width, @height, {minFilter: THREE.LinearFilter, magFilter: THREE.LinearFilter}
-      @ssaoPass.uniforms['tDepth'].value = depthRenderTarget
       @ssaoPass.uniforms['size'].value.set @width, @height
+      @fxaaPass.uniforms['resolution'].value.set 1 / @width, 1 / @height
+      @composer.setSize @width, @height
     @controls.needsRender = true
 
 module.exports = Renderer

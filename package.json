@@ -44,6 +44,70 @@
       "plugin-typescript": "github:frankwallis/plugin-typescript@^2.5.9"
     },
     "overrides": {
+      "github:mrdoob/three.js@r71": {
+        "main": "build/three",
+        "ignore": [
+          "docs",
+          "src",
+          "editor",
+          "test",
+          "utils",
+          "examples/*.html",
+          "examples/models",
+          "examples/scenes",
+          "examples/sounds",
+          "examples/obj",
+          "examples/textures"
+        ],
+        "format": "global",
+        "meta": {
+          "build/three.js": {
+            "exports": "THREE"
+          },
+          "examples/js/shaders/SSAOShader.js": {
+            "deps": [
+              "three"
+            ],
+            "exports": "THREE"
+          },
+          "examples/js/shaders/FXAAShader.js": {
+            "deps": [
+              "three"
+            ],
+            "exports": "THREE"
+          },
+          "examples/js/shaders/CopyShader.js": {
+            "deps": [
+              "three"
+            ],
+            "exports": "THREE"
+          },
+          "examples/js/postprocessing/ShaderPass.js": {
+            "deps": [
+              "three"
+            ],
+            "exports": "THREE"
+          },
+          "examples/js/postprocessing/RenderPass.js": {
+            "deps": [
+              "three"
+            ],
+            "exports": "THREE"
+          },
+          "examples/js/postprocessing/MaskPass.js": {
+            "deps": [
+              "three"
+            ],
+            "exports": "THREE"
+          },
+          "examples/js/postprocessing/EffectComposer.js": {
+            "deps": [
+              "three"
+            ],
+            "exports": "THREE"
+          }
+        }
+      },
       "github:twitter/typeahead.js@0.10.5": {
         "dependencies": {
           "jquery": "github:components/jquery"
