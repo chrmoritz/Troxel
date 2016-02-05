@@ -17,10 +17,11 @@
   "scripts": {
     "start": "serve --compress",
     "test": "concurrent -p command -l 20 \"npm run test:mocha\" \"npm run test:lint\" \"npm run build:jade\" \"npm run build:assets\"",
+    "test:win": "concurrent -p command -l 20 \"npm run test:mocha\" \"npm run test:lint\" \"npm run build:jade\"",
     "test:mocha": "mocha -t 5000 --compilers coffee:coffee-script/register",
-    "test:lint": "coffeelint coffee/*.coffee test/*.coffee",
+    "test:lint": "coffeelint coffee test",
     "build": "concurrent -p command -l 20 \"npm run build:jade\" \"npm run build:assets\"",
-    "build:jade": "jade --obj '{deploy:true}' index.jade --out dist",
+    "build:jade": "jade --obj \"{deploy:true}\" index.jade --out dist",
     "build:assets": "mkdirp dist && jspm build troxel/Main.coffee! dist/troxel.min.js --skip-source-maps --minify",
     "serve": "jekyll serve -I -s dist -d .jekyll",
     "prepublish": "jspm install"

@@ -12,7 +12,7 @@ install:
   - npm install
 
 test_script:
-  - npm test
+  - npm run test:win
 
 cache:
   - jspm_packages -> package.json
