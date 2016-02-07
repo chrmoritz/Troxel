@@ -54,7 +54,7 @@ describe 'QubicleIO', ->
       it 'should handle color format correctly', ->
         io.addValues 0, 0, 0, 0, 32, 64, 128, 1
         io.voxels.should.have.propertyByPath(0, 0, 0).with.properties({r: 128, g: 64, b: 32, a: 255, t: 0, s: 0})
-      it 'should handle zOriantation correctly'
+      it 'should handle zOrientation correctly'
     describe 'addColorValues', ->
       it 'should add color values correctly and set default values for other parameters', ->
         io.addColorValues 0, 0, 0, 32, 64, 128

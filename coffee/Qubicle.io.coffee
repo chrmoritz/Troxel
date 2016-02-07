@@ -15,7 +15,7 @@ class QubicleIO extends require('./IO.coffee!')
         fra.onloadend = =>
           @readFile fra.result, 1
           if @loadingState++ == 2
-            @mirrorZ() if @zOriantation == 0
+            @mirrorZ() if @zOrientation == 0
             callback(APpos)
         console.log "reading alpha file with name: #{files.a.name}"
         fra.readAsArrayBuffer files.a
@@ -26,7 +26,7 @@ class QubicleIO extends require('./IO.coffee!')
         frt.onloadend = =>
           @readFile frt.result, 2
           if @loadingState++ == 2
-            @mirrorZ() if @zOriantation == 0
+            @mirrorZ() if @zOrientation == 0
             callback(APpos)
         console.log "reading type file with name: #{files.t.name}"
         frt.readAsArrayBuffer files.t
@@ -37,26 +37,30 @@ class QubicleIO extends require('./IO.coffee!')
         frs.onloadend = =>
           @readFile frs.result, 3
           if @loadingState++ == 2
-            @mirrorZ() if @zOriantation == 0
+            @mirrorZ() if @zOrientation == 0
             callback(APpos)
         console.log "reading specular file with name: #{files.s.name}"
         frs.readAsArrayBuffer files.s
       else
         @loadingState++
       if @loadingState == 3
-        @mirrorZ() if @zOriantation == 0
+        @mirrorZ() if @zOrientation == 0
         callback(APpos)
     console.log "reading file with name: #{files.m.name}"
     fr.readAsArrayBuffer files.m
 
   readFile: (ab, type) ->
     console.log "file.byteLength: #{ab.byteLength}"
-    [version, colorFormat, zOriantation, compression, visabilityMask, matrixCount] = new Uint32Array ab.slice 0, 24
+    [version, colorFormat, zOrientation, compression, visabilityMask, matrixCount] = new Uint32Array ab.slice 0, 24
     console.log "version: #{version} (expected 257 = 1.1.0.0 = current version)"
     console.warn "Expected version 257 but found version: #{version} (May result in errors)" unless version == 257
     console.log "color format: #{colorFormat} (0 for RGBA (recommended) or 1 for BGRA)"
-    console.log "z-axis oriantation: #{zOriantation} (0 for left, 1 for right handed (recommended))"
-    @zOriantation = zOriantation if type == 0
+    console.log "z-axis orientation: #{zOrientation} (0 for left, 1 for right handed (recommended))"
+    if type == 0
+      @zOrientation = zOrientation
+    else if @zOrientation != zOrientation
+      alert("Error: mixing different z-axis orientations formats (left / right handed) is not supported")
+      throw new Error "mixing different z-axis orientations formats (left / right handed) is not supported"
     console.log "compression: #{compression} (0 for uncompressed, 1 for compressed with run length encoding (RLE))"
     console.log "visability mask: #{visabilityMask} (should be 0 for encoded in A value, no partially visability)"
     console.warn "partially visability not supported and will be ignored / handled as full visibility" unless visabilityMask == 0
@@ -205,7 +209,7 @@ class QubicleIO extends require('./IO.coffee!')
     data = [
       1, 1, 0, 0 # version: 1.1.0.0 (current)
       0, 0, 0, 0 # color format: rgba
-      1, 0, 0, 0 # z-axis oriantation: right handed
+      1, 0, 0, 0 # z-axis orientation: right handed
       +comp, 0, 0, 0 # compression: no (1, 0, 0, 0 for compressed)
       0, 0, 0, 0 # visability mask: no partially visibility
       1, 0, 0, 0 # matrix count: 1

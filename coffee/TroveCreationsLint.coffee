@@ -187,10 +187,10 @@ class TroveCreationsLint
     }
 
   validateMelee: ->
-    if @io.x > 10 or @io.y > 10 or @io.z > 35 # oriantation and dimension
+    if @io.x > 10 or @io.y > 10 or @io.z > 35 # orientation and dimension
       if @io.z <= 10 and ((@io.x <= 35 and @io.y <= 10) or (@io.x <= 10 and @io.y <= 35))
         return @errors.push {
-          title: 'Incorrect melee weapon model oriantation!'
+          title: 'Incorrect melee weapon model orientation!'
           body: 'Your melee weapon model is incorrectly oriantated and will be thereby held in a wrong direction ingame.
                  Rotate it so that the tip of your weapon is facing the front!
                  Don\'t forget to fix this in your local files too before creating and submitting the .blueprint.'
@@ -232,10 +232,10 @@ class TroveCreationsLint
       }
 
   validateGun: ->
-    if @io.x > 5 or @io.y > 12 or @io.z > 5 # oriantation and dimension
+    if @io.x > 5 or @io.y > 12 or @io.z > 5 # orientation and dimension
       if @io.y <= 5 and ((@io.x <= 12 and @io.z <= 5) or (@io.x <= 5 and @io.z <= 12))
         return @errors.push {
-          title: 'Incorrect gun weapon model oriantation!'
+          title: 'Incorrect gun weapon model orientation!'
           body: 'Your gun weapon model is incorrectly oriantated and will be thereby held in a wrong direction ingame.
                  Rotate it so that the muzzle is facing down! Check out the
                  <a href="http://trove.wikia.com/wiki/Gun_Weapon_Creation#Weapon_orientation" class="alert-link" target="_blank">gun
@@ -278,10 +278,10 @@ class TroveCreationsLint
       }
 
   validateStaff: ->
-    if @io.x > 12 or @io.y > 12 or @io.z > 35 # oriantation and dimension
+    if @io.x > 12 or @io.y > 12 or @io.z > 35 # orientation and dimension
       if @io.z <= 12 and ((@io.x <= 35 and @io.y <= 12) or (@io.x <= 12 and @io.y <= 35))
         return @errors.push {
-          title: 'Incorrect staff weapon model oriantation!'
+          title: 'Incorrect staff weapon model orientation!'
           body: 'Your staff weapon model is incorrectly oriantated and will be thereby held in a wrong direction ingame.
                  Rotate it so that the tip of your weapon is facing the front!
                  Don\'t forget to fix this in your local files too before creating and submitting the .blueprint.'
@@ -330,10 +330,10 @@ class TroveCreationsLint
       }
 
   validateBow: ->
-    if @io.x > 3 or @io.y > 9 or @io.z > 21 # oriantation and dimension
+    if @io.x > 3 or @io.y > 9 or @io.z > 21 # orientation and dimension
       if @io.z <= 9 and ((@io.x <= 21 and @io.y <= 9) or (@io.x <= 9 and @io.y <= 21))
         return @errors.push {
-          title: 'Incorrect bow weapon model oriantation!'
+          title: 'Incorrect bow weapon model orientation!'
           body: 'You bow weapon model is incorrectly oriantated and will be thereby held in a wrong direction ingame.
                  Rotate it so that the bowstring goes from back to front!
                  Don\'t forget to fix this in your local files too before creating and submitting the .blueprint.'
@@ -383,10 +383,10 @@ class TroveCreationsLint
       }
 
   validateSpear: ->
-    if @io.x > 11 or @io.y > 11 or @io.z > 45 # oriantation and dimension
+    if @io.x > 11 or @io.y > 11 or @io.z > 45 # orientation and dimension
       if @io.z <= 11 and ((@io.x <= 45 and @io.y <= 11) or (@io.x <= 11 and @io.y <= 45))
         return @errors.push {
-          title: 'Incorrect spear weapon model oriantation!'
+          title: 'Incorrect spear weapon model orientation!'
           body: 'Your spear weapon model is incorrectly oriantated and will be thereby held in a wrong direction ingame.
                  Rotate it so that the tip/head of your weapon is facing the front!
                  Don\'t forget to fix this in your local files too before creating and submitting the .blueprint.'
@@ -467,7 +467,7 @@ class TroveCreationsLint
     [ax, ay, az] = @io.getAttachmentPoint() # attachment point position
     unless az == 0
       return @errors.push {
-        title: 'Incorrect mask model oriantation!'
+        title: 'Incorrect mask model orientation!'
         body: 'You mask model is incorrectly oriantated and will be thereby not weared correctly ingame.
                Rotate it so that it is facing the front!
                Don\'t forget to fix this in your local files too before creating and submitting the .blueprint.'
@@ -507,7 +507,7 @@ class TroveCreationsLint
     [ax, ay, az] = @io.getAttachmentPoint() # attachment point position
     unless ay == 0
       return @errors.push {
-        title: 'Incorrect hat model oriantation!'
+        title: 'Incorrect hat model orientation!'
         body: 'You hat model is incorrectly oriantated and will be thereby not weared correctly ingame.
                Rotate it so that top of the hat is facing up!
                Don\'t forget to fix this in your local files too before creating and submitting the .blueprint.'
