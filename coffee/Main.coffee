@@ -1,4 +1,5 @@
 'use strict'
+window.location.protocol = 'https' if window.location.protocol != 'https:' and window.location.hostname != 'localhost'
 require('bootstrap/dist/css/bootstrap.css!')
 require('bootstrap/dist/css/bootstrap-theme.css!')
 require('./Main.css!')
@@ -16,26 +17,112 @@ $ = require('bootstrap')
 io = null
 dragFiles = null
 editor = null
-appCacheDownloadCount = 0
-window.location.protocol = 'https' if window.location.protocol != 'https:' and window.location.hostname != 'localhost'
-window.applicationCache.addEventListener 'downloading', ->
-  appCacheDownloadCount = 0
-  $('#AppCacheProgressFileCount').text(0)
-  $('#AppCacheProgress').show().children().width('0%')
-window.applicationCache.addEventListener 'progress', ->
-  $('#AppCacheProgressFileCount').text(++appCacheDownloadCount)
-  $('#AppCacheProgress').children().width("#{appCacheDownloadCount*100/16}%")
-window.applicationCache.addEventListener 'updateready', ->
-  $.ajax({url: 'static/Recent_Changes.html', cache: false}).done (html) -> $('#recentChangesDiv').html(html)
-  $('#updateModal').modal 'show'
-  $('#AppCacheProgress').fadeOut()
-  clearInterval updatechecker
-window.applicationCache.addEventListener 'cached', -> # first download
-  $('#AppCacheProgress').fadeOut()
-updatechecker = setInterval (-> window.applicationCache.update()), 300000
-$('#updateLater').click ->
-  updatechecker = setInterval (-> window.applicationCache.update(); $('#updateModal').modal 'show'), parseInt($('#remindUpdateTime').val())
-  $('#updateModal').modal 'hide'
+bpDB = {version: [1, 0]}
+anchorBP = null
+$.getJSON("https://troxeljs.github.io/trove-blueprints/index.json")
+  .done (data) ->
+    if data.version[0] == bpDB.version[0] and data.version[1] == bpDB.version[1]
+      bpDB.latest = data.latest
+      cacheVer = parseInt(window.localStorage.getItem('latestBpDBversion'))
+      bpDB.needsMajorUpgrade = true unless isNaN(cacheVer) or bpDB.version[0] - 1 == Math.floor(cacheVer / 100000)
+      [_, y, m, d] = /^(\d{4})-(\d\d)-(\d\d)$/.exec("2016-01-02")
+      v = (d - 1) + 31 * (m - 1) + 372 * (y - 2016) + 100000 * (bpDB.version[0] - 1)
+      window.localStorage.setItem('latestBpDBversion', v)
+    else
+      alert("Warning: You are using an outdated version of Troxel which is no longer compatible with the newest Trove Blueprints Datebase format.
+            You have to update Troxel to the latest version to continue getting updates for the Trove Blueprints Datebase!")
+      v = parseInt(window.localStorage.getItem('latestBpDBversion'))
+    prepareBpDB(window.indexedDB.open('Trove-Blueprints', v))
+  .fail ->
+    prepareBpDB(window.indexedDB.open('Trove-Blueprints', parseInt(window.localStorage.getItem('latestBpDBversion'))))
+prepareBpDB = (request) ->
+  request.onerror = (e) ->
+    console.warn(e.target.error)
+    switch e.target.error.name
+      when "VersionError" then alert("The Trove Blueprints Datebase was updated by another Troxel subproject to a version not compatible with this version of Troxel.
+                                      Try updating Troxel to use it again!")
+      when "QuotaExceededError" then alert("The Trove Blueprints Datebase run out of disk space.
+                                            Try to allow Troxel to use more disk space or remove older Blueprint Databases and reload the page to use it again!")
+      when "UnknownError" then alert("The Trove Blueprints Datebase couldn't be loaded because of an error with your Browser or hard disk.
+                                      Try to fix all issues with your Browser profile to use it again!")
+  request.onblocked = (e) ->
+    alert("The Trove Blueprints Datebase needs to be updated. Please close (or reload) all other tabs with Troxel open!")
+  request.onupgradeneeded = (e) ->
+    if bpDB.needsMajorUpgrade
+      alert("The Trove Blueprints Datebase is missing the major version upgrade code!")
+      throw new Error("no Trove Blueprints Datebase upgrade Code provided")
+      return # Upgrade all existing DB's to new format
+    unless bpDB.latest?
+      return alert("The local version of the Trove Blueprints Datebase was removed and we can't get a new one.
+                    Try going online and / or update Troxel to retrieve a new copy of the Trove Blueprints Datebase.")
+    db = e.target.result
+    db.createObjectStore(bpDB.latest, {autoIncrement: false}) # out-of-line keys
+    $.getJSON("https://troxeljs.github.io/trove-blueprints/#{bpDB.latest}.json").done (bps) ->
+      transaction = db.transaction(bpDB.latest, "readwrite")
+      objectStore = transaction.objectStore(bpDB.latest)
+      bar = $('#UpdateProgress').show().children().width('0%')
+      keys = Object.keys(bps)
+      len = keys.length
+      i = 0
+      addNext = ->
+        for j in [0..Math.min(100 - 2, len - i - 2)] by 1
+          objectStore.add(bps[keys[i + j]], keys[i + j])
+        unless i + j >= len
+          objectStore.add(bps[keys[i + j]], keys[i + j]).onsuccess = addNext
+          i += 100
+          bar.width("#{i * 100 / len}%")
+        else
+          bar.width("100%")
+      addNext()
+      transaction.oncomplete = (e) ->
+        $('#UpdateProgress').fadeOut()
+        useBpDB(db)
+      transaction.onerror = (e) ->
+        console.warn(e.target.error)
+        switch e.target.error.name
+          when "QuotaExceededError" then alert("The Trove Blueprints Datebase run out of disk space.
+                                                Try to allow Troxel to use more disk space or remove older Blueprint Databases and reload the page to use it again!")
+          when "UnknownError" then alert("The Trove Blueprints Datebase couldn't be loaded because of an error with your Browser or hard disk.
+                                          Try to fix all issues with your Browser profile to use it again!")
+  request.onsuccess = (e) ->
+    db = e.target.result
+    unless bpDB.latest? # offline or incompatible with latest online version
+      for objs in db.objectStoreNames
+        bpDB.latest = objs if not bpDB.latest? or objs > bpDB.latest
+    useBpDB(db)
+useBpDB = (db) ->
+  db.onversionchange = (e) ->
+    db.close()
+    alert("The Trove Blueprints Datebase was updated in another browser tab. This page will be reloaded now!")
+    location.reload()
+  db.onerror = (e) -> console.warn(e.target.error)
+  bpDB.db = db
+  if anchorBP?
+    openBp(anchorBP)
+openBp = (b) ->
+  return unless bpDB.db?
+  transaction = bpDB.db.transaction(bpDB.latest, "readonly")
+  objectStore = transaction.objectStore(bpDB.latest)
+  request = objectStore.get(b.toLowerCase())
+  request.onerror = (e) ->
+    console.warn(e.target.error)
+    $('#WebGlContainer').empty()
+    editor = null
+  request.onsuccess = (e) ->
+    if e.target.result? # if undefined -> not found
+      io = new Base64IO e.target.result
+      $('#btnExport').hide()
+      $('#btnExportPng').show()
+      if editor?
+        editor.reload io.voxels, io.x, io.y, io.z, true, false
+      else
+        editor = new Editor io
+      try # Try to add a state object to the current history state (if below limit)
+        history.replaceState {voxels: io.voxels, x: io.x, y: io.y, z: io.z, readonly: true}, 'Troxel', '#b=' + value.toLowerCase()
+    else
+      $('#WebGlContainer').empty()
+      editor = null
+
 window.onpopstate = (e) ->
   if e?.state?
     reload = io?
@@ -64,22 +151,10 @@ window.onpopstate = (e) ->
         editor = new Editor io
       break
     if param == 'b' # load Trove model from blueprint id
-      $.getJSON 'https://troxeljs.github.io/trove-blueprints/2016-02-02.json', (data) ->
-        model = data[value.toLowerCase()]
-        unless model?
-          # ToDo: improve this
-          $('#WebGlContainer').empty()
-          return editor = null
-        io = new Base64IO model
-        $('#btnExport').hide()
-        $('#btnExportPng').show()
-        if editor?
-          editor.reload io.voxels, io.x, io.y, io.z, true, false
-        else
-          editor = new Editor io
-        try # Try to add a state object to the current history state (if below limit)
-          history.replaceState {voxels: io.voxels, x: io.x, y: io.y, z: io.z, readonly: true}, 'Troxel', '#b=' + value.toLowerCase()
-      return
+      if bpDB.db?
+        return openBp(value)
+      else
+        return anchorBP = value
   unless io?
     # ToDo: improve this
     $('#WebGlContainer').empty()
@@ -179,8 +254,13 @@ $('#open').click ->
       mio = new JsonIO $('#sjson').val()
       cb()
     when '#tabtrove'
-      $.getJSON 'https://troxeljs.github.io/trove-blueprints/2016-02-02.json', (data) ->
-        model = data[$('#sbtrove').val().toLowerCase()]
+      return unless bpDB.db?
+      transaction = bpDB.db.transaction(bpDB.latest, "readonly")
+      objectStore = transaction.objectStore(bpDB.latest)
+      request = objectStore.get($('#sbtrove').val().toLowerCase())
+      request.onerror = (e) -> console.warn(e.target.error)
+      request.onsuccess = (e) ->
+        model = e.target.result
         return unless model?
         if io? and $('#ImportMerge').prop('checked')
           offsets = {x: parseInt($('#QbMergeOffX').val()), y: parseInt($('#QbMergeOffY').val()), z: parseInt($('#QbMergeOffZ').val())}
@@ -219,21 +299,18 @@ $('#open').click ->
       $('#modeEdit').click()
   return
 $('#openTroveTab').click ->
-  i = 0
-  blueprints = new Bloodhound({
-    datumTokenizer: (bp) -> bp.value.split(/[\[,\],_]/i),
-    queryTokenizer: (bp) -> bp.split(/[\s,_]/i),
-    limit: 10000,
-    prefetch: {
-      url: 'https://troxeljs.github.io/trove-blueprints/2016-02-02.json',
-      cacheKey: 'TroveBlueprintCache'
-      filter: (bps) -> $.map(bps, (base64, bp) ->
-        return {value: bp}
-      )
-    }
-  })
-  blueprints.initialize()
-  $('#sbtrove').typeahead {highlight: true, minLength: 2, hint: false}, {name: 'troveBlueprints', source: blueprints.ttAdapter()}
+  return unless bpDB.db?
+  $('#sbtrove').typeahead {highlight: false, minLength: 3, hint: true}, {
+    name: 'troveBlueprints'
+    source: (q, cb) ->
+      transaction = bpDB.db.transaction(bpDB.latest, "readonly")
+      objectStore = transaction.objectStore(bpDB.latest)
+      q = q.toLowerCase()
+      request = objectStore.getAllKeys(window.IDBKeyRange.bound(q, q + '\uffff'))
+      request.onerror = (e) -> (console.warn(e.target.error); cb([]))
+      request.onsuccess = (e) -> cb(e.target.result)
+    displayKey: (s) -> s
+  }
 $('.snewApPos').prop('disabled', true)
 $('#cbnewAp').prop('checked', false).change -> $('.snewApPos').prop('disabled', !$(@).prop('checked'))
 $('#btnExport').click ->
