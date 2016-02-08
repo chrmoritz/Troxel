@@ -1,6 +1,7 @@
 'use strict'
 require('bootstrap/dist/css/bootstrap.css!')
 require('bootstrap/dist/css/bootstrap-theme.css!')
+require('./Main.css!')
 IO = require('./IO.coffee!')
 {Base64IO, JsonIO} = require('./Troxel.io.coffee!')
 QubicleIO = require('./Qubicle.io.coffee!')

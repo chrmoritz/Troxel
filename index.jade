@@ -5,46 +5,6 @@ html
     meta(name='viewport', content='width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0')
     if deploy
       link(rel='stylesheet', href='troxel.min.css')
-    style.
-      #dropZone {
-        border: 2px dashed #bbbbbb;
-        border-radius: 5px;
-        color: #737373;
-        padding: 25px;
-        text-align: center;
-      }
-
-      .twitter-typeahead{
-        width: 100%;
-      }
-      .tt-dropdown-menu {
-        width: 100%;
-        margin-top: 2px;
-        padding: 8px 0;
-        background-color: #fff;
-        border: 1px solid #ccc;
-        border: 1px solid rgba(0, 0, 0, 0.2);
-        max-height: 400px;
-        overflow-y: auto;
-        -webkit-border-radius: 8px;
-           -moz-border-radius: 8px;
-                border-radius: 8px;
-        -webkit-box-shadow: 0 5px 10px rgba(0,0,0,.2);
-           -moz-box-shadow: 0 5px 10px rgba(0,0,0,.2);
-                box-shadow: 0 5px 10px rgba(0,0,0,.2);
-      }
-      .tt-suggestion {
-        padding: 3px 20px;
-        font-size: 18px;
-        line-height: 24px;
-      }
-      .tt-suggestion.tt-cursor {
-        color: #fff;
-        background-color: #0097cf;
-      }
-      .tt-suggestion p {
-        margin: 0;
-      }
 
   body(style='background-color: #888888;')
     .navbar.navbar-inverse.navbar-fixed-top(role='navigation', style='margin-bottom: 0px;')
@@ -576,8 +536,4 @@ html
       script(src='jspm.browser.js', type='text/javascript')
       script(src='jspm.config.js', type='text/javascript')
       script.
-        System.import('troxel/Main.coffee!').then(function(m){
-          console.log('Main.coffee loaded');
-        }).catch(function(e){
-          console.warn(e);
-        });
+        System.import('troxel/Main.coffee!').catch(function(e){console.warn(e);});

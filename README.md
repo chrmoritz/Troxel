@@ -33,6 +33,8 @@ npm install
 ```
 npm start
 ```
+Then open: http://localhost:3000/index.jade
+
 *This server will automatically recompile resources after editing them. You only need to reload you page to see your edits live.*
 
 #### Running tests
