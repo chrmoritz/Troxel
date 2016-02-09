@@ -300,9 +300,11 @@ $('#open').click ->
   return
 $('#openTroveTab').click ->
   return unless bpDB.db?
-  $('#sbtrove').typeahead {highlight: false, minLength: 3, hint: true}, {
+  $('#sbtrove').typeahead {highlight: false, minLength: 2, hint: true}, {
     name: 'troveBlueprints'
-    source: (q, cb) ->
+    async: true
+    limit: 1000
+    source: (q, scb, cb) ->
       transaction = bpDB.db.transaction(bpDB.latest, "readonly")
       objectStore = transaction.objectStore(bpDB.latest)
       q = q.toLowerCase()

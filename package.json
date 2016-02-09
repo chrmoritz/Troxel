@@ -55,7 +55,7 @@
       "jquery": "github:components/jquery@^2.2.0",
       "stats": "github:mrdoob/stats.js@r14",
       "three": "github:mrdoob/three.js@r71",
-      "typeahead": "github:twitter/typeahead.js@0.10.5"
+      "typeahead": "github:twitter/typeahead.js@^0.11.1"
     },
     "devDependencies": {
       "clean-css": "npm:clean-css@^3.4.9",
@@ -142,9 +142,17 @@
           }
         }
       },
-      "github:twitter/typeahead.js@0.10.5": {
+      "github:twitter/typeahead.js@0.11.1": {
+        "main": "dist/typeahead.jquery.js",
         "dependencies": {
           "jquery": "github:components/jquery"
+        },
+        "meta": {
+          "dist/typeahead.jquery.js": {
+            "deps": [
+              "jquery"
+            ]
+          }
         }
       },
       "github:components/jquery@2.2.0": {

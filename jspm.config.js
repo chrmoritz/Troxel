@@ -29,7 +29,7 @@ SystemJS.config({
     "stats": "github:mrdoob/stats.js@r14",
     "stream": "github:jspm/nodelibs-stream@0.2.0-alpha",
     "three": "github:mrdoob/three.js@r71",
-    "typeahead": "github:twitter/typeahead.js@0.10.5",
+    "typeahead": "github:twitter/typeahead.js@0.11.1",
     "url": "github:jspm/nodelibs-url@0.2.0-alpha",
     "util": "github:jspm/nodelibs-util@0.2.0-alpha"
   },
@@ -116,7 +116,7 @@ SystemJS.config({
         "querystring": "npm:querystring@0.2.0"
       }
     },
-    "github:twitter/typeahead.js@0.10.5": {
+    "github:twitter/typeahead.js@0.11.1": {
       "map": {
         "jquery": "github:components/jquery@2.2.0"
       }
