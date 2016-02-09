@@ -357,13 +357,14 @@ $('#btnExportPng').click -> editor.render(true)
 $('#ulSavedModels').parent().on 'show.bs.dropdown', (e) ->
   if $(e.relatedTarget).data('tag') == '#ulSavedModels'
     if !io? or io.readonly == 1
-      $(@).find('a[data-target=#saveModal]').prop('disabled', true).parent().addClass('disabled')
+      $(@).find('#SavedModelsAdd').prop('disabled', true).parent().addClass('disabled')
     else
-      $(@).find('a[data-target=#saveModal]').prop('disabled', false).parent().removeClass('disabled')
+      $(@).find('#SavedModelsAdd').prop('disabled', false).parent().removeClass('disabled')
     $('#ulSavedModels li:gt(6)').remove()
     for i in [0...window.localStorage.length] by 1
       key = window.localStorage.key i
-      $('#ulSavedModels').append "<li><a class='openSavedModel' data-model='#{window.localStorage.getItem(key)}'>#{key}</a></li>" unless key.indexOf('__') == 0
+      if key.indexOf('saved_models_') == 0
+        $('#ulSavedModels').append "<li><a class='openSavedModel' data-model='#{window.localStorage.getItem(key)}'>#{key.substring(13)}</a></li>"
     $('#ulSavedModels').append '<li class="disabled"><a>No saved models</a></li>' if $('.openSavedModel').length == 0
   $('.openSavedModel').click ->
     io = new Base64IO $(@).data 'model'
@@ -380,7 +381,7 @@ $('#ulSavedModels').parent().on 'show.bs.dropdown', (e) ->
     $('#ulSavedModels li:eq(1) a').text $(@).text()
 $('#saveModelAs').click ->
   return if $('#saveModelName').val().length == 0 or !io? or io.readonly
-  window.localStorage.setItem $('#saveModelName').val(), new Base64IO(io).export io.readonly
+  window.localStorage.setItem 'saved_models_' + $('#saveModelName').val(), new Base64IO(io).export io.readonly
   $('#saveModal').modal 'hide'
 $('#modeView').click ->
   return if !io? or $(@).parent().hasClass('active')
