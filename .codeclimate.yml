@@ -1,13 +1,20 @@
 engines:
   coffeelint :
     enabled: true
+  eslint:
+    enabled: true
+  csslint:
+    enabled: true
   fixme:
     enabled: true
 ratings:
    paths:
    - "**.coffee"
+   - "**.css"
+   - "**.js"
 exclude_paths:
 - "test/models/*"
 - "**.json"
 - "**.txt"
 - "**.yml"
+- "**.md"
