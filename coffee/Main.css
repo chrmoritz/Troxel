@@ -1,4 +1,4 @@
-#dropZone {
+.dropZone {
   border: 2px dashed #bbbbbb;
   border-radius: 5px;
   color: #737373;
@@ -15,15 +15,15 @@
 }
 
 .tt-menu {
-  width: 422px;
-  max-height: 300px;
-  margin: 2px 0;
-  padding: 8px 0;
   background-color: #fff;
   border: 1px solid #ccc;
   border: 1px solid rgba(0, 0, 0, 0.2);
   box-sizing: border-box;
+  margin: 2px 0;
+  max-height: 300px;
   overflow-y: auto;
+  padding: 8px 0;
+  width: 422px;
   -webkit-border-radius: 8px;
      -moz-border-radius: 8px;
           border-radius: 8px;
@@ -33,20 +33,20 @@
 }
 
 .tt-suggestion {
-  padding: 3px 20px;
   font-size: 18px;
   line-height: 24px;
+  padding: 3px 20px;
 }
 
 .tt-suggestion:hover {
-  cursor: pointer;
-  color: #fff;
   background-color: #0097cf;
+  color: #fff;
+  cursor: pointer;
 }
 
 .tt-suggestion.tt-cursor {
-  color: #fff;
   background-color: #0097cf;
+  color: #fff;
 }
 
 .tt-suggestion p {

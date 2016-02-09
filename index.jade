@@ -20,7 +20,7 @@ html
                 li.dropdown-header Current Model:
                 li.disabled: a untitled/unsaved
                 li(style='display: none;'): a Save
-                li: a(data-toggle='modal', data-target='#saveModal') Save as ...
+                li: a#SavedModelsAdd(data-toggle='modal', data-target='#saveModal') Save as ...
                 li(style='display: none;'): a Remove
                 li.divider
                 li.dropdown-header Saved Models:
@@ -80,7 +80,7 @@ html
                     label.col-sm-1.control-label(for='sjson') JSON:
                     .col-sm-11: textarea#sjson.form-control(rows=7, style='resize: vertical; min-height: 100px;')
               #tabdrag.tab-pane.fade
-                #dropZone Drag files anywhere to this modal to select them
+                .dropZone Drag files anywhere to this modal to select them
                 h4 Selected files:
                 ul.list-unstyled
                   li: span.help-block No files selected
