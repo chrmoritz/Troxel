@@ -1,5 +1,5 @@
 'use strict'
-window.location.protocol = 'https' if window.location.protocol != 'https:' and window.location.hostname != 'localhost'
+window.location.protocol = 'https' if window.location.protocol != 'https:' and window.location.hostname == 'troxel.js.org'
 require('bootstrap/dist/css/bootstrap.css!')
 require('bootstrap/dist/css/bootstrap-theme.css!')
 require('./Main.css!')
@@ -19,7 +19,7 @@ dragFiles = null
 editor = null
 bpDB = {version: [1, 0]}
 anchorBP = null
-$.getJSON("https://troxeljs.github.io/trove-blueprints/index.json")
+$.getJSON("https://troxel.js.org/trove-blueprints/index.json")
   .done (data) ->
     if data.version[0] == bpDB.version[0] and data.version[1] == bpDB.version[1]
       bpDB.latest = data.latest
@@ -57,7 +57,7 @@ prepareBpDB = (request) ->
                     Try going online and / or update Troxel to retrieve a new copy of the Trove Blueprints Datebase.")
     db = e.target.result
     db.createObjectStore(bpDB.latest, {autoIncrement: false}) # out-of-line keys
-    $.getJSON("https://troxeljs.github.io/trove-blueprints/#{bpDB.latest}.json").done (bps) ->
+    $.getJSON("https://troxel.js.org/trove-blueprints/#{bpDB.latest}.json").done (bps) ->
       transaction = db.transaction(bpDB.latest, "readwrite")
       objectStore = transaction.objectStore(bpDB.latest)
       bar = $('#UpdateProgress').show().children().width('0%')

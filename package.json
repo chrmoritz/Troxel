@@ -2,7 +2,7 @@
   "name": "troxel",
   "version": "0.9.0",
   "description": "WebGL-based voxel viewer and editor",
-  "homepage": "https://chrmoritz.github.io/Troxel/",
+  "homepage": "https://troxel.js.org/",
   "bugs": {
     "url": "https://github.com/chrmoritz/Troxel/issues"
   },
@@ -23,7 +23,7 @@
     "build": "concurrent -p command -l 20 \"npm run build:jade\" \"npm run build:assets\" \"npm run build:fonts\"",
     "build:jade": "jade --obj \"{deploy:true}\" index.jade --out dist",
     "build:assets": "mkdirp dist && jspm build troxel/Main.coffee! dist/troxel.min.js --skip-source-maps --minify && replace '../jspm_packages/github/twbs/bootstrap@3.[0-9]*.[0-9]*/dist/fonts/' 'fonts/' dist/troxel.min.css  -q",
-    "build:fonts": "mkdir -p dist/fonts && cp jspm_packages/github/twbs/bootstrap@*/dist/fonts/* dist/fonts",
+    "build:fonts": "mkdir -p dist/fonts && cp jspm_packages/github/twbs/bootstrap@*/dist/fonts/* dist/fonts && echo troxel.js.org > dist/CNAME",
     "serve": "jekyll serve -I -s dist -d .jekyll",
     "prepublish": "jspm install"
   },
