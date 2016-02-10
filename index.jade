@@ -47,7 +47,7 @@ html
               li: a(href='#tabvox', data-toggle='tab') Magica (.vox)
               li: a(href='#tabjson', data-toggle='tab') JSON
               li: a#dragTab(href='#tabdrag', data-toggle='tab') Drag & Drop
-              li: a#openTroveTab(href='#tabtrove', data-toggle='tab') Trove-Model-List
+              li: a#openTroveTab(href='#tabtrove', data-toggle='tab') Trove-Blueprint
               li: a(href='#tabnew', data-toggle='tab') empty Model (new)
             .tab-content
               #tabqb.tab-pane.fade.in.active
@@ -88,13 +88,19 @@ html
               #tabtrove.tab-pane.fade
                 .form-horizontal
                   .form-group
+                    label.col-sm-3.control-label(for='sbtag') Tag (date of patch release):
+                    .col-sm-5
+                      select#cbbtag.form-control
+                        option(value='latest') latest (default Trove Blueprint Database)
+                    .col-sm-4: button.btn.btn-default.form-control#bbmanageTags Manage Blueprint DB (installed tags)...
+                  .form-group
                     label.col-sm-2.control-label(for='sbtrove') Blueprint id:
                     .col-sm-10: input#sbtrove.form-control(type='text')
                   span.help-block All rights for the here listed voxel models belongs to Trion Worlds and or their respective voxel model authors.
                   span.help-block
                     | Hint: Check out&nbsp;
                     a(href='http://www.trovesaurus.com/', target='_blank') Trovesaurus
-                    |  for a categorized list of Trove items with metatdata.
+                    |  for a categorized but more outdated list of Trove items with metatdata.
               #tabnew.tab-pane.fade
                 .form-horizontal
                   .form-group
@@ -279,7 +285,7 @@ html
               option(value=1800000) 30 minutes
               option(value=3600000) 1 hour
               option(value=7200000) 2 hours
-            button(onclick="javascript:window.location.href=window.location.href.split('#')[0];").btn.btn-primary Update now
+            button(onclick="javascript:location.reload();").btn.btn-primary Update now
       
     #TroveCreationLinterModal.modal.fade(tabindex='-1', role='dialog')
       .modal-dialog.modal-lg

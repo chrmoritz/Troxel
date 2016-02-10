@@ -60,6 +60,7 @@ prepareBpDB = (request, v) ->
     bpDB.doingUpgrade = true
     window.localStorage.setItem('_BpDB_latestVersion', v) # ToDo: test blocking upgrade scenario
     # ToDo: implement bpDB.installRequest and bpDB.removeRequest
+    # ToDo: Check if bpDB.installRequest or bpDB.installLatestTag already exist and bpDB.removeRequest doesn not exist
     db = e.target.result
     db.createObjectStore(bpDB.installLatestTag, {autoIncrement: false}) # out-of-line keys
     $.getJSON("https://troxel.js.org/trove-blueprints/#{bpDB.installLatestTag}.json").done (bps) ->
@@ -109,7 +110,7 @@ prepareBpDB = (request, v) ->
       useBpDB(db)
     else
       alert("The local Trove Blueprints Datebase does not exist and all Trove Blueprint related features won't be available.
-             Try going online and / or updating Troxel to fix this and be able use all Trove Blueprint related features again!")
+             Try going online and or updating Troxel to fix this and be able use all Trove Blueprint related features again!")
 deleteAndRecreateDB = ->
   DBDeleteRequest = window.indexedDB.deleteDatabase('Trove-Blueprints')
   DBDeleteRequest.onerror = ->
@@ -287,8 +288,10 @@ $('#open').click ->
       cb()
     when '#tabtrove'
       return unless bpDB.db?
-      transaction = bpDB.db.transaction(bpDB.latestTag, "readonly")
-      objectStore = transaction.objectStore(bpDB.latestTag)
+      tag = $('#cbbtag').val()
+      tag = bpDB.latestTag if tag == 'latest'
+      transaction = bpDB.db.transaction(tag, "readonly")
+      objectStore = transaction.objectStore(tag)
       request = objectStore.get($('#sbtrove').val().toLowerCase())
       request.onerror = (e) -> console.warn(e.target.error)
       request.onsuccess = (e) ->
@@ -332,13 +335,22 @@ $('#open').click ->
   return
 $('#openTroveTab').click ->
   return unless bpDB.db?
+  unless $('#cbbtag').data('troxel-filled')
+    for objs in bpDB.db.objectStoreNames
+      $('#cbbtag').append("<option value=\"#{objs}\">#{objs} (#{new Date(objs).toLocaleDateString()})</option>")
+    $('#cbbtag').data('troxel-filled', true)
+    $('#cbbtag').change()
+$('#cbbtag').change ->
+  tag = $('#cbbtag').val()
+  tag = bpDB.latestTag if tag == 'latest'
+  $('#sbtrove').typeahead('destroy')
   $('#sbtrove').typeahead {highlight: false, minLength: 2, hint: true}, {
     name: 'troveBlueprints'
     async: true
     limit: 1000
     source: (q, scb, cb) ->
-      transaction = bpDB.db.transaction(bpDB.latestTag, "readonly")
-      objectStore = transaction.objectStore(bpDB.latestTag)
+      transaction = bpDB.db.transaction(tag, "readonly")
+      objectStore = transaction.objectStore(tag)
       q = q.toLowerCase()
       if objectStore.openKeyCursor? # Chrome, Firefox
         request = objectStore.openKeyCursor(window.IDBKeyRange.bound(q, q + '\uffff'))
