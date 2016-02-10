@@ -25,14 +25,14 @@ $.getJSON("https://troxel.js.org/trove-blueprints/index.json")
       bpDB.latest = data.latest
       cacheVer = parseInt(window.localStorage.getItem('latestBpDBversion'))
       bpDB.needsMajorUpgrade = true unless isNaN(cacheVer) or bpDB.version[0] - 1 == Math.floor(cacheVer / 100000)
-      [_, y, m, d] = /^(\d{4})-(\d\d)-(\d\d)$/.exec("2016-01-02")
+      [_, y, m, d] = /^(\d{4})-(\d\d)-(\d\d)$/.exec(bpDB.latest)
       v = (d - 1) + 31 * (m - 1) + 372 * (y - 2016) + 100000 * (bpDB.version[0] - 1)
       window.localStorage.setItem('latestBpDBversion', v)
     else
       alert("Warning: You are using an outdated version of Troxel which is no longer compatible with the newest Trove Blueprints Datebase format.
             You have to update Troxel to the latest version to continue getting updates for the Trove Blueprints Datebase!")
       v = parseInt(window.localStorage.getItem('latestBpDBversion'))
-    prepareBpDB(window.indexedDB.open('Trove-Blueprints', v))
+    prepareBpDB(window.indexedDB.open('Trove-Blueprints', parseInt(v))) # parseInt because of IE oddness
   .fail ->
     prepareBpDB(window.indexedDB.open('Trove-Blueprints', parseInt(window.localStorage.getItem('latestBpDBversion'))))
 prepareBpDB = (request) ->
@@ -308,9 +308,19 @@ $('#openTroveTab').click ->
       transaction = bpDB.db.transaction(bpDB.latest, "readonly")
       objectStore = transaction.objectStore(bpDB.latest)
       q = q.toLowerCase()
-      request = objectStore.getAllKeys(window.IDBKeyRange.bound(q, q + '\uffff'))
-      request.onerror = (e) -> (console.warn(e.target.error); cb([]))
-      request.onsuccess = (e) -> cb(e.target.result)
+      if objectStore.openKeyCursor? # Chrome, Firefox
+        request = objectStore.openKeyCursor(window.IDBKeyRange.bound(q, q + '\uffff'))
+      else # IE, Edge (less performant than keyCursor but not supported on IE, Edge)
+        request = objectStore.openCursor(window.IDBKeyRange.bound(q, q + '\uffff'))
+      result = []
+      request.onerror = (e) -> (console.warn(e.target.error); cb(result))
+      request.onsuccess = (e) ->
+        cursor = e.target.result
+        if cursor?
+          result.push(cursor.key)
+          cursor.continue()
+        else
+          cb(result)
     displayKey: (s) -> s
   }
 $('.snewApPos').prop('disabled', true)
