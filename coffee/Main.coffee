@@ -22,44 +22,49 @@ anchorBP = null
 $.getJSON("https://troxel.js.org/trove-blueprints/index.json")
   .done (data) ->
     if data.version[0] == bpDB.version[0] and data.version[1] == bpDB.version[1]
-      bpDB.latest = data.latest
-      cacheVer = parseInt(window.localStorage.getItem('latestBpDBversion'))
-      bpDB.needsMajorUpgrade = true unless isNaN(cacheVer) or bpDB.version[0] - 1 == Math.floor(cacheVer / 100000)
-      [_, y, m, d] = /^(\d{4})-(\d\d)-(\d\d)$/.exec(bpDB.latest)
-      v = (d - 1) + 31 * (m - 1) + 372 * (y - 2016) + 100000 * (bpDB.version[0] - 1)
-      window.localStorage.setItem('latestBpDBversion', v)
+      v = parseInt(window.localStorage.getItem('_BpDB_latestVersion') || 0)
+      f = parseInt(window.localStorage.getItem('_BpDB_formatMajor') || bpDB.version[0])
+      t = window.localStorage.getItem('_BpDB_latestTag')
+      unless f == bpDB.version[0] # A major format upgrade of the BpDB is needed
+        alert("The Trove Blueprints Datebase is outdated and must be recreated using and updated format.).
+               Troxel will now clean all remaining artifacts up, reload the page and recreate a basic Trove Blueprints Datebase (only latest tag)!")
+        deleteAndRecreateDB()
+      bpDB.installRequest = JSON.parse(window.localStorage.getItem('_BpDB_installRequest') || '[]')
+      bpDB.removeRequest = JSON.parse(window.localStorage.getItem('_BpDB_removeRequest') || '[]')
+      bpDB.installLatestTag = data.latest unless v > 0 and t? and t == data.latest
+      # first visit or no successfull import yet or new tag available or install request or remove request
+      v++ if v == 0 or !t? or t != data.latest or bpDB.installRequest.length > 0 or bpDB.removeRequest.length > 0
     else
       alert("Warning: You are using an outdated version of Troxel which is no longer compatible with the newest Trove Blueprints Datebase format.
             You have to update Troxel to the latest version to continue getting updates for the Trove Blueprints Datebase!")
-      v = parseInt(window.localStorage.getItem('latestBpDBversion'))
-    prepareBpDB(window.indexedDB.open('Trove-Blueprints', parseInt(v))) # parseInt because of IE oddness
+      v = parseInt(window.localStorage.getItem('_BpDB_latestVersion') || 1)
+    prepareBpDB(window.indexedDB.open('Trove-Blueprints', parseInt(v)), v) # parseInt because of IE oddness
   .fail ->
-    prepareBpDB(window.indexedDB.open('Trove-Blueprints', parseInt(window.localStorage.getItem('latestBpDBversion'))))
-prepareBpDB = (request) ->
+    v = parseInt(window.localStorage.getItem('_BpDB_latestVersion') || 1)
+    prepareBpDB(window.indexedDB.open('Trove-Blueprints', parseInt(v)), v)
+prepareBpDB = (request, v) ->
   request.onerror = (e) ->
     console.warn(e.target.error)
     switch e.target.error.name
-      when "VersionError" then alert("The Trove Blueprints Datebase was updated by another Troxel subproject to a version not compatible with this version of Troxel.
-                                      Try updating Troxel to use it again!")
+      when "VersionError"
+        alert("The Trove Blueprints Datebase is corrupted (maybe your browser has run out of profile disk space or you deleted part of it manually).
+               Troxel will now clean all remaining artifacts up, reload the page and recreate a basic Trove Blueprints Datebase (only latest tag)!")
+        deleteAndRecreateDB()
       when "QuotaExceededError" then alert("The Trove Blueprints Datebase run out of disk space.
                                             Try to allow Troxel to use more disk space or remove older Blueprint Databases and reload the page to use it again!")
       when "UnknownError" then alert("The Trove Blueprints Datebase couldn't be loaded because of an error with your Browser or hard disk.
                                       Try to fix all issues with your Browser profile to use it again!")
   request.onblocked = (e) ->
-    alert("The Trove Blueprints Datebase needs to be updated. Please close (or reload) all other tabs with Troxel open!")
+    alert("The Trove Blueprints Datebase needs to be updated. Please close (or reload) all other opened tabs with Troxel or any other subproject hostet on troxel.js.org!")
   request.onupgradeneeded = (e) ->
-    if bpDB.needsMajorUpgrade
-      alert("The Trove Blueprints Datebase is missing the major version upgrade code!")
-      throw new Error("no Trove Blueprints Datebase upgrade Code provided")
-      return # Upgrade all existing DB's to new format
-    unless bpDB.latest?
-      return alert("The local version of the Trove Blueprints Datebase was removed and we can't get a new one.
-                    Try going online and / or update Troxel to retrieve a new copy of the Trove Blueprints Datebase.")
+    bpDB.doingUpgrade = true
+    window.localStorage.setItem('_BpDB_latestVersion', v) # ToDo: test blocking upgrade scenario
+    # ToDo: implement bpDB.installRequest and bpDB.removeRequest
     db = e.target.result
-    db.createObjectStore(bpDB.latest, {autoIncrement: false}) # out-of-line keys
-    $.getJSON("https://troxel.js.org/trove-blueprints/#{bpDB.latest}.json").done (bps) ->
-      transaction = db.transaction(bpDB.latest, "readwrite")
-      objectStore = transaction.objectStore(bpDB.latest)
+    db.createObjectStore(bpDB.installLatestTag, {autoIncrement: false}) # out-of-line keys
+    $.getJSON("https://troxel.js.org/trove-blueprints/#{bpDB.installLatestTag}.json").done (bps) ->
+      transaction = db.transaction(bpDB.installLatestTag, "readwrite")
+      objectStore = transaction.objectStore(bpDB.installLatestTag)
       bar = $('#UpdateProgress').show().children().width('0%')
       keys = Object.keys(bps)
       len = keys.length
@@ -76,6 +81,13 @@ prepareBpDB = (request) ->
       addNext()
       transaction.oncomplete = (e) ->
         $('#UpdateProgress').fadeOut()
+        bpDB.latestTag = bpDB.installLatestTag # ToDo: Set bpDB.latestTag if only install/remove request (read from localStroage or calcualte from DB?)
+        window.localStorage.setItem('_BpDB_formatMajor', bpDB.version[0])
+        window.localStorage.setItem('_BpDB_latestTag', bpDB.latestTag)
+        # ToDo: unset _BpDB_installRequest and _BpDB_removeRequest in localStorage
+        delete bpDB.installRequest if bpDB.installRequest?
+        delete bpDB.installRequest
+        delete bpDB.removeRequest
         useBpDB(db)
       transaction.onerror = (e) ->
         console.warn(e.target.error)
@@ -85,11 +97,31 @@ prepareBpDB = (request) ->
           when "UnknownError" then alert("The Trove Blueprints Datebase couldn't be loaded because of an error with your Browser or hard disk.
                                           Try to fix all issues with your Browser profile to use it again!")
   request.onsuccess = (e) ->
+    return if bpDB.doingUpgrade?
+    window.localStorage.setItem('_BpDB_latestVersion', v)
     db = e.target.result
-    unless bpDB.latest? # offline or incompatible with latest online version
+    bpDB.latestTag = window.localStorage.getItem('_BpDB_latestTag')
+    unless bpDB.latestTag? # try to recover latestTag if offline or incompatible format
       for objs in db.objectStoreNames
-        bpDB.latest = objs if not bpDB.latest? or objs > bpDB.latest
-    useBpDB(db)
+        bpDB.latestTag = objs if not bpDB.latestTag? or objs > bpDB.latestTag
+      window.localStorage.setItem('_BpDB_latestTag', bpDB.latestTag) if bpDB.latestTag?
+    if bpDB.latestTag?
+      useBpDB(db)
+    else
+      alert("The local Trove Blueprints Datebase does not exist and all Trove Blueprint related features won't be available.
+             Try going online and / or updating Troxel to fix this and be able use all Trove Blueprint related features again!")
+deleteAndRecreateDB = ->
+  DBDeleteRequest = window.indexedDB.deleteDatabase('Trove-Blueprints')
+  DBDeleteRequest.onerror = ->
+    alert("Error: An error occurred while cleaning up all remaining artifacts of the Trove Blueprints Datebase.
+          Please try to delete all offline data used by troxel.js.org in your brower settings manually and reload the page!")
+  DBDeleteRequest.onsuccess = ->
+    window.localStorage.removeItem('_BpDB_latestVersion')
+    window.localStorage.removeItem('_BpDB_formatMajor')
+    window.localStorage.removeItem('_BpDB_latestTag')
+    window.localStorage.removeItem('_BpDB_installRequest')
+    window.localStorage.removeItem('_BpDB_removeRequest')
+    location.reload()
 useBpDB = (db) ->
   db.onversionchange = (e) ->
     db.close()
@@ -101,8 +133,8 @@ useBpDB = (db) ->
     openBp(anchorBP)
 openBp = (b) ->
   return unless bpDB.db?
-  transaction = bpDB.db.transaction(bpDB.latest, "readonly")
-  objectStore = transaction.objectStore(bpDB.latest)
+  transaction = bpDB.db.transaction(bpDB.latestTag, "readonly")
+  objectStore = transaction.objectStore(bpDB.latestTag)
   request = objectStore.get(b.toLowerCase())
   request.onerror = (e) ->
     console.warn(e.target.error)
@@ -255,8 +287,8 @@ $('#open').click ->
       cb()
     when '#tabtrove'
       return unless bpDB.db?
-      transaction = bpDB.db.transaction(bpDB.latest, "readonly")
-      objectStore = transaction.objectStore(bpDB.latest)
+      transaction = bpDB.db.transaction(bpDB.latestTag, "readonly")
+      objectStore = transaction.objectStore(bpDB.latestTag)
       request = objectStore.get($('#sbtrove').val().toLowerCase())
       request.onerror = (e) -> console.warn(e.target.error)
       request.onsuccess = (e) ->
@@ -305,8 +337,8 @@ $('#openTroveTab').click ->
     async: true
     limit: 1000
     source: (q, scb, cb) ->
-      transaction = bpDB.db.transaction(bpDB.latest, "readonly")
-      objectStore = transaction.objectStore(bpDB.latest)
+      transaction = bpDB.db.transaction(bpDB.latestTag, "readonly")
+      objectStore = transaction.objectStore(bpDB.latestTag)
       q = q.toLowerCase()
       if objectStore.openKeyCursor? # Chrome, Firefox
         request = objectStore.openKeyCursor(window.IDBKeyRange.bound(q, q + '\uffff'))
