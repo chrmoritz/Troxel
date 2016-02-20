@@ -16,11 +16,11 @@
   "main": "./lib/index.js",
   "scripts": {
     "start": "serve --compress",
-    "test": "concurrent -p command -l 20 \"npm run test:mocha\" \"npm run test:lint\" \"npm run build:jade\" \"npm run build:assets\" \"npm run build:fonts\"",
-    "test:win": "concurrent -p command -l 20 \"npm run test:mocha\" \"npm run test:lint\" \"npm run build:jade\"",
+    "test": "concurrently -p command -l 20 \"npm run test:mocha\" \"npm run test:lint\" \"npm run build:jade\" \"npm run build:assets\" \"npm run build:fonts\"",
+    "test:win": "concurrently -p command -l 20 \"npm run test:mocha\" \"npm run test:lint\" \"npm run build:jade\"",
     "test:mocha": "mocha -t 5000 --compilers coffee:coffee-script/register",
     "test:lint": "coffeelint coffee test",
-    "build": "concurrent -p command -l 20 \"npm run build:jade\" \"npm run build:assets\" \"npm run build:fonts\"",
+    "build": "concurrently -p command -l 20 \"npm run build:jade\" \"npm run build:assets\" \"npm run build:fonts\"",
     "build:jade": "jade --obj \"{deploy:true}\" index.jade --out dist",
     "build:assets": "mkdirp dist && jspm build troxel/Main.coffee! dist/troxel.min.js --skip-source-maps --minify && replace '../jspm_packages/github/twbs/bootstrap@3.[0-9]*.[0-9]*/dist/fonts/' 'fonts/' dist/troxel.min.css  -q",
     "build:fonts": "mkdir -p dist/fonts && cp jspm_packages/github/twbs/bootstrap@*/dist/fonts/* dist/fonts && echo troxel.js.org > dist/CNAME",
@@ -32,7 +32,7 @@
   "devDependencies": {
     "coffeelint": "^1.14.1",
     "coffeelint-stylish": "^0.1.2",
-    "concurrently": "^1.0.0",
+    "concurrently": "^2.0.0",
     "jade": "^1.11.0",
     "jspm": "^0.17.0-beta.5",
     "mkdirp": "^0.5.1",
