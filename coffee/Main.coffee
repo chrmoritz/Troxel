@@ -450,7 +450,7 @@ $('#modeEdit').click ->
   $('#modeView').parent().removeClass('active')
   editor.changeEditMode(true)
   $('#addPanel').fadeIn()
-  ga 'send', 'pageview', '/Troxel/edit' if ga?
+  ga 'send', 'pageview', '/edit' if ga?
 $('.rotateBtn').click ->
   return unless io?
   switch $(@).data('rotate')

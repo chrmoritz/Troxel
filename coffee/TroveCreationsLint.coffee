@@ -15,7 +15,7 @@ class TroveCreationsLint
     @hasNoSpecularOnNonSolidVoxels()
     @hasNoBlackVoxels()
     @hasNoFloatingVoxels() if @type not in ['lair', 'dungeon']
-    @usesMaterialMaps() if @type not in ['lair', 'dungeon']
+    @usesMaterialMaps() if @type not in ['lair', 'dungeon', 'hair']
     @hasExactlyOneAttachmentPoint() if @type not in ['deco', 'lair', 'dungeon']
     switch @type
       when 'melee' then @validateMelee()
