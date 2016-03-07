@@ -1,5 +1,4 @@
 'use strict'
-window.location.protocol = 'https' if window.location.protocol != 'https:' and window.location.hostname == 'troxel.js.org'
 require('bootstrap/dist/css/bootstrap.css!')
 require('bootstrap/dist/css/bootstrap-theme.css!')
 require('./Main.css!')
