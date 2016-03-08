@@ -6,6 +6,19 @@ node_js:
   - '4'
   - '5'
 
+after_success:
+  - |
+      if [[ $TRAVIS_NODE_VERSION == "5" ]]; then
+        npm run beta
+        cd beta
+        git config --global user.name "Christian Moritz"
+        git config --global user.email "chrmoritz@users.noreply.github.com"
+        git init
+        git add .
+        git commit -m "publish beta build on Github Pages"
+        git push --force --quiet "https://${GH_TOKEN}@github.com/troxeljs/beta.git" master:gh-pages > /dev/null 2>&1
+      fi
+
 cache:
   directories:
     - jspm_packages
