@@ -369,7 +369,8 @@ $('#cbbtag').change ->
   }
 $('.snewApPos').prop('disabled', true)
 $('#cbnewAp').prop('checked', false).change -> $('.snewApPos').prop('disabled', !$(@).prop('checked'))
-$('#btnExport').click ->
+blobURLs = []
+$('#exportModal').on 'hide.bs.modal', ->
   $('#exportQb').text('Export as Qubicle (.qb) ...').removeAttr('href')
   $('#exportQba').hide().removeAttr('href')
   $('#exportQbt').hide().removeAttr('href')
@@ -378,11 +379,14 @@ $('#btnExport').click ->
   $('#exportVox').text('Export as Magica Voxel (.vox) ...').removeAttr('href')
   $('#exportBase64Ta').hide()
   $('#exportJsonTa').hide()
+  URL.revokeObjectURL(bURL) for bURL in blobURLs
+  blobURLs = []
 $('#exportQb').click ->
   return if io.readonly
   unless $(@).attr('href')?
     qbmaps = new QubicleIO(io).export($('#exportQbComp').prop('checked'))
     [href, hrefa, hreft, hrefs] = qbmaps.map (m) -> URL.createObjectURL(new Blob([m], {type: 'application/octet-binary'}))
+    blobURLs.push(href, hrefa, hreft, hrefs)
     filename = $('#exportFilenameQb').val() || 'Model'
     $(@).text('Download main mash (.qb)').attr('download', "#{filename}.qb").attr 'href', href
     $('#exportQba').show().attr('download', "#{filename}_a.qb").attr 'href', hrefa
@@ -397,6 +401,7 @@ $('#exportVox').click ->
   return if io.readonly
   filename = $('#exportFilenameVox').val() || 'Model'
   href = URL.createObjectURL(new Blob([new MagicaIO(io).export()], {type: 'application/octet-binary'}))
+  blobURLs.push(href)
   $(@).text('Download as Magica Voxel (.vox)').attr('download', "#{filename}.vox").attr 'href', href unless $(@).attr('href')?
 $('#exportBase64').click ->
   return if io.readonly
@@ -546,8 +551,8 @@ $('#addVoxType').change ->
 $('#addVoxAlpha').val(112)
 $('#editVoxNoiseBright').val(0)
 $('#editVoxNoiseHSL').val(0)
-$('#resizeModal').on 'shown.bs.modal', ->
-  $('#resizeModal').modal 'hide' unless editor?
+$('#resizeModal').on 'show.bs.modal', (e) ->
+  e.relatedTarget.preventDefault() unless editor?
 $('#openResizeModal').click ->
   return unless editor?
   $('#resizeX').val(io.x)
@@ -672,5 +677,5 @@ $('#TroveCreationsExport').click ->
   $('#TroveCreationsExportLink').val("[Troxel Link](#{l})").fadeIn()
   if $('#TroveCreationsTsl').prop('checked')
     $.post('http://www.trovesaurus.com/shorturl.php', {TroxelData: l}).done (url) -> $('#TroveCreationsExportLink').val(url)
-$('#TroveCreationLinterModal').on 'shown.bs.modal', ->
-  $('#TroveCreationLinterModal').modal 'hide' unless editor?
+$('#TroveCreationLinterModal').on 'show.bs.modal', (e) ->
+  e.relatedTarget.preventDefault() unless editor?
