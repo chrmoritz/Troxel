@@ -393,7 +393,8 @@ $('#exportQbzip').click ->
     zip.file("#{filename}_a.qb", qba)
     zip.file("#{filename}_t.qb", qbt)
     zip.file("#{filename}_s.qb", qbs)
-    href = URL.createObjectURL(zip.generate({type:"blob"}), {type: 'application/zip'})
+    comp = if $('#exportQbZipComp').prop('checked') then 'DEFLATE' else 'STORE'
+    href = URL.createObjectURL(zip.generate({type:"blob", compression: comp}), {type: 'application/zip'})
     blobURLs.push(href)
     $('#exportQbzip').text('Download material map archive (.zip: 4x .qb)').attr('download', "#{filename}.zip").attr('href', href)
 $('.exportQb').click ->

@@ -173,11 +173,17 @@ html
                       input#exportFilenameQb.form-control(type='text', value='Model')
                       span.input-group-addon .qb
                   .form-group
-                    label.col-sm-3.control-label(for='exportQbComp') Options:
+                    label.col-sm-3.control-label(for='exportQbComp') Qb-Options:
                     .col-sm-9: .checkbox
                       label
                         input#exportQbComp(type='checkbox', checked)
                         | compressed (incompatible with some 3rd party apps)
+                  .form-group
+                    label.col-sm-3.control-label(for='exportQbComp') Zip-Options:
+                    .col-sm-9: .checkbox
+                      label
+                        input#exportQbZipComp(type='checkbox', checked)
+                        | deflate / compress zip (may lower performance for large files)
                 a#exportQbzip.btn.btn-primary.btn-lg.btn-block(download='Model.zip') Export as material map archive (.zip: 4x .qb) ...
                 p.help-block or alternatively download each material map file separately:
                 a#exportQb.exportQb.btn.btn-info.btn-block(download='Model.qb') Export as Qubicle (*.qb, main map) ...
