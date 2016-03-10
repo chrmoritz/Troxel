@@ -33,17 +33,17 @@
   "author": "Christian Moritz",
   "license": "LGPL-3.0",
   "devDependencies": {
-    "coffeelint": "^1.14.1",
+    "coffeelint": "^1.15.0",
     "coffeelint-stylish": "^0.1.2",
     "concurrently": "^2.0.0",
     "copyfiles": "^0.2.1",
     "jade": "^1.11.0",
-    "jspm": "^0.17.0-beta.5",
+    "jspm": "^0.17.0-beta.11",
     "mkdirp": "^0.5.1",
-    "mocha": "^2.3.0",
+    "mocha": "^2.4.5",
     "replace": "^0.3.0",
     "serve": "^1.4.0",
-    "should": "^8.0.0"
+    "should": "^8.2.2"
   },
   "dependencies": {
     "coffee-script": "^1.10.0"
@@ -162,9 +162,6 @@
             ]
           }
         }
-      },
-      "github:components/jquery@2.2.0": {
-        "main": "jquery"
       },
       "github:twbs/bootstrap@3.3.6": {
         "shim": {
