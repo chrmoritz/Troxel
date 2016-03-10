@@ -4,7 +4,6 @@ SystemJS.config({
     "npm:@*/*.json",
     "npm:*.json"
   ],
-  globalEvaluationScope: false,
   transpiler: "plugin-typescript",
   separateCSS: true,
 
@@ -21,6 +20,7 @@ SystemJS.config({
     "http": "github:jspm/nodelibs-http@0.2.0-alpha",
     "https": "github:jspm/nodelibs-https@0.2.0-alpha",
     "jquery": "github:components/jquery@2.2.0",
+    "jszip": "github:Stuk/jszip@2.5.0",
     "module": "github:jspm/nodelibs-module@0.2.0-alpha",
     "os": "github:jspm/nodelibs-os@0.2.0-alpha",
     "path": "github:jspm/nodelibs-path@0.2.0-alpha",

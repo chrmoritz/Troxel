@@ -10,6 +10,7 @@ ZoxelIO = require('./Zoxel.io.coffee!')
 Editor = require('./Editor.coffee!')
 TroveCreationsLint = require('./TroveCreationsLint.coffee!')
 THREE = require('three')
+JSZip = require('jszip')
 Bloodhound = require('typeahead')
 $ = require('bootstrap')
 
@@ -371,27 +372,41 @@ $('.snewApPos').prop('disabled', true)
 $('#cbnewAp').prop('checked', false).change -> $('.snewApPos').prop('disabled', !$(@).prop('checked'))
 blobURLs = []
 $('#exportModal').on 'hide.bs.modal', ->
-  $('#exportQb').text('Export as Qubicle (.qb) ...').removeAttr('href')
-  $('#exportQba').hide().removeAttr('href')
-  $('#exportQbt').hide().removeAttr('href')
-  $('#exportQbs').hide().removeAttr('href')
+  $('#exportQb').text('Export as Qubicle (*.qb, main map) ...').removeAttr('href')
+  $('#exportQba').text('Export as alpha material map (*_a.qb) ...').removeAttr('href')
+  $('#exportQbt').text('Export as type material map (*_t.qb) ...').removeAttr('href')
+  $('#exportQbs').text('Export as specular material map (*_s.qb) ...').removeAttr('href')
+  $('#exportQbzip').text('Export as material map archive (.zip: 4x .qb) ...').removeAttr('href')
   $('#exportZox').text('Export as Zoxel (.zox) ...').removeAttr('href')
   $('#exportVox').text('Export as Magica Voxel (.vox) ...').removeAttr('href')
   $('#exportBase64Ta').hide()
   $('#exportJsonTa').hide()
   URL.revokeObjectURL(bURL) for bURL in blobURLs
   blobURLs = []
-$('#exportQb').click ->
+$('#exportQbzip').click ->
+  return if io.readonly
+  unless $(@).attr('href')?
+    [qb, qba, qbt, qbs] = new QubicleIO(io).export($('#exportQbComp').prop('checked'))
+    filename = $('#exportFilenameQb').val() || 'Model'
+    zip = new JSZip()
+    zip.file("#{filename}.qb", qb)
+    zip.file("#{filename}_a.qb", qba)
+    zip.file("#{filename}_t.qb", qbt)
+    zip.file("#{filename}_s.qb", qbs)
+    href = URL.createObjectURL(zip.generate({type:"blob"}), {type: 'application/zip'})
+    blobURLs.push(href)
+    $('#exportQbzip').text('Download material map archive (.zip: 4x .qb)').attr('download', "#{filename}.zip").attr('href', href)
+$('.exportQb').click ->
   return if io.readonly
   unless $(@).attr('href')?
     qbmaps = new QubicleIO(io).export($('#exportQbComp').prop('checked'))
     [href, hrefa, hreft, hrefs] = qbmaps.map (m) -> URL.createObjectURL(new Blob([m], {type: 'application/octet-binary'}))
     blobURLs.push(href, hrefa, hreft, hrefs)
     filename = $('#exportFilenameQb').val() || 'Model'
-    $(@).text('Download main mash (.qb)').attr('download', "#{filename}.qb").attr 'href', href
-    $('#exportQba').show().attr('download', "#{filename}_a.qb").attr 'href', hrefa
-    $('#exportQbt').show().attr('download', "#{filename}_t.qb").attr 'href', hreft
-    $('#exportQbs').show().attr('download', "#{filename}_s.qb").attr 'href', hrefs
+    $('#exportQb').text('Download main map (.qb)').attr('download', "#{filename}.qb").attr('href', href)
+    $('#exportQba').text('Download alpha material map (*_a.qb)').attr('download', "#{filename}_a.qb").attr('href', hrefa)
+    $('#exportQbt').text('Download type material map (*_t.qb)').attr('download', "#{filename}_t.qb").attr('href', hreft)
+    $('#exportQbs').text('Download specular material map (*_s.qb)').attr('download', "#{filename}_s.qb").attr('href', hrefs)
 $('#exportZox').click ->
   return if io.readonly
   filename = $('#exportFilenameZox').val() || 'Model'
