@@ -31,17 +31,11 @@ describe 'QubicleIO', ->
       io = new QubicleIO model
     it 'should be able to successfully export to a .qb file', (done) ->
       readFileAsUint8Array 'test/models/chr_knight.qb', (view) ->
-        b = io.export(false)[0]
-        b.should.have.ownProperty('options', 'expected blob.options to be defined').with.ownProperty('type').equal('application/octet-binary')
-        b.should.have.ownProperty('ab', 'expected blob.ab to be defined')
-        (new Uint8Array b.ab[0]).should.eql(view)
+        b = io.export(false)[0].should.eql(view)
         done()
     it 'should be able to successfully export to a .qb file (compressed)', (done) ->
       readFileAsUint8Array 'test/models/chr_knight_compressed.qb', (view) ->
-        b = io.export(true)[0]
-        b.should.have.ownProperty('options', 'expected blob.options to be defined').with.ownProperty('type').equal('application/octet-binary')
-        b.should.have.ownProperty('ab', 'expected blob.ab to be defined')
-        (new Uint8Array b.ab[0]).should.eql(view)
+        io.export(true)[0].should.eql(view)
         done()
     it 'should be able to successfully export to a .qb file (multiple maps)'
     it 'should be able to successfully export to a .qb file (multiple matrices)'

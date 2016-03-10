@@ -212,6 +212,6 @@ class MagicaIO extends require('./IO.coffee!')
     data = data.concat paletteChunk
     console.log "export Magica:"
     console.log data
-    URL.createObjectURL new Blob [new Uint8Array data], type: 'application/octet-binary'
+    return new Uint8Array data
 
 module.exports = MagicaIO

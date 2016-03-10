@@ -23,7 +23,4 @@ describe 'MagicaIO', ->
         view = v
         done()
     it 'should be able to successfully export to a .vox file', ->
-      b = io.export()
-      b.should.have.ownProperty('options', 'expected blob.options to be defined').with.ownProperty('type').equal('application/octet-binary')
-      b.should.have.ownProperty('ab', 'expected blob.ab to be defined')
-      (new Uint8Array b.ab[0]).should.eql(view)
+      io.export().should.eql(view)

@@ -1,6 +1,6 @@
 'use strict'
 should = require 'should'
-{readFileAsText} = require './TestUtils.coffee'
+{readFileAsJSON} = require './TestUtils.coffee'
 {Base64IO, JsonIO} = require '../lib/index'
 
 model = require './models/chr_knight.json'
@@ -34,14 +34,14 @@ describe 'Base64IO', ->
       io.export(true).should.equal(base64.chr_knight_ro)
 
 describe 'JsonIO', ->
-  sjson = null
+  json = null
   before (done) ->
-    readFileAsText 'test/models/chr_knight.json', (s) ->
-      sjson = s
+    readFileAsJSON 'test/models/chr_knight.json', (s) ->
+      json = s
       done()
   describe 'import', ->
     it 'should be able to load from JSON', ->
-      io = new JsonIO(sjson)
+      io = new JsonIO(JSON.stringify(json))
       io.should.have.ownProperty('x', 'expected io.x to be defined').equal(20, 'expected io.x to be 20')
       io.should.have.ownProperty('y', 'expected io.y to be defined').equal(20, 'expected io.y to be 20')
       io.should.have.ownProperty('z', 'expected io.z to be defined').equal(21, 'expected io.z to be 21')
@@ -52,6 +52,6 @@ describe 'JsonIO', ->
     before ->
       io = new JsonIO model
     it 'should be able to export to JSON', ->
-      io.export(false).should.eql(JSON.stringify(JSON.parse(sjson)))
+      io.export(false).should.eql(JSON.stringify(json))
     it 'should be able to export to JSON (pretty)', ->
-      io.export(true).should.eql(JSON.stringify(JSON.parse(sjson), null, '    '))
+      io.export(true).should.eql(JSON.stringify(json, null, '    '))

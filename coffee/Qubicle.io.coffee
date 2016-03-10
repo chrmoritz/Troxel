@@ -307,6 +307,6 @@ class QubicleIO extends require('./IO.coffee!')
       exportValues @voxels[z]?[y]?[x] for x in [0...@x] by 1 for y in [0...@y] by 1 for z in [0...@z] by 1
     console.log "export Qubicle:"
     console.log data
-    URL.createObjectURL new Blob [new Uint8Array ta], type: 'application/octet-binary' for ta in [data, data_a, data_t, data_s]
+    [data, data_a, data_t, data_s].map (ta) -> new Uint8Array(ta)
 
 module.exports = QubicleIO

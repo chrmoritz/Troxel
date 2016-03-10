@@ -35,6 +35,6 @@ class ZoxelIO extends require('./IO.coffee!')
     json = {creator: "Troxel", width: @x, height: @y, depth: @z, version: 1, frames: 1, frame1: frame}
     console.log "Zoxel export:"
     console.log json
-    'data:application/octet-binary;base64,' + btoa JSON.stringify json
+    JSON.stringify json
 
 module.exports = ZoxelIO

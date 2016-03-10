@@ -381,7 +381,8 @@ $('#btnExport').click ->
 $('#exportQb').click ->
   return if io.readonly
   unless $(@).attr('href')?
-    [href, hrefa, hreft, hrefs] = new QubicleIO(io).export($('#exportQbComp').prop('checked'))
+    qbmaps = new QubicleIO(io).export($('#exportQbComp').prop('checked'))
+    [href, hrefa, hreft, hrefs] = qbmaps.map (m) -> URL.createObjectURL(new Blob([m], {type: 'application/octet-binary'}))
     filename = $('#exportFilenameQb').val() || 'Model'
     $(@).text('Download main mash (.qb)').attr('download', "#{filename}.qb").attr 'href', href
     $('#exportQba').show().attr('download', "#{filename}_a.qb").attr 'href', hrefa
@@ -390,11 +391,13 @@ $('#exportQb').click ->
 $('#exportZox').click ->
   return if io.readonly
   filename = $('#exportFilenameZox').val() || 'Model'
-  $(@).text('Download as Zoxel (.zox)').attr('download', "#{filename}.zox").attr 'href', new ZoxelIO(io).export() unless $(@).attr('href')?
+  href = 'data:application/octet-binary;base64,' + btoa(new ZoxelIO(io).export())
+  $(@).text('Download as Zoxel (.zox)').attr('download', "#{filename}.zox").attr 'href', href unless $(@).attr('href')?
 $('#exportVox').click ->
   return if io.readonly
   filename = $('#exportFilenameVox').val() || 'Model'
-  $(@).text('Download as Magica Voxel (.vox)').attr('download', "#{filename}.vox").attr 'href', new MagicaIO(io).export() unless $(@).attr('href')?
+  href = URL.createObjectURL(new Blob([new MagicaIO(io).export()], {type: 'application/octet-binary'}))
+  $(@).text('Download as Magica Voxel (.vox)').attr('download', "#{filename}.vox").attr 'href', href unless $(@).attr('href')?
 $('#exportBase64').click ->
   return if io.readonly
   if $('#exportBase64Rbb').prop('checked')
