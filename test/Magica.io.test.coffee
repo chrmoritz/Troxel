@@ -1,7 +1,7 @@
 'use strict'
 should = require 'should'
-{readFileAsUint8Array} = require './TestUtils.coffee'
-{MagicaIO} = require '../lib/index'
+{readFileAsUint8Array} = require './TestUtils'
+MagicaIO = require '../coffee/Magica.io'
 
 model = require './models/chr_knight.json'
 

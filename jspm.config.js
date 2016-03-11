@@ -14,6 +14,23 @@ SystemJS.config({
         },
         "*.ts": {
           "loader": "plugin-typescript"
+        },
+        "*.css": {
+          "loader": "css"
+        }
+      }
+    },
+    "bootstrap": { // Builder
+      "meta": {
+        "*.css": {
+          "loader": "css"
+        }
+      }
+    },
+    "github:twbs/bootstrap@3.3.6": { // Browser
+      "meta": {
+        "*.css": {
+          "loader": "css"
         }
       }
     }

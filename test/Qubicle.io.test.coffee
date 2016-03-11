@@ -1,7 +1,7 @@
 'use strict'
 should = require 'should'
-{readFileAsUint8Array} = require './TestUtils.coffee'
-{QubicleIO} = require '../lib/index'
+{readFileAsUint8Array} = require './TestUtils'
+QubicleIO = require '../coffee/Qubicle.io'
 
 model = require './models/chr_knight.json'
 
