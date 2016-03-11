@@ -1,6 +1,6 @@
 # http://voxel.codeplex.com/wikipage?title=VOX%20Format&referringTitle=MagicaVoxel%20Editor
 'use strict'
-class MagicaIO extends require('./IO.coffee!')
+class MagicaIO extends require('./IO.coffee')
   constructor: (file, callback) ->
     return if super(file)
     fr = new FileReader()

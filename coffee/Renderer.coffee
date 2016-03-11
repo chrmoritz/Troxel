@@ -7,7 +7,7 @@ require('three/examples/js/postprocessing/ShaderPass')
 require('three/examples/js/postprocessing/RenderPass')
 require('three/examples/js/postprocessing/MaskPass')
 require('three/examples/js/postprocessing/EffectComposer')
-TroxelControls = require('./Controls.coffee!')
+TroxelControls = require('./Controls.coffee')
 $ = require('jquery')
 
 class Renderer

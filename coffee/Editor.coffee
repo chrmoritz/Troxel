@@ -1,10 +1,10 @@
 'use strict'
 THREE = require('three')
 Stats = require('stats')
-{Base64IO} = require('./Troxel.io.coffee!')
+{Base64IO} = require('./Troxel.io.coffee')
 $ = require('jquery')
 
-class Editor extends require('./Renderer.coffee!')
+class Editor extends require('./Renderer.coffee')
   constructor: (io, @embedded = false, @domContainer = $('#WebGlContainer')) ->
     @objects = []
     super io, @embedded, @domContainer, parseInt($('#renderMode').val()), parseInt($('#renderWireframes').val()), $('#rendererPostEffect').val() == '1',

@@ -13,7 +13,7 @@
   "engines": {
     "node": ">=4.0.0"
   },
-  "main": "./lib/index.js",
+  "main": "./troxel.js",
   "scripts": {
     "start": "serve --compress",
     "test": "concurrently -p command -l 20 \"npm run test:mocha\" \"npm run test:lint\" \"npm run build:jade\" \"npm run build:assets\" \"npm run build:fonts\"",

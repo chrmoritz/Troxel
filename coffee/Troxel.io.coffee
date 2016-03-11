@@ -1,5 +1,5 @@
 'use strict'
-class Base64IO extends require('./IO.coffee!')
+class Base64IO extends require('./IO.coffee')
   constructor: (base64) ->
     return if super(base64)
     @voxels = []
@@ -130,7 +130,7 @@ class Base64IO extends require('./IO.coffee!')
     console.log data
     btoa String.fromCharCode.apply null, data
 
-class JsonIO extends require('./IO.coffee!')
+class JsonIO extends require('./IO.coffee')
   constructor: (json) ->
     return if super(json)
     {x: @x, y: @y, z: @z, voxels: @voxels} = JSON.parse json

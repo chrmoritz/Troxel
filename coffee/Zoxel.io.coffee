@@ -1,6 +1,6 @@
 # https://github.com/grking/zoxel/blob/develop/src/plugins/io_zoxel.py
 'use strict'
-class ZoxelIO extends require('./IO.coffee!')
+class ZoxelIO extends require('./IO.coffee')
   constructor: (file, callback) ->
     return if super(file)
     @voxels = []

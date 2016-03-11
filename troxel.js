@@ -1,10 +1,4 @@
 'use strict';
-global.module = require('module');
-let res = global.module._resolveFilename;
-global.module._resolveFilename = function(r, p){
-  return res(r.split('!')[0], p);
-};
-
 require('coffee-script/register');
 module.exports = {
   IO: require('../coffee/IO'),

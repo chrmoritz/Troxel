@@ -3,7 +3,19 @@ SystemJS.config({
   separateCSS: true,
   packages: {
     "troxel": {
-      "format": "cjs"
+      "format": "cjs",
+      "main": "coffee/Main.coffee",
+      "meta": {
+        "*.coffee": {
+          "loader": "coffee"
+        },
+        "*.js": {
+          "loader": "plugin-typescript"
+        },
+        "*.ts": {
+          "loader": "plugin-typescript"
+        }
+      }
     }
   }
 });
