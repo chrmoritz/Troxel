@@ -49,7 +49,7 @@ SystemJS.config({
     "buffer": "github:jspm/nodelibs-buffer@0.2.0-alpha",
     "child_process": "github:jspm/nodelibs-child_process@0.2.0-alpha",
     "clean-css": "npm:clean-css@3.4.10",
-    "coffee": "github:chrmoritz/system-coffee@0.1.3",
+    "coffee": "github:chrmoritz/system-coffee@0.2.0",
     "css": "github:systemjs/plugin-css@0.1.20",
     "events": "github:jspm/nodelibs-events@0.2.0-alpha",
     "fs": "github:jspm/nodelibs-fs@0.2.0-alpha",
@@ -62,14 +62,26 @@ SystemJS.config({
     "path": "github:jspm/nodelibs-path@0.2.0-alpha",
     "plugin-typescript": "github:frankwallis/plugin-typescript@2.6.0",
     "process": "github:jspm/nodelibs-process@0.2.0-alpha",
+    "repl": "github:jspm/nodelibs-repl@0.2.0-alpha",
     "stats": "github:mrdoob/stats.js@r14",
     "stream": "github:jspm/nodelibs-stream@0.2.0-alpha",
     "three": "github:mrdoob/three.js@r71",
     "typeahead": "github:twitter/typeahead.js@0.11.1",
     "url": "github:jspm/nodelibs-url@0.2.0-alpha",
-    "util": "github:jspm/nodelibs-util@0.2.0-alpha"
+    "util": "github:jspm/nodelibs-util@0.2.0-alpha",
+    "vm": "github:jspm/nodelibs-vm@0.2.0-alpha"
   },
   packages: {
+    "github:chrmoritz/system-coffee@0.2.0": {
+      "map": {
+        "coffee-script": "npm:coffee-script@1.10.0"
+      }
+    },
+    "github:twbs/bootstrap@3.3.6": {
+      "map": {
+        "jquery": "github:components/jquery@2.2.1"
+      }
+    },
     "github:frankwallis/plugin-typescript@2.6.0": {
       "map": {
         "typescript": "npm:typescript@1.7.5"
@@ -154,11 +166,6 @@ SystemJS.config({
       }
     },
     "github:twitter/typeahead.js@0.11.1": {
-      "map": {
-        "jquery": "github:components/jquery@2.2.1"
-      }
-    },
-    "github:twbs/bootstrap@3.3.6": {
       "map": {
         "jquery": "github:components/jquery@2.2.1"
       }
