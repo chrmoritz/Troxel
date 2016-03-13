@@ -1,55 +1,16 @@
 # http://www.minddesk.com/wiki/index.php?title=Qubicle_Constructor_1:Data_Exchange_With_Qubicle_Binary
 'use strict'
 class QubicleIO extends require('./IO.coffee')
-  constructor: (files, callback) ->
-    return if super(files)
+  constructor: (abs) ->
+    return if super(abs)
     @voxels = []
     @x = @y = @z = -1
     @warn = []
-    @loadingState = 0
-    fr = new FileReader()
-    fr.onloadend = =>
-      APpos = @readFile fr.result, 0
-      if files.a?
-        fra = new FileReader()
-        fra.onloadend = =>
-          @readFile fra.result, 1
-          if @loadingState++ == 2
-            @mirrorZ() if @zOrientation == 0
-            callback(APpos)
-        console.log "reading alpha file with name: #{files.a.name}"
-        fra.readAsArrayBuffer files.a
-      else
-        @loadingState++
-      if files.t?
-        frt = new FileReader()
-        frt.onloadend = =>
-          @readFile frt.result, 2
-          if @loadingState++ == 2
-            @mirrorZ() if @zOrientation == 0
-            callback(APpos)
-        console.log "reading type file with name: #{files.t.name}"
-        frt.readAsArrayBuffer files.t
-      else
-        @loadingState++
-      if files.s?
-        frs = new FileReader()
-        frs.onloadend = =>
-          @readFile frs.result, 3
-          if @loadingState++ == 2
-            @mirrorZ() if @zOrientation == 0
-            callback(APpos)
-        console.log "reading specular file with name: #{files.s.name}"
-        frs.readAsArrayBuffer files.s
-      else
-        @loadingState++
-      if @loadingState == 3
-        @mirrorZ() if @zOrientation == 0
-        callback(APpos)
-    console.log "reading file with name: #{files.m.name}"
-    fr.readAsArrayBuffer files.m
+    @readFile(abs[i], i) for i in [0..3] when abs[i]?
+    @mirrorZ() if @zOrientation == 0
 
   readFile: (ab, type) ->
+    console.log "##### Reading material map file with type: #{type} (0: main, 1: alpha, 2: type, 3: specular) #####"
     console.log "file.byteLength: #{ab.byteLength}"
     [version, colorFormat, zOrientation, compression, visabilityMask, matrixCount] = new Uint32Array ab.slice 0, 24
     console.log "version: #{version} (expected 257 = 1.1.0.0 = current version)"

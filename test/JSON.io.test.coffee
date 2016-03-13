@@ -3,19 +3,15 @@ fs = require 'fs'
 should = require 'should'
 
 require './TestUtils'
-ZoxelIO = require '../coffee/Zoxel.io'
+JsonIO = require '../coffee/JSON.io'
 
-describe 'ZoxelIO', ->
-  model = chr_knight = null
-  before (done) ->
+describe 'JsonIO', ->
+  model = null
+  before ->
     model = require './models/chr_knight.json'
-    fs.readFile 'test/models/chr_knight.zox', 'utf8', (err, data) ->
-      return done(err) if err?
-      chr_knight = data
-      done()
   describe 'import', ->
-    it 'should be able to successfully import a .zox file', ->
-      io = new ZoxelIO chr_knight
+    it 'should be able to load from JSON', ->
+      io = new JsonIO(JSON.stringify(model))
       io.should.have.ownProperty('x', 'expected io.x to be defined').equal(20, 'expected io.x to be 20')
       io.should.have.ownProperty('y', 'expected io.y to be defined').equal(20, 'expected io.y to be 20')
       io.should.have.ownProperty('z', 'expected io.z to be defined').equal(21, 'expected io.z to be 21')
@@ -24,6 +20,8 @@ describe 'ZoxelIO', ->
   describe 'export', ->
     io = null
     before ->
-      io = new ZoxelIO model
-    it 'should be able to successfully export to a .zox file', ->
-      io.export().should.eql(chr_knight)
+      io = new JsonIO model
+    it 'should be able to export to JSON', ->
+      io.export(false).should.eql(JSON.stringify(model))
+    it 'should be able to export to JSON (pretty)', ->
+      io.export(true).should.eql(JSON.stringify(model, null, '    '))

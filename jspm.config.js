@@ -45,6 +45,7 @@ SystemJS.config({
   ],
   map: {
     "assert": "github:jspm/nodelibs-assert@0.2.0-alpha",
+    "bluebird": "npm:bluebird@3.3.4",
     "bootstrap": "github:twbs/bootstrap@3.3.6",
     "buffer": "github:jspm/nodelibs-buffer@0.2.0-alpha",
     "child_process": "github:jspm/nodelibs-child_process@0.2.0-alpha",

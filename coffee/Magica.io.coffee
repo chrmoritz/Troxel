@@ -1,165 +1,159 @@
 # http://voxel.codeplex.com/wikipage?title=VOX%20Format&referringTitle=MagicaVoxel%20Editor
 'use strict'
 class MagicaIO extends require('./IO.coffee')
-  constructor: (file, callback) ->
-    return if super(file)
-    fr = new FileReader()
-    fr.onloadend = =>
-      ab = fr.result
-      meta = (String.fromCharCode char for char in new Uint8Array ab.slice 0, 4).join ''
-      console.log "meta: #{meta} (expected VOX )"
-      throw new Error "Expected Magica Voxel header not found" unless meta == 'VOX '
-      [version] = new Uint32Array ab.slice 4, 8
-      console.log "version: #{version} (expected 150)"
-      console.warn "Expected version 150 but found version: #{version} (May result in errors)" unless version == 150
-      mainChunkId = (String.fromCharCode char for char in new Uint8Array ab.slice 8, 12).join ''
-      console.log "mainChunkId: #{mainChunkId} (expected MAIN)"
-      throw new Error "Didn't found main Chunk as expected" unless mainChunkId == 'MAIN'
-      [mainChunkSize, mainChunkChildSize] = new Uint32Array ab.slice 12, 20
-      console.log "mainChunkSize: #{mainChunkSize} (expected 0)"
-      console.log "mainChunkChildSize: #{mainChunkChildSize}"
-      console.warn console.log "There shouldn't be any bytes left" unless 20 + mainChunkChildSize == ab.byteLength
-      # search for SIZE, XYZI (voxel) and optional RGBA (palette) chunk
-      chunkPointer = 20 + mainChunkSize
-      sizeBegin = sizeEnd = voxelBegin = voxelEnd = paletteBegin = paletteLength = -1
-      while chunkPointer < 20 + mainChunkSize + mainChunkChildSize
-        chunkId = (String.fromCharCode char for char in new Uint8Array ab.slice chunkPointer, chunkPointer + 4).join ''
-        [chunkSize, chunkChildSize] = new Uint32Array ab.slice chunkPointer + 4, chunkPointer + 12
-        console.log "found child chunk: #{chunkId} with begin: #{chunkPointer + 12}, size: #{chunkSize} and childSize: #{chunkChildSize} (expected 0)"
-        switch chunkId
-          when "SIZE"
-            console.warn "invalid length of size chunk" unless chunkSize == 12
-            sizeBegin = chunkPointer + 12
-            sizeEnd = sizeBegin + chunkSize
-          when "XYZI"
-            voxelBegin = chunkPointer + 12
-            voxelEnd = voxelBegin + chunkSize
-          when "RGBA"
-            paletteBegin = chunkPointer + 12
-            console.warn "invalid length of palette chunk" unless chunkSize == 1024
-            paletteLength = chunkSize
-        chunkPointer += 12 + chunkSize + chunkChildSize
-      throw new Error "missing chunks" if sizeBegin == -1 or sizeEnd == -1 or voxelBegin == -1 or voxelEnd == -1
-      # read size chunk
-      [@x, @z, @y] = new Uint32Array ab.slice sizeBegin, sizeEnd # order is x, z, y (normalized with .qb)
-      console.log "dimensions: width: #{@x} height: #{@y} depth: #{@z}"
-      # read palette chunk
-      palette = []
-      if paletteBegin == -1 or paletteLength == -1
-        palette = [ # default palette
-          {r: 255, g: 255, b: 255, a: 255, t: 0, s: 0}, {r: 255, g: 255, b: 204, a: 255, t: 0, s: 0}, {r: 255, g: 255, b: 153, a: 255, t: 0, s: 0},
-          {r: 255, g: 255, b: 102, a: 255, t: 0, s: 0}, {r: 255, g: 255, b:  51, a: 255, t: 0, s: 0}, {r: 255, g: 255, b:   0, a: 255, t: 0, s: 0},
-          {r: 255, g: 204, b: 255, a: 255, t: 0, s: 0}, {r: 255, g: 204, b: 204, a: 255, t: 0, s: 0}, {r: 255, g: 204, b: 153, a: 255, t: 0, s: 0},
-          {r: 255, g: 204, b: 102, a: 255, t: 0, s: 0}, {r: 255, g: 204, b:  51, a: 255, t: 0, s: 0}, {r: 255, g: 204, b:   0, a: 255, t: 0, s: 0},
-          {r: 255, g: 153, b: 255, a: 255, t: 0, s: 0}, {r: 255, g: 153, b: 204, a: 255, t: 0, s: 0}, {r: 255, g: 153, b: 153, a: 255, t: 0, s: 0},
-          {r: 255, g: 153, b: 102, a: 255, t: 0, s: 0}, {r: 255, g: 153, b:  51, a: 255, t: 0, s: 0}, {r: 255, g: 153, b:   0, a: 255, t: 0, s: 0},
-          {r: 255, g: 102, b: 255, a: 255, t: 0, s: 0}, {r: 255, g: 102, b: 204, a: 255, t: 0, s: 0}, {r: 255, g: 102, b: 153, a: 255, t: 0, s: 0},
-          {r: 255, g: 102, b: 102, a: 255, t: 0, s: 0}, {r: 255, g: 102, b:  51, a: 255, t: 0, s: 0}, {r: 255, g: 102, b:   0, a: 255, t: 0, s: 0},
-          {r: 255, g:  51, b: 255, a: 255, t: 0, s: 0}, {r: 255, g:  51, b: 204, a: 255, t: 0, s: 0}, {r: 255, g:  51, b: 153, a: 255, t: 0, s: 0},
-          {r: 255, g:  51, b: 102, a: 255, t: 0, s: 0}, {r: 255, g:  51, b:  51, a: 255, t: 0, s: 0}, {r: 255, g:  51, b:   0, a: 255, t: 0, s: 0},
-          {r: 255, g:   0, b: 255, a: 250, t: 7, s: 7}, {r: 255, g:   0, b: 204, a: 255, t: 0, s: 0}, {r: 255, g:   0, b: 153, a: 255, t: 0, s: 0},
-          {r: 255, g:   0, b: 102, a: 255, t: 0, s: 0}, {r: 255, g:   0, b:  51, a: 255, t: 0, s: 0}, {r: 255, g:   0, b:   0, a: 255, t: 0, s: 0},
-          {r: 204, g: 255, b: 255, a: 255, t: 0, s: 0}, {r: 204, g: 255, b: 204, a: 255, t: 0, s: 0}, {r: 204, g: 255, b: 153, a: 255, t: 0, s: 0},
-          {r: 204, g: 255, b: 102, a: 255, t: 0, s: 0}, {r: 204, g: 255, b:  51, a: 255, t: 0, s: 0}, {r: 204, g: 255, b:   0, a: 255, t: 0, s: 0},
-          {r: 204, g: 204, b: 255, a: 255, t: 0, s: 0}, {r: 204, g: 204, b: 204, a: 255, t: 0, s: 0}, {r: 204, g: 204, b: 153, a: 255, t: 0, s: 0},
-          {r: 204, g: 204, b: 102, a: 255, t: 0, s: 0}, {r: 204, g: 204, b:  51, a: 255, t: 0, s: 0}, {r: 204, g: 204, b:   0, a: 255, t: 0, s: 0},
-          {r: 204, g: 153, b: 255, a: 255, t: 0, s: 0}, {r: 204, g: 153, b: 204, a: 255, t: 0, s: 0}, {r: 204, g: 153, b: 153, a: 255, t: 0, s: 0},
-          {r: 204, g: 153, b: 102, a: 255, t: 0, s: 0}, {r: 204, g: 153, b:  51, a: 255, t: 0, s: 0}, {r: 204, g: 153, b:   0, a: 255, t: 0, s: 0},
-          {r: 204, g: 102, b: 255, a: 255, t: 0, s: 0}, {r: 204, g: 102, b: 204, a: 255, t: 0, s: 0}, {r: 204, g: 102, b: 153, a: 255, t: 0, s: 0},
-          {r: 204, g: 102, b: 102, a: 255, t: 0, s: 0}, {r: 204, g: 102, b:  51, a: 255, t: 0, s: 0}, {r: 204, g: 102, b:   0, a: 255, t: 0, s: 0},
-          {r: 204, g:  51, b: 255, a: 255, t: 0, s: 0}, {r: 204, g:  51, b: 204, a: 255, t: 0, s: 0}, {r: 204, g:  51, b: 153, a: 255, t: 0, s: 0},
-          {r: 204, g:  51, b: 102, a: 255, t: 0, s: 0}, {r: 204, g:  51, b:  51, a: 255, t: 0, s: 0}, {r: 204, g:  51, b:   0, a: 255, t: 0, s: 0},
-          {r: 204, g:   0, b: 255, a: 255, t: 0, s: 0}, {r: 204, g:   0, b: 204, a: 255, t: 0, s: 0}, {r: 204, g:   0, b: 153, a: 255, t: 0, s: 0},
-          {r: 204, g:   0, b: 102, a: 255, t: 0, s: 0}, {r: 204, g:   0, b:  51, a: 255, t: 0, s: 0}, {r: 204, g:   0, b:   0, a: 255, t: 0, s: 0},
-          {r: 153, g: 255, b: 255, a: 255, t: 0, s: 0}, {r: 153, g: 255, b: 204, a: 255, t: 0, s: 0}, {r: 153, g: 255, b: 153, a: 255, t: 0, s: 0},
-          {r: 153, g: 255, b: 102, a: 255, t: 0, s: 0}, {r: 153, g: 255, b:  51, a: 255, t: 0, s: 0}, {r: 153, g: 255, b:   0, a: 255, t: 0, s: 0},
-          {r: 153, g: 204, b: 255, a: 255, t: 0, s: 0}, {r: 153, g: 204, b: 204, a: 255, t: 0, s: 0}, {r: 153, g: 204, b: 153, a: 255, t: 0, s: 0},
-          {r: 153, g: 204, b: 102, a: 255, t: 0, s: 0}, {r: 153, g: 204, b:  51, a: 255, t: 0, s: 0}, {r: 153, g: 204, b:   0, a: 255, t: 0, s: 0},
-          {r: 153, g: 153, b: 255, a: 255, t: 0, s: 0}, {r: 153, g: 153, b: 204, a: 255, t: 0, s: 0}, {r: 153, g: 153, b: 153, a: 255, t: 0, s: 0},
-          {r: 153, g: 153, b: 102, a: 255, t: 0, s: 0}, {r: 153, g: 153, b:  51, a: 255, t: 0, s: 0}, {r: 153, g: 153, b:   0, a: 255, t: 0, s: 0},
-          {r: 153, g: 102, b: 255, a: 255, t: 0, s: 0}, {r: 153, g: 102, b: 204, a: 255, t: 0, s: 0}, {r: 153, g: 102, b: 153, a: 255, t: 0, s: 0},
-          {r: 153, g: 102, b: 102, a: 255, t: 0, s: 0}, {r: 153, g: 102, b:  51, a: 255, t: 0, s: 0}, {r: 153, g: 102, b:   0, a: 255, t: 0, s: 0},
-          {r: 153, g:  51, b: 255, a: 255, t: 0, s: 0}, {r: 153, g:  51, b: 204, a: 255, t: 0, s: 0}, {r: 153, g:  51, b: 153, a: 255, t: 0, s: 0},
-          {r: 153, g:  51, b: 102, a: 255, t: 0, s: 0}, {r: 153, g:  51, b:  51, a: 255, t: 0, s: 0}, {r: 153, g:  51, b:   0, a: 255, t: 0, s: 0},
-          {r: 153, g:   0, b: 255, a: 255, t: 0, s: 0}, {r: 153, g:   0, b: 204, a: 255, t: 0, s: 0}, {r: 153, g:   0, b: 153, a: 255, t: 0, s: 0},
-          {r: 153, g:   0, b: 102, a: 255, t: 0, s: 0}, {r: 153, g:   0, b:  51, a: 255, t: 0, s: 0}, {r: 153, g:   0, b:   0, a: 255, t: 0, s: 0},
-          {r: 102, g: 255, b: 255, a: 255, t: 0, s: 0}, {r: 102, g: 255, b: 204, a: 255, t: 0, s: 0}, {r: 102, g: 255, b: 153, a: 255, t: 0, s: 0},
-          {r: 102, g: 255, b: 102, a: 255, t: 0, s: 0}, {r: 102, g: 255, b:  51, a: 255, t: 0, s: 0}, {r: 102, g: 255, b:   0, a: 255, t: 0, s: 0},
-          {r: 102, g: 204, b: 255, a: 255, t: 0, s: 0}, {r: 102, g: 204, b: 204, a: 255, t: 0, s: 0}, {r: 102, g: 204, b: 153, a: 255, t: 0, s: 0},
-          {r: 102, g: 204, b: 102, a: 255, t: 0, s: 0}, {r: 102, g: 204, b:  51, a: 255, t: 0, s: 0}, {r: 102, g: 204, b:   0, a: 255, t: 0, s: 0},
-          {r: 102, g: 153, b: 255, a: 255, t: 0, s: 0}, {r: 102, g: 153, b: 204, a: 255, t: 0, s: 0}, {r: 102, g: 153, b: 153, a: 255, t: 0, s: 0},
-          {r: 102, g: 153, b: 102, a: 255, t: 0, s: 0}, {r: 102, g: 153, b:  51, a: 255, t: 0, s: 0}, {r: 102, g: 153, b:   0, a: 255, t: 0, s: 0},
-          {r: 102, g: 102, b: 255, a: 255, t: 0, s: 0}, {r: 102, g: 102, b: 204, a: 255, t: 0, s: 0}, {r: 102, g: 102, b: 153, a: 255, t: 0, s: 0},
-          {r: 102, g: 102, b: 102, a: 255, t: 0, s: 0}, {r: 102, g: 102, b:  51, a: 255, t: 0, s: 0}, {r: 102, g: 102, b:   0, a: 255, t: 0, s: 0},
-          {r: 102, g:  51, b: 255, a: 255, t: 0, s: 0}, {r: 102, g:  51, b: 204, a: 255, t: 0, s: 0}, {r: 102, g:  51, b: 153, a: 255, t: 0, s: 0},
-          {r: 102, g:  51, b: 102, a: 255, t: 0, s: 0}, {r: 102, g:  51, b:  51, a: 255, t: 0, s: 0}, {r: 102, g:  51, b:   0, a: 255, t: 0, s: 0},
-          {r: 102, g:   0, b: 255, a: 255, t: 0, s: 0}, {r: 102, g:   0, b: 204, a: 255, t: 0, s: 0}, {r: 102, g:   0, b: 153, a: 255, t: 0, s: 0},
-          {r: 102, g:   0, b: 102, a: 255, t: 0, s: 0}, {r: 102, g:   0, b:  51, a: 255, t: 0, s: 0}, {r: 102, g:   0, b:   0, a: 255, t: 0, s: 0},
-          {r:  51, g: 255, b: 255, a: 255, t: 0, s: 0}, {r:  51, g: 255, b: 204, a: 255, t: 0, s: 0}, {r:  51, g: 255, b: 153, a: 255, t: 0, s: 0},
-          {r:  51, g: 255, b: 102, a: 255, t: 0, s: 0}, {r:  51, g: 255, b:  51, a: 255, t: 0, s: 0}, {r:  51, g: 255, b:   0, a: 255, t: 0, s: 0},
-          {r:  51, g: 204, b: 255, a: 255, t: 0, s: 0}, {r:  51, g: 204, b: 204, a: 255, t: 0, s: 0}, {r:  51, g: 204, b: 153, a: 255, t: 0, s: 0},
-          {r:  51, g: 204, b: 102, a: 255, t: 0, s: 0}, {r:  51, g: 204, b:  51, a: 255, t: 0, s: 0}, {r:  51, g: 204, b:   0, a: 255, t: 0, s: 0},
-          {r:  51, g: 153, b: 255, a: 255, t: 0, s: 0}, {r:  51, g: 153, b: 204, a: 255, t: 0, s: 0}, {r:  51, g: 153, b: 153, a: 255, t: 0, s: 0},
-          {r:  51, g: 153, b: 102, a: 255, t: 0, s: 0}, {r:  51, g: 153, b:  51, a: 255, t: 0, s: 0}, {r:  51, g: 153, b:   0, a: 255, t: 0, s: 0},
-          {r:  51, g: 102, b: 255, a: 255, t: 0, s: 0}, {r:  51, g: 102, b: 204, a: 255, t: 0, s: 0}, {r:  51, g: 102, b: 153, a: 255, t: 0, s: 0},
-          {r:  51, g: 102, b: 102, a: 255, t: 0, s: 0}, {r:  51, g: 102, b:  51, a: 255, t: 0, s: 0}, {r:  51, g: 102, b:   0, a: 255, t: 0, s: 0},
-          {r:  51, g:  51, b: 255, a: 255, t: 0, s: 0}, {r:  51, g:  51, b: 204, a: 255, t: 0, s: 0}, {r:  51, g:  51, b: 153, a: 255, t: 0, s: 0},
-          {r:  51, g:  51, b: 102, a: 255, t: 0, s: 0}, {r:  51, g:  51, b:  51, a: 255, t: 0, s: 0}, {r:  51, g:  51, b:   0, a: 255, t: 0, s: 0},
-          {r:  51, g:   0, b: 255, a: 255, t: 0, s: 0}, {r:  51, g:   0, b: 204, a: 255, t: 0, s: 0}, {r:  51, g:   0, b: 153, a: 255, t: 0, s: 0},
-          {r:  51, g:   0, b: 102, a: 255, t: 0, s: 0}, {r:  51, g:   0, b:  51, a: 255, t: 0, s: 0}, {r:  51, g:   0, b:   0, a: 255, t: 0, s: 0},
-          {r:   0, g: 255, b: 255, a: 255, t: 0, s: 0}, {r:   0, g: 255, b: 204, a: 255, t: 0, s: 0}, {r:   0, g: 255, b: 153, a: 255, t: 0, s: 0},
-          {r:   0, g: 255, b: 102, a: 255, t: 0, s: 0}, {r:   0, g: 255, b:  51, a: 255, t: 0, s: 0}, {r:   0, g: 255, b:   0, a: 255, t: 0, s: 0},
-          {r:   0, g: 204, b: 255, a: 255, t: 0, s: 0}, {r:   0, g: 204, b: 204, a: 255, t: 0, s: 0}, {r:   0, g: 204, b: 153, a: 255, t: 0, s: 0},
-          {r:   0, g: 204, b: 102, a: 255, t: 0, s: 0}, {r:   0, g: 204, b:  51, a: 255, t: 0, s: 0}, {r:   0, g: 204, b:   0, a: 255, t: 0, s: 0},
-          {r:   0, g: 153, b: 255, a: 255, t: 0, s: 0}, {r:   0, g: 153, b: 204, a: 255, t: 0, s: 0}, {r:   0, g: 153, b: 153, a: 255, t: 0, s: 0},
-          {r:   0, g: 153, b: 102, a: 255, t: 0, s: 0}, {r:   0, g: 153, b:  51, a: 255, t: 0, s: 0}, {r:   0, g: 153, b:   0, a: 255, t: 0, s: 0},
-          {r:   0, g: 102, b: 255, a: 255, t: 0, s: 0}, {r:   0, g: 102, b: 204, a: 255, t: 0, s: 0}, {r:   0, g: 102, b: 153, a: 255, t: 0, s: 0},
-          {r:   0, g: 102, b: 102, a: 255, t: 0, s: 0}, {r:   0, g: 102, b:  51, a: 255, t: 0, s: 0}, {r:   0, g: 102, b:   0, a: 255, t: 0, s: 0},
-          {r:   0, g:  51, b: 255, a: 255, t: 0, s: 0}, {r:   0, g:  51, b: 204, a: 255, t: 0, s: 0}, {r:   0, g:  51, b: 153, a: 255, t: 0, s: 0},
-          {r:   0, g:  51, b: 102, a: 255, t: 0, s: 0}, {r:   0, g:  51, b:  51, a: 255, t: 0, s: 0}, {r:   0, g:  51, b:   0, a: 255, t: 0, s: 0},
-          {r:   0, g:   0, b: 255, a: 255, t: 0, s: 0}, {r:   0, g:   0, b: 204, a: 255, t: 0, s: 0}, {r:   0, g:   0, b: 153, a: 255, t: 0, s: 0},
-          {r:   0, g:   0, b: 102, a: 255, t: 0, s: 0}, {r:   0, g:   0, b:  51, a: 255, t: 0, s: 0}, {r: 238, g:   0, b:   0, a: 255, t: 0, s: 0},
-          {r: 221, g:   0, b:   0, a: 255, t: 0, s: 0}, {r: 187, g:   0, b:   0, a: 255, t: 0, s: 0}, {r: 170, g:   0, b:   0, a: 255, t: 0, s: 0},
-          {r: 136, g:   0, b:   0, a: 255, t: 0, s: 0}, {r: 119, g:   0, b:   0, a: 255, t: 0, s: 0}, {r:  85, g:   0, b:   0, a: 255, t: 0, s: 0},
-          {r:  68, g:   0, b:   0, a: 255, t: 0, s: 0}, {r:  34, g:   0, b:   0, a: 255, t: 0, s: 0}, {r:  17, g:   0, b:   0, a: 255, t: 0, s: 0},
-          {r:   0, g: 238, b:   0, a: 255, t: 0, s: 0}, {r:   0, g: 221, b:   0, a: 255, t: 0, s: 0}, {r:   0, g: 187, b:   0, a: 255, t: 0, s: 0},
-          {r:   0, g: 170, b:   0, a: 255, t: 0, s: 0}, {r:   0, g: 136, b:   0, a: 255, t: 0, s: 0}, {r:   0, g: 119, b:   0, a: 255, t: 0, s: 0},
-          {r:   0, g:  85, b:   0, a: 255, t: 0, s: 0}, {r:   0, g:  68, b:   0, a: 255, t: 0, s: 0}, {r:   0, g:  34, b:   0, a: 255, t: 0, s: 0},
-          {r:   0, g:  17, b:   0, a: 255, t: 0, s: 0}, {r:   0, g:   0, b: 238, a: 255, t: 0, s: 0}, {r:   0, g:   0, b: 221, a: 255, t: 0, s: 0},
-          {r:   0, g:   0, b: 187, a: 255, t: 0, s: 0}, {r:   0, g:   0, b: 170, a: 255, t: 0, s: 0}, {r:   0, g:   0, b: 136, a: 255, t: 0, s: 0},
-          {r:   0, g:   0, b: 119, a: 255, t: 0, s: 0}, {r:   0, g:   0, b:  85, a: 255, t: 0, s: 0}, {r:   0, g:   0, b:  68, a: 255, t: 0, s: 0},
-          {r:   0, g:   0, b:  34, a: 255, t: 0, s: 0}, {r:   0, g:   0, b:  17, a: 255, t: 0, s: 0}, {r: 238, g: 238, b: 238, a: 255, t: 0, s: 0},
-          {r: 221, g: 221, b: 221, a: 255, t: 0, s: 0}, {r: 187, g: 187, b: 187, a: 255, t: 0, s: 0}, {r: 170, g: 170, b: 170, a: 255, t: 0, s: 0},
-          {r: 136, g: 136, b: 136, a: 255, t: 0, s: 0}, {r: 119, g: 119, b: 119, a: 255, t: 0, s: 0}, {r:  85, g:  85, b:  85, a: 255, t: 0, s: 0},
-          {r:  68, g:  68, b:  68, a: 255, t: 0, s: 0}, {r:  34, g:  34, b:  34, a: 255, t: 0, s: 0}, {r:  17, g:  17, b:  17, a: 255, t: 0, s: 0}
-        ]
-        console.log "default palette"
-      else
-        rawpalette = new Uint8Array ab.slice paletteBegin, paletteBegin + paletteLength
-        for i in [0...paletteLength] by 4
-          if rawpalette[i] == 255 and rawpalette[i + 1] == 0 and rawpalette[i + 2] == 255
-            palette.push {r: 255, g: 0, b: 255, a: 250, t: 7, s: 7} # attachment point
-          else
-            palette.push {r: rawpalette[i], g: rawpalette[i + 1], b: rawpalette[i + 2], a: 255, t: 0, s: 0}
-        console.log "palette:"
-        console.log palette
-      # read voxel chunk
-      @voxels = []
-      [voxelCount] = new Uint32Array ab.slice voxelBegin, voxelBegin + 4
-      console.log "voxel count: #{voxelCount}"
-      console.warn "invalid length of voxel chunk" unless voxelBegin + 4 + 4 * voxelCount == voxelEnd
-      rawvoxels = new Uint8Array ab.slice voxelBegin + 4, voxelBegin + 4 + 4 * voxelCount
-      for i in [0...4 * voxelCount] by 4
-        z = @z - rawvoxels[i + 1] - 1
-        @voxels[z] = [] unless @voxels[z]?
-        @voxels[z][rawvoxels[i + 2]] = [] unless @voxels[z][rawvoxels[i + 2]]?
-        vox = palette[rawvoxels[i + 3] - 1] # order is x, z, y (normalized with .qb)
-        @voxels[z][rawvoxels[i + 2]][@x - rawvoxels[i] - 1] = {r: vox.r, g: vox.g, b: vox.b, a: vox.a, s: vox.s, t: vox.t}
-      console.log "voxels:"
-      console.log @voxels
-      callback()
-    console.log "reading file with name: #{file.name}"
-    fr.readAsArrayBuffer file
+  constructor: (ab) ->
+    return if super(ab)
+    meta = (String.fromCharCode char for char in new Uint8Array ab.slice 0, 4).join ''
+    console.log "meta: #{meta} (expected VOX )"
+    throw new Error "Expected Magica Voxel header not found" unless meta == 'VOX '
+    [version] = new Uint32Array ab.slice 4, 8
+    console.log "version: #{version} (expected 150)"
+    console.warn "Expected version 150 but found version: #{version} (May result in errors)" unless version == 150
+    mainChunkId = (String.fromCharCode char for char in new Uint8Array ab.slice 8, 12).join ''
+    console.log "mainChunkId: #{mainChunkId} (expected MAIN)"
+    throw new Error "Didn't found main Chunk as expected" unless mainChunkId == 'MAIN'
+    [mainChunkSize, mainChunkChildSize] = new Uint32Array ab.slice 12, 20
+    console.log "mainChunkSize: #{mainChunkSize} (expected 0)"
+    console.log "mainChunkChildSize: #{mainChunkChildSize}"
+    console.warn console.log "There shouldn't be any bytes left" unless 20 + mainChunkChildSize == ab.byteLength
+    # search for SIZE, XYZI (voxel) and optional RGBA (palette) chunk
+    chunkPointer = 20 + mainChunkSize
+    sizeBegin = sizeEnd = voxelBegin = voxelEnd = paletteBegin = paletteLength = -1
+    while chunkPointer < 20 + mainChunkSize + mainChunkChildSize
+      chunkId = (String.fromCharCode char for char in new Uint8Array ab.slice chunkPointer, chunkPointer + 4).join ''
+      [chunkSize, chunkChildSize] = new Uint32Array ab.slice chunkPointer + 4, chunkPointer + 12
+      console.log "found child chunk: #{chunkId} with begin: #{chunkPointer + 12}, size: #{chunkSize} and childSize: #{chunkChildSize} (expected 0)"
+      switch chunkId
+        when "SIZE"
+          console.warn "invalid length of size chunk" unless chunkSize == 12
+          sizeBegin = chunkPointer + 12
+          sizeEnd = sizeBegin + chunkSize
+        when "XYZI"
+          voxelBegin = chunkPointer + 12
+          voxelEnd = voxelBegin + chunkSize
+        when "RGBA"
+          paletteBegin = chunkPointer + 12
+          console.warn "invalid length of palette chunk" unless chunkSize == 1024
+          paletteLength = chunkSize
+      chunkPointer += 12 + chunkSize + chunkChildSize
+    throw new Error "missing chunks" if sizeBegin == -1 or sizeEnd == -1 or voxelBegin == -1 or voxelEnd == -1
+    # read size chunk
+    [@x, @z, @y] = new Uint32Array ab.slice sizeBegin, sizeEnd # order is x, z, y (normalized with .qb)
+    console.log "dimensions: width: #{@x} height: #{@y} depth: #{@z}"
+    # read palette chunk
+    palette = []
+    if paletteBegin == -1 or paletteLength == -1
+      palette = [ # default palette
+        {r: 255, g: 255, b: 255, a: 255, t: 0, s: 0}, {r: 255, g: 255, b: 204, a: 255, t: 0, s: 0}, {r: 255, g: 255, b: 153, a: 255, t: 0, s: 0},
+        {r: 255, g: 255, b: 102, a: 255, t: 0, s: 0}, {r: 255, g: 255, b:  51, a: 255, t: 0, s: 0}, {r: 255, g: 255, b:   0, a: 255, t: 0, s: 0},
+        {r: 255, g: 204, b: 255, a: 255, t: 0, s: 0}, {r: 255, g: 204, b: 204, a: 255, t: 0, s: 0}, {r: 255, g: 204, b: 153, a: 255, t: 0, s: 0},
+        {r: 255, g: 204, b: 102, a: 255, t: 0, s: 0}, {r: 255, g: 204, b:  51, a: 255, t: 0, s: 0}, {r: 255, g: 204, b:   0, a: 255, t: 0, s: 0},
+        {r: 255, g: 153, b: 255, a: 255, t: 0, s: 0}, {r: 255, g: 153, b: 204, a: 255, t: 0, s: 0}, {r: 255, g: 153, b: 153, a: 255, t: 0, s: 0},
+        {r: 255, g: 153, b: 102, a: 255, t: 0, s: 0}, {r: 255, g: 153, b:  51, a: 255, t: 0, s: 0}, {r: 255, g: 153, b:   0, a: 255, t: 0, s: 0},
+        {r: 255, g: 102, b: 255, a: 255, t: 0, s: 0}, {r: 255, g: 102, b: 204, a: 255, t: 0, s: 0}, {r: 255, g: 102, b: 153, a: 255, t: 0, s: 0},
+        {r: 255, g: 102, b: 102, a: 255, t: 0, s: 0}, {r: 255, g: 102, b:  51, a: 255, t: 0, s: 0}, {r: 255, g: 102, b:   0, a: 255, t: 0, s: 0},
+        {r: 255, g:  51, b: 255, a: 255, t: 0, s: 0}, {r: 255, g:  51, b: 204, a: 255, t: 0, s: 0}, {r: 255, g:  51, b: 153, a: 255, t: 0, s: 0},
+        {r: 255, g:  51, b: 102, a: 255, t: 0, s: 0}, {r: 255, g:  51, b:  51, a: 255, t: 0, s: 0}, {r: 255, g:  51, b:   0, a: 255, t: 0, s: 0},
+        {r: 255, g:   0, b: 255, a: 250, t: 7, s: 7}, {r: 255, g:   0, b: 204, a: 255, t: 0, s: 0}, {r: 255, g:   0, b: 153, a: 255, t: 0, s: 0},
+        {r: 255, g:   0, b: 102, a: 255, t: 0, s: 0}, {r: 255, g:   0, b:  51, a: 255, t: 0, s: 0}, {r: 255, g:   0, b:   0, a: 255, t: 0, s: 0},
+        {r: 204, g: 255, b: 255, a: 255, t: 0, s: 0}, {r: 204, g: 255, b: 204, a: 255, t: 0, s: 0}, {r: 204, g: 255, b: 153, a: 255, t: 0, s: 0},
+        {r: 204, g: 255, b: 102, a: 255, t: 0, s: 0}, {r: 204, g: 255, b:  51, a: 255, t: 0, s: 0}, {r: 204, g: 255, b:   0, a: 255, t: 0, s: 0},
+        {r: 204, g: 204, b: 255, a: 255, t: 0, s: 0}, {r: 204, g: 204, b: 204, a: 255, t: 0, s: 0}, {r: 204, g: 204, b: 153, a: 255, t: 0, s: 0},
+        {r: 204, g: 204, b: 102, a: 255, t: 0, s: 0}, {r: 204, g: 204, b:  51, a: 255, t: 0, s: 0}, {r: 204, g: 204, b:   0, a: 255, t: 0, s: 0},
+        {r: 204, g: 153, b: 255, a: 255, t: 0, s: 0}, {r: 204, g: 153, b: 204, a: 255, t: 0, s: 0}, {r: 204, g: 153, b: 153, a: 255, t: 0, s: 0},
+        {r: 204, g: 153, b: 102, a: 255, t: 0, s: 0}, {r: 204, g: 153, b:  51, a: 255, t: 0, s: 0}, {r: 204, g: 153, b:   0, a: 255, t: 0, s: 0},
+        {r: 204, g: 102, b: 255, a: 255, t: 0, s: 0}, {r: 204, g: 102, b: 204, a: 255, t: 0, s: 0}, {r: 204, g: 102, b: 153, a: 255, t: 0, s: 0},
+        {r: 204, g: 102, b: 102, a: 255, t: 0, s: 0}, {r: 204, g: 102, b:  51, a: 255, t: 0, s: 0}, {r: 204, g: 102, b:   0, a: 255, t: 0, s: 0},
+        {r: 204, g:  51, b: 255, a: 255, t: 0, s: 0}, {r: 204, g:  51, b: 204, a: 255, t: 0, s: 0}, {r: 204, g:  51, b: 153, a: 255, t: 0, s: 0},
+        {r: 204, g:  51, b: 102, a: 255, t: 0, s: 0}, {r: 204, g:  51, b:  51, a: 255, t: 0, s: 0}, {r: 204, g:  51, b:   0, a: 255, t: 0, s: 0},
+        {r: 204, g:   0, b: 255, a: 255, t: 0, s: 0}, {r: 204, g:   0, b: 204, a: 255, t: 0, s: 0}, {r: 204, g:   0, b: 153, a: 255, t: 0, s: 0},
+        {r: 204, g:   0, b: 102, a: 255, t: 0, s: 0}, {r: 204, g:   0, b:  51, a: 255, t: 0, s: 0}, {r: 204, g:   0, b:   0, a: 255, t: 0, s: 0},
+        {r: 153, g: 255, b: 255, a: 255, t: 0, s: 0}, {r: 153, g: 255, b: 204, a: 255, t: 0, s: 0}, {r: 153, g: 255, b: 153, a: 255, t: 0, s: 0},
+        {r: 153, g: 255, b: 102, a: 255, t: 0, s: 0}, {r: 153, g: 255, b:  51, a: 255, t: 0, s: 0}, {r: 153, g: 255, b:   0, a: 255, t: 0, s: 0},
+        {r: 153, g: 204, b: 255, a: 255, t: 0, s: 0}, {r: 153, g: 204, b: 204, a: 255, t: 0, s: 0}, {r: 153, g: 204, b: 153, a: 255, t: 0, s: 0},
+        {r: 153, g: 204, b: 102, a: 255, t: 0, s: 0}, {r: 153, g: 204, b:  51, a: 255, t: 0, s: 0}, {r: 153, g: 204, b:   0, a: 255, t: 0, s: 0},
+        {r: 153, g: 153, b: 255, a: 255, t: 0, s: 0}, {r: 153, g: 153, b: 204, a: 255, t: 0, s: 0}, {r: 153, g: 153, b: 153, a: 255, t: 0, s: 0},
+        {r: 153, g: 153, b: 102, a: 255, t: 0, s: 0}, {r: 153, g: 153, b:  51, a: 255, t: 0, s: 0}, {r: 153, g: 153, b:   0, a: 255, t: 0, s: 0},
+        {r: 153, g: 102, b: 255, a: 255, t: 0, s: 0}, {r: 153, g: 102, b: 204, a: 255, t: 0, s: 0}, {r: 153, g: 102, b: 153, a: 255, t: 0, s: 0},
+        {r: 153, g: 102, b: 102, a: 255, t: 0, s: 0}, {r: 153, g: 102, b:  51, a: 255, t: 0, s: 0}, {r: 153, g: 102, b:   0, a: 255, t: 0, s: 0},
+        {r: 153, g:  51, b: 255, a: 255, t: 0, s: 0}, {r: 153, g:  51, b: 204, a: 255, t: 0, s: 0}, {r: 153, g:  51, b: 153, a: 255, t: 0, s: 0},
+        {r: 153, g:  51, b: 102, a: 255, t: 0, s: 0}, {r: 153, g:  51, b:  51, a: 255, t: 0, s: 0}, {r: 153, g:  51, b:   0, a: 255, t: 0, s: 0},
+        {r: 153, g:   0, b: 255, a: 255, t: 0, s: 0}, {r: 153, g:   0, b: 204, a: 255, t: 0, s: 0}, {r: 153, g:   0, b: 153, a: 255, t: 0, s: 0},
+        {r: 153, g:   0, b: 102, a: 255, t: 0, s: 0}, {r: 153, g:   0, b:  51, a: 255, t: 0, s: 0}, {r: 153, g:   0, b:   0, a: 255, t: 0, s: 0},
+        {r: 102, g: 255, b: 255, a: 255, t: 0, s: 0}, {r: 102, g: 255, b: 204, a: 255, t: 0, s: 0}, {r: 102, g: 255, b: 153, a: 255, t: 0, s: 0},
+        {r: 102, g: 255, b: 102, a: 255, t: 0, s: 0}, {r: 102, g: 255, b:  51, a: 255, t: 0, s: 0}, {r: 102, g: 255, b:   0, a: 255, t: 0, s: 0},
+        {r: 102, g: 204, b: 255, a: 255, t: 0, s: 0}, {r: 102, g: 204, b: 204, a: 255, t: 0, s: 0}, {r: 102, g: 204, b: 153, a: 255, t: 0, s: 0},
+        {r: 102, g: 204, b: 102, a: 255, t: 0, s: 0}, {r: 102, g: 204, b:  51, a: 255, t: 0, s: 0}, {r: 102, g: 204, b:   0, a: 255, t: 0, s: 0},
+        {r: 102, g: 153, b: 255, a: 255, t: 0, s: 0}, {r: 102, g: 153, b: 204, a: 255, t: 0, s: 0}, {r: 102, g: 153, b: 153, a: 255, t: 0, s: 0},
+        {r: 102, g: 153, b: 102, a: 255, t: 0, s: 0}, {r: 102, g: 153, b:  51, a: 255, t: 0, s: 0}, {r: 102, g: 153, b:   0, a: 255, t: 0, s: 0},
+        {r: 102, g: 102, b: 255, a: 255, t: 0, s: 0}, {r: 102, g: 102, b: 204, a: 255, t: 0, s: 0}, {r: 102, g: 102, b: 153, a: 255, t: 0, s: 0},
+        {r: 102, g: 102, b: 102, a: 255, t: 0, s: 0}, {r: 102, g: 102, b:  51, a: 255, t: 0, s: 0}, {r: 102, g: 102, b:   0, a: 255, t: 0, s: 0},
+        {r: 102, g:  51, b: 255, a: 255, t: 0, s: 0}, {r: 102, g:  51, b: 204, a: 255, t: 0, s: 0}, {r: 102, g:  51, b: 153, a: 255, t: 0, s: 0},
+        {r: 102, g:  51, b: 102, a: 255, t: 0, s: 0}, {r: 102, g:  51, b:  51, a: 255, t: 0, s: 0}, {r: 102, g:  51, b:   0, a: 255, t: 0, s: 0},
+        {r: 102, g:   0, b: 255, a: 255, t: 0, s: 0}, {r: 102, g:   0, b: 204, a: 255, t: 0, s: 0}, {r: 102, g:   0, b: 153, a: 255, t: 0, s: 0},
+        {r: 102, g:   0, b: 102, a: 255, t: 0, s: 0}, {r: 102, g:   0, b:  51, a: 255, t: 0, s: 0}, {r: 102, g:   0, b:   0, a: 255, t: 0, s: 0},
+        {r:  51, g: 255, b: 255, a: 255, t: 0, s: 0}, {r:  51, g: 255, b: 204, a: 255, t: 0, s: 0}, {r:  51, g: 255, b: 153, a: 255, t: 0, s: 0},
+        {r:  51, g: 255, b: 102, a: 255, t: 0, s: 0}, {r:  51, g: 255, b:  51, a: 255, t: 0, s: 0}, {r:  51, g: 255, b:   0, a: 255, t: 0, s: 0},
+        {r:  51, g: 204, b: 255, a: 255, t: 0, s: 0}, {r:  51, g: 204, b: 204, a: 255, t: 0, s: 0}, {r:  51, g: 204, b: 153, a: 255, t: 0, s: 0},
+        {r:  51, g: 204, b: 102, a: 255, t: 0, s: 0}, {r:  51, g: 204, b:  51, a: 255, t: 0, s: 0}, {r:  51, g: 204, b:   0, a: 255, t: 0, s: 0},
+        {r:  51, g: 153, b: 255, a: 255, t: 0, s: 0}, {r:  51, g: 153, b: 204, a: 255, t: 0, s: 0}, {r:  51, g: 153, b: 153, a: 255, t: 0, s: 0},
+        {r:  51, g: 153, b: 102, a: 255, t: 0, s: 0}, {r:  51, g: 153, b:  51, a: 255, t: 0, s: 0}, {r:  51, g: 153, b:   0, a: 255, t: 0, s: 0},
+        {r:  51, g: 102, b: 255, a: 255, t: 0, s: 0}, {r:  51, g: 102, b: 204, a: 255, t: 0, s: 0}, {r:  51, g: 102, b: 153, a: 255, t: 0, s: 0},
+        {r:  51, g: 102, b: 102, a: 255, t: 0, s: 0}, {r:  51, g: 102, b:  51, a: 255, t: 0, s: 0}, {r:  51, g: 102, b:   0, a: 255, t: 0, s: 0},
+        {r:  51, g:  51, b: 255, a: 255, t: 0, s: 0}, {r:  51, g:  51, b: 204, a: 255, t: 0, s: 0}, {r:  51, g:  51, b: 153, a: 255, t: 0, s: 0},
+        {r:  51, g:  51, b: 102, a: 255, t: 0, s: 0}, {r:  51, g:  51, b:  51, a: 255, t: 0, s: 0}, {r:  51, g:  51, b:   0, a: 255, t: 0, s: 0},
+        {r:  51, g:   0, b: 255, a: 255, t: 0, s: 0}, {r:  51, g:   0, b: 204, a: 255, t: 0, s: 0}, {r:  51, g:   0, b: 153, a: 255, t: 0, s: 0},
+        {r:  51, g:   0, b: 102, a: 255, t: 0, s: 0}, {r:  51, g:   0, b:  51, a: 255, t: 0, s: 0}, {r:  51, g:   0, b:   0, a: 255, t: 0, s: 0},
+        {r:   0, g: 255, b: 255, a: 255, t: 0, s: 0}, {r:   0, g: 255, b: 204, a: 255, t: 0, s: 0}, {r:   0, g: 255, b: 153, a: 255, t: 0, s: 0},
+        {r:   0, g: 255, b: 102, a: 255, t: 0, s: 0}, {r:   0, g: 255, b:  51, a: 255, t: 0, s: 0}, {r:   0, g: 255, b:   0, a: 255, t: 0, s: 0},
+        {r:   0, g: 204, b: 255, a: 255, t: 0, s: 0}, {r:   0, g: 204, b: 204, a: 255, t: 0, s: 0}, {r:   0, g: 204, b: 153, a: 255, t: 0, s: 0},
+        {r:   0, g: 204, b: 102, a: 255, t: 0, s: 0}, {r:   0, g: 204, b:  51, a: 255, t: 0, s: 0}, {r:   0, g: 204, b:   0, a: 255, t: 0, s: 0},
+        {r:   0, g: 153, b: 255, a: 255, t: 0, s: 0}, {r:   0, g: 153, b: 204, a: 255, t: 0, s: 0}, {r:   0, g: 153, b: 153, a: 255, t: 0, s: 0},
+        {r:   0, g: 153, b: 102, a: 255, t: 0, s: 0}, {r:   0, g: 153, b:  51, a: 255, t: 0, s: 0}, {r:   0, g: 153, b:   0, a: 255, t: 0, s: 0},
+        {r:   0, g: 102, b: 255, a: 255, t: 0, s: 0}, {r:   0, g: 102, b: 204, a: 255, t: 0, s: 0}, {r:   0, g: 102, b: 153, a: 255, t: 0, s: 0},
+        {r:   0, g: 102, b: 102, a: 255, t: 0, s: 0}, {r:   0, g: 102, b:  51, a: 255, t: 0, s: 0}, {r:   0, g: 102, b:   0, a: 255, t: 0, s: 0},
+        {r:   0, g:  51, b: 255, a: 255, t: 0, s: 0}, {r:   0, g:  51, b: 204, a: 255, t: 0, s: 0}, {r:   0, g:  51, b: 153, a: 255, t: 0, s: 0},
+        {r:   0, g:  51, b: 102, a: 255, t: 0, s: 0}, {r:   0, g:  51, b:  51, a: 255, t: 0, s: 0}, {r:   0, g:  51, b:   0, a: 255, t: 0, s: 0},
+        {r:   0, g:   0, b: 255, a: 255, t: 0, s: 0}, {r:   0, g:   0, b: 204, a: 255, t: 0, s: 0}, {r:   0, g:   0, b: 153, a: 255, t: 0, s: 0},
+        {r:   0, g:   0, b: 102, a: 255, t: 0, s: 0}, {r:   0, g:   0, b:  51, a: 255, t: 0, s: 0}, {r: 238, g:   0, b:   0, a: 255, t: 0, s: 0},
+        {r: 221, g:   0, b:   0, a: 255, t: 0, s: 0}, {r: 187, g:   0, b:   0, a: 255, t: 0, s: 0}, {r: 170, g:   0, b:   0, a: 255, t: 0, s: 0},
+        {r: 136, g:   0, b:   0, a: 255, t: 0, s: 0}, {r: 119, g:   0, b:   0, a: 255, t: 0, s: 0}, {r:  85, g:   0, b:   0, a: 255, t: 0, s: 0},
+        {r:  68, g:   0, b:   0, a: 255, t: 0, s: 0}, {r:  34, g:   0, b:   0, a: 255, t: 0, s: 0}, {r:  17, g:   0, b:   0, a: 255, t: 0, s: 0},
+        {r:   0, g: 238, b:   0, a: 255, t: 0, s: 0}, {r:   0, g: 221, b:   0, a: 255, t: 0, s: 0}, {r:   0, g: 187, b:   0, a: 255, t: 0, s: 0},
+        {r:   0, g: 170, b:   0, a: 255, t: 0, s: 0}, {r:   0, g: 136, b:   0, a: 255, t: 0, s: 0}, {r:   0, g: 119, b:   0, a: 255, t: 0, s: 0},
+        {r:   0, g:  85, b:   0, a: 255, t: 0, s: 0}, {r:   0, g:  68, b:   0, a: 255, t: 0, s: 0}, {r:   0, g:  34, b:   0, a: 255, t: 0, s: 0},
+        {r:   0, g:  17, b:   0, a: 255, t: 0, s: 0}, {r:   0, g:   0, b: 238, a: 255, t: 0, s: 0}, {r:   0, g:   0, b: 221, a: 255, t: 0, s: 0},
+        {r:   0, g:   0, b: 187, a: 255, t: 0, s: 0}, {r:   0, g:   0, b: 170, a: 255, t: 0, s: 0}, {r:   0, g:   0, b: 136, a: 255, t: 0, s: 0},
+        {r:   0, g:   0, b: 119, a: 255, t: 0, s: 0}, {r:   0, g:   0, b:  85, a: 255, t: 0, s: 0}, {r:   0, g:   0, b:  68, a: 255, t: 0, s: 0},
+        {r:   0, g:   0, b:  34, a: 255, t: 0, s: 0}, {r:   0, g:   0, b:  17, a: 255, t: 0, s: 0}, {r: 238, g: 238, b: 238, a: 255, t: 0, s: 0},
+        {r: 221, g: 221, b: 221, a: 255, t: 0, s: 0}, {r: 187, g: 187, b: 187, a: 255, t: 0, s: 0}, {r: 170, g: 170, b: 170, a: 255, t: 0, s: 0},
+        {r: 136, g: 136, b: 136, a: 255, t: 0, s: 0}, {r: 119, g: 119, b: 119, a: 255, t: 0, s: 0}, {r:  85, g:  85, b:  85, a: 255, t: 0, s: 0},
+        {r:  68, g:  68, b:  68, a: 255, t: 0, s: 0}, {r:  34, g:  34, b:  34, a: 255, t: 0, s: 0}, {r:  17, g:  17, b:  17, a: 255, t: 0, s: 0}
+      ]
+      console.log "default palette"
+    else
+      rawpalette = new Uint8Array ab.slice paletteBegin, paletteBegin + paletteLength
+      for i in [0...paletteLength] by 4
+        if rawpalette[i] == 255 and rawpalette[i + 1] == 0 and rawpalette[i + 2] == 255
+          palette.push {r: 255, g: 0, b: 255, a: 250, t: 7, s: 7} # attachment point
+        else
+          palette.push {r: rawpalette[i], g: rawpalette[i + 1], b: rawpalette[i + 2], a: 255, t: 0, s: 0}
+      console.log "palette:"
+      console.log palette
+    # read voxel chunk
+    @voxels = []
+    [voxelCount] = new Uint32Array ab.slice voxelBegin, voxelBegin + 4
+    console.log "voxel count: #{voxelCount}"
+    console.warn "invalid length of voxel chunk" unless voxelBegin + 4 + 4 * voxelCount == voxelEnd
+    rawvoxels = new Uint8Array ab.slice voxelBegin + 4, voxelBegin + 4 + 4 * voxelCount
+    for i in [0...4 * voxelCount] by 4
+      z = @z - rawvoxels[i + 1] - 1
+      @voxels[z] = [] unless @voxels[z]?
+      @voxels[z][rawvoxels[i + 2]] = [] unless @voxels[z][rawvoxels[i + 2]]?
+      vox = palette[rawvoxels[i + 3] - 1] # order is x, z, y (normalized with .qb)
+      @voxels[z][rawvoxels[i + 2]][@x - rawvoxels[i] - 1] = {r: vox.r, g: vox.g, b: vox.b, a: vox.a, s: vox.s, t: vox.t}
+    console.log "voxels:"
+    console.log @voxels
 
   export: ->
     data = [

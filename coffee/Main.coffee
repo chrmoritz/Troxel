@@ -3,7 +3,8 @@ require('bootstrap/dist/css/bootstrap.css')
 require('bootstrap/dist/css/bootstrap-theme.css')
 require('./Main.css')
 IO = require('./IO.coffee')
-{Base64IO, JsonIO} = require('./Troxel.io.coffee')
+Base64IO = require('./Troxel.io.coffee')
+JsonIO = require('./JSON.io.coffee')
 QubicleIO = require('./Qubicle.io.coffee')
 MagicaIO = require('./Magica.io.coffee')
 ZoxelIO = require('./Zoxel.io.coffee')
@@ -13,6 +14,8 @@ THREE = require('three')
 JSZip = require('jszip')
 Bloodhound = require('typeahead')
 $ = require('bootstrap')
+Promise = require('bluebird')
+Promise.config({longStackTraces: true, warnings: true})
 
 io = null
 dragFiles = null
@@ -220,7 +223,7 @@ replaceStateOfHistory = (io, link) ->
   try # Try to add a state object to the current history state (if below limit)
     history.replaceState io, 'Troxel', link
 $('#open').click ->
-  cb = (APpos) ->
+  cb = (mio, APpos) ->
     if APpos? and $('#ImportRestorAP').prop('checked')
       mio.voxels[APpos[2]] = [] unless mio.voxels[APpos[2]]?
       mio.voxels[APpos[2]][APpos[1]] = [] unless mio.voxels[APpos[2]][APpos[1]]?
@@ -252,19 +255,33 @@ $('#open').click ->
   switch $('#filetabs li.active a').attr('href')
     when '#tabdrag'
       if dragFiles[0].name.split('.').pop() == 'zox'
-        mio = new ZoxelIO dragFiles[0], cb
+        fr = new FileReader()
+        fr.onloadend = (e) -> cb(new ZoxelIO(e.target.result))
+        console.log("reading file with name: #{dragFiles[0].name}")
+        fr.readAsText dragFiles[0]
       else if dragFiles[0].name.split('.').pop() == 'vox'
-        mio = new MagicaIO dragFiles[0], cb
+        fr = new FileReader()
+        fr.onloadend = (e) -> cb(new MagicaIO(e.target.result))
+        console.log("reading file with name: #{dragFiles[0].name}")
+        fr.readAsArrayBuffer dragFiles[0]
       else if dragFiles[0].name.split('.').pop() == 'qb'
-        files = {}
+        files = new Array(4)
         for f, i in dragFiles
           switch f.name.substr(-5)
-            when '_a.qb' then files.a = f unless files.a?
-            when '_t.qb' then files.t = f unless files.t?
-            when '_s.qb' then files.s = f unless files.s?
-            else files.m = f if f.name.substr(-3) == '.qb'
-        if files.m?
-          mio = new QubicleIO files, cb
+            when '_a.qb' then files[1] = f unless files[1]?
+            when '_t.qb' then files[2] = f unless files[2]?
+            when '_s.qb' then files[3] = f unless files[3]?
+            else files[0] = f if !files[0]? and f.name.substr(-3) == '.qb'
+        if files[0]?
+          Promise.map(files, (qb) ->
+            return null unless qb?
+            return new Promise (resolve, reject) ->
+              fr = new FileReader()
+              fr.onloadend = (e) -> resolve(e.target.result)
+              fr.onerror = (e) -> reject(e.target.error)
+              console.log("reading file with name: #{qb.name}")
+              fr.readAsArrayBuffer qb
+          ).then((abs) -> cb(new QubicleIO(abs)))
         else
           alert "Can't find Qubicle main mesh file!"
       else
@@ -272,24 +289,37 @@ $('#open').click ->
     when '#tabqb'
       f = $('#fqb').prop('files')[0]
       if f and f.name.split('.').pop() == 'qb'
-        mio = new QubicleIO {m: f, a: f = $('#fqba').prop('files')[0], t: f = $('#fqbt').prop('files')[0], s: f = $('#fqbs').prop('files')[0]}, cb
+        Promise.map([f, $('#fqba').prop('files')[0], $('#fqbt').prop('files')[0], $('#fqbs').prop('files')[0]], (qb) ->
+          return null unless qb?
+          return new Promise (resolve, reject) ->
+            fr = new FileReader()
+            fr.onloadend = (e) -> resolve(e.target.result)
+            fr.onerror = (e) -> reject(e.target.error)
+            console.log("reading file with name: #{qb.name}")
+            fr.readAsArrayBuffer qb
+        ).then((abs) -> cb(new QubicleIO(abs)))
       else
         alert 'Please choose at least a valid main mesh Qubicle (.qb) file above!'
     when '#tabvox'
       f = $('#fvox').prop('files')[0]
       if f and f.name.split('.').pop() == 'vox'
-        mio = new MagicaIO f, cb
+        fr = new FileReader()
+        fr.onloadend = (e) -> cb(new MagicaIO(e.target.result))
+        console.log("reading file with name: #{f.name}")
+        fr.readAsArrayBuffer f
       else
         alert 'Please choose a valid Magica Voxel (.vox) file above!'
     when '#tabzox'
       f = $('#fzox').prop('files')[0]
       if f and f.name.split('.').pop() == 'zox'
-        mio = new ZoxelIO f, cb
+        fr = new FileReader()
+        fr.onloadend = (e) -> cb(new ZoxelIO(e.target.result))
+        console.log("reading file with name: #{f.name}")
+        fr.readAsText f
       else
         alert 'Please choose a valid Zoxel (.zox) file above!'
     when '#tabjson'
-      mio = new JsonIO $('#sjson').val()
-      cb()
+      cb(new JsonIO $('#sjson').val())
     when '#tabtrove'
       return unless bpDB.db?
       tag = $('#cbbtag').val()
@@ -330,8 +360,7 @@ $('#open').click ->
           voxels[az] = []
           voxels[az][ay] = []
           voxels[az][ay][ax] = {r: 255, g: 0, b: 255, a: 250, t: 7, s: 7}
-      mio = new IO x: x, y: y, z: z, voxels: voxels
-      cb()
+      cb(new IO x: x, y: y, z: z, voxels: voxels)
       $('#modeEdit').click()
   return
 $('#openTroveTab').click ->

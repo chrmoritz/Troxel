@@ -53,6 +53,7 @@
       "lib": "coffee"
     },
     "dependencies": {
+      "bluebird": "npm:bluebird@^3.3.4",
       "bootstrap": "github:twbs/bootstrap@^3.3.6",
       "coffee": "github:chrmoritz/system-coffee@^0.2.0",
       "css": "github:systemjs/plugin-css@^0.1.20",
@@ -198,6 +199,16 @@
               ],
               "exports": "$"
             }
+          }
+        }
+      },
+      "npm:bluebird@3.3.4": {
+        "meta": {
+          "js/browser/bluebird.js": {
+            "format": "global"
+          },
+          "js/browser/bluebird.min.js": {
+            "format": "global"
           }
         }
       },

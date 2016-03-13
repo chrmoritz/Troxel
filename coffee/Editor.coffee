@@ -1,7 +1,7 @@
 'use strict'
 THREE = require('three')
 Stats = require('stats')
-{Base64IO} = require('./Troxel.io.coffee')
+Base64IO = require('./Troxel.io.coffee')
 $ = require('jquery')
 
 class Editor extends require('./Renderer.coffee')

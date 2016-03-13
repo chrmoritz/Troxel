@@ -1,42 +1,48 @@
 'use strict'
+fs = require 'fs'
 should = require 'should'
-{readFileAsUint8Array} = require './TestUtils'
+
+require './TestUtils'
 QubicleIO = require '../coffee/Qubicle.io'
 
-model = require './models/chr_knight.json'
-
 describe 'QubicleIO', ->
+  model = chr_knight = chr_knight_compressed = null
+  before (done) ->
+    model = require './models/chr_knight.json'
+    t = 0
+    fs.readFile 'test/models/chr_knight.qb', (err, data) ->
+      return done(err) if err?
+      chr_knight = new Uint8Array(data)
+      done() if t++
+    fs.readFile 'test/models/chr_knight_compressed.qb', (err, data) ->
+      return done(err) if err?
+      chr_knight_compressed = new Uint8Array(data)
+      done() if t++
   describe 'import', ->
-    it 'should be able to successfully import a .qb file', (done) ->
-      io = new QubicleIO m: 'test/models/chr_knight.qb', ->
-        io.should.have.ownProperty('x', 'expected io.x to be defined').equal(20, 'expected io.x to be 20')
-        io.should.have.ownProperty('y', 'expected io.y to be defined').equal(20, 'expected io.y to be 20')
-        io.should.have.ownProperty('z', 'expected io.z to be defined').equal(21, 'expected io.z to be 21')
-        io.should.have.ownProperty('voxels', 'expected io.voxels to be defined')
-        JSON.parse(JSON.stringify(io.voxels)).should.eql(model.voxels)
-        done()
-    it 'should be able to successfully import a .qb file (compressed)', (done) ->
-      io = new QubicleIO m: 'test/models/chr_knight_compressed.qb', ->
-        io.should.have.ownProperty('x', 'expected io.x to be defined').equal(20, 'expected io.x to be 20')
-        io.should.have.ownProperty('y', 'expected io.y to be defined').equal(20, 'expected io.y to be 20')
-        io.should.have.ownProperty('z', 'expected io.z to be defined').equal(21, 'expected io.z to be 21')
-        io.should.have.ownProperty('voxels', 'expected io.voxels to be defined')
-        JSON.parse(JSON.stringify(io.voxels)).should.eql(model.voxels)
-        done()
+    it 'should be able to successfully import a .qb file', ->
+      io = new QubicleIO([chr_knight.buffer])
+      io.should.have.ownProperty('x', 'expected io.x to be defined').equal(20, 'expected io.x to be 20')
+      io.should.have.ownProperty('y', 'expected io.y to be defined').equal(20, 'expected io.y to be 20')
+      io.should.have.ownProperty('z', 'expected io.z to be defined').equal(21, 'expected io.z to be 21')
+      io.should.have.ownProperty('voxels', 'expected io.voxels to be defined')
+      JSON.parse(JSON.stringify(io.voxels)).should.eql(model.voxels)
+    it 'should be able to successfully import a .qb file (compressed)', ->
+      io = new QubicleIO([chr_knight_compressed.buffer])
+      io.should.have.ownProperty('x', 'expected io.x to be defined').equal(20, 'expected io.x to be 20')
+      io.should.have.ownProperty('y', 'expected io.y to be defined').equal(20, 'expected io.y to be 20')
+      io.should.have.ownProperty('z', 'expected io.z to be defined').equal(21, 'expected io.z to be 21')
+      io.should.have.ownProperty('voxels', 'expected io.voxels to be defined')
+      JSON.parse(JSON.stringify(io.voxels)).should.eql(model.voxels)
     it 'should be able to successfully import a .qb file (multiple maps)'
     it 'should be able to successfully import a .qb file (mutliple matrices)'
   describe 'export', ->
     io = view = view_c = null
     before ->
       io = new QubicleIO model
-    it 'should be able to successfully export to a .qb file', (done) ->
-      readFileAsUint8Array 'test/models/chr_knight.qb', (view) ->
-        b = io.export(false)[0].should.eql(view)
-        done()
-    it 'should be able to successfully export to a .qb file (compressed)', (done) ->
-      readFileAsUint8Array 'test/models/chr_knight_compressed.qb', (view) ->
-        io.export(true)[0].should.eql(view)
-        done()
+    it 'should be able to successfully export to a .qb file', ->
+      b = io.export(false)[0].should.eql(chr_knight)
+    it 'should be able to successfully export to a .qb file (compressed)', ->
+      io.export(true)[0].should.eql(chr_knight_compressed)
     it 'should be able to successfully export to a .qb file (multiple maps)'
     it 'should be able to successfully export to a .qb file (multiple matrices)'
   describe 'methods', ->

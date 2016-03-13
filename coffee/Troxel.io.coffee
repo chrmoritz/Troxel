@@ -138,5 +138,4 @@ class JsonIO extends require('./IO.coffee')
   export: (pretty) ->
     JSON.stringify {x: @x, y: @y, z: @z, voxels: @voxels}, null, if pretty then '    ' else ''
 
-exports.Base64IO = Base64IO
-exports.JsonIO = JsonIO
+module.exports = Base64IO
