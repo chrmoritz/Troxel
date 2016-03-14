@@ -60,7 +60,7 @@ class QubicleIO extends require('./IO.coffee')
       console.log "position: dx : #{dx} dy: #{dy} dz: #{dz} (ignored if only 1 matrix)"
       if matrixCount == 1
         if type == 0 and dx <= 0 and dy <= 0 and dz <= 0 and (dx < 0 or dy < 0 or dz < 0)
-          APpos = [-dx, -dy, -dz] if -dx < x and -dy < y and -dz < z
+          @APpos = [-dx, -dy, -dz] if -dx < x and -dy < y and -dz < z
         dx = dy = dz = 0
       if matrixCount > 1
         dx -= dx_offset
@@ -107,7 +107,6 @@ class QubicleIO extends require('./IO.coffee')
     console.log "voxels:"
     console.log @voxels
     console.warn "There shouldn't be any bytes left" unless matrixBegin == ab.byteLength
-    return APpos
 
   addValues: (type, x, y, z, r, g, b, colorFormat) ->
     [r, b] = [b, r] if colorFormat == 1
