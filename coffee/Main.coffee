@@ -457,7 +457,7 @@ $('#exportBase64').click ->
   l = window.location.toString().split('#')[0] + '#m=' + new Base64IO(io).export($('#exportBase64Ro').prop('checked'), if $('#exportBase64V2').prop('checked') then 2 else 1)
   $('#exportBase64Ta').val(l).fadeIn()
   if $('#exportBase64Tsl').prop('checked')
-    $.post('http://www.trovesaurus.com/shorturl.php', {TroxelData: l}).done (url) -> $('#exportBase64Ta').val(url)
+    $.post('https://www.trovesaurus.com/shorturl.php', {TroxelData: l}).done (url) -> $('#exportBase64Ta').val(url)
 $('#exportJson').click ->
   return if io.readonly
   $('#exportJsonTa').val(new JsonIO(io).export($('#exportJsonPret').prop('checked'))).fadeIn()
@@ -722,6 +722,6 @@ $('#TroveCreationsExport').click ->
   l = window.location.toString().split('#')[0] + '#m=' + new Base64IO(io).export($('#TroveCreationsReadonly').prop('checked'), 2)
   $('#TroveCreationsExportLink').val("[Troxel Link](#{l})").fadeIn()
   if $('#TroveCreationsTsl').prop('checked')
-    $.post('http://www.trovesaurus.com/shorturl.php', {TroxelData: l}).done (url) -> $('#TroveCreationsExportLink').val(url)
+    $.post('https://www.trovesaurus.com/shorturl.php', {TroxelData: l}).done (url) -> $('#TroveCreationsExportLink').val(url)
 $('#TroveCreationLinterModal').on 'show.bs.modal', (e) ->
   e.relatedTarget.preventDefault() unless editor?
