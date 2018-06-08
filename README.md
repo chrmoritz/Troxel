@@ -58,10 +58,7 @@ npm run serve
 **Note:** *You need the github-pages gem installed (`gem install github-pages`) for this.*
 
 #### Importing Trove's blueprints
-```
-npm run import
-```
-**Note:** *If Trove is not installed in the default location you will prompted to enter the correct path to the `Live` folder containing the blueprints directory. By default the importer spawns 2 times your cpu count of Trove devtool child processes. You can customize this behavior by running the importer like `npm run grunt -- import:1` with the parallel jobs count as an optional parameter after the colon `:`.*
+Check out [troxeljs/trove-blueprints](https://github.com/troxeljs/trove-blueprints) for more information about how to import blueprints.
 
 libTroxel
 ======
