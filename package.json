@@ -42,7 +42,7 @@
     "mkdirp": "^0.5.1",
     "mocha": "^2.4.5",
     "replace": "^0.3.0",
-    "serve": "^1.4.0",
+    "serve2": "^1.2.1",
     "should": "^8.2.2"
   },
   "dependencies": {
